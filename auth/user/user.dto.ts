@@ -22,6 +22,10 @@ export class CreateUserDto {
   @ApiProperty()
   @IsNotEmpty()
   password: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  email: string;
 }
 export class UpdatePasswordDto {
   @IsNotEmpty()

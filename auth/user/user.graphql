@@ -1,0 +1,13 @@
+type User {
+    id: number
+    name: String
+    password: String
+    email: String
+    avatar_url: String
+    role: Role
+}
+
+enum Role {
+    ADMIN
+    USER
+}
