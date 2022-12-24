@@ -27,7 +27,7 @@ const Label = forwardRef(
             <StyledLabel
                 ref={ref}
                 component='span'
-                // ownerState={{ color, variant }}
+                ownerState={{ color, variant }}
                 sx={{
                     ...(startIcon && { pl: 0.75 }),
                     ...(endIcon && { pr: 0.75 }),

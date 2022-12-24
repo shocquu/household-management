@@ -6,22 +6,59 @@ import LoginPage from './pages/LoginPage';
 import Page404 from './pages/Page404';
 import ProductsPage from './pages/ProductsPage';
 import DashboardAppPage from './pages/DashboardAppPage';
+import RegisterPage from './pages/RegisterPage';
+import useAuth from './hooks/useAuth';
+
+const ProtectedRoute = ({ children }) => {
+    const { user, loading } = useAuth();
+    console.log(user);
+    if (!user) return <Navigate to='/login' replace />;
+
+    if (!loading) return children;
+};
+
+const RestrictedRoute = ({ children }) => {
+    const { user, loading } = useAuth();
+
+    if (user) return <Navigate to='/' replace />;
+
+    if (!loading) return children;
+};
 
 const Routes = () => {
     const routes = useRoutes([
         {
             path: '/dashboard',
-            element: <DashboardLayout />,
+            element: (
+                <ProtectedRoute>
+                    <DashboardLayout />
+                </ProtectedRoute>
+            ),
             children: [
                 { element: <Navigate to='/dashboard/app' />, index: true },
-                { path: 'app', element: <DashboardAppPage /> },
+                {
+                    path: 'app',
+                    element: <DashboardAppPage />,
+                },
                 { path: 'user', element: <UserPage /> },
                 { path: 'products', element: <ProductsPage /> },
             ],
         },
         {
             path: 'login',
-            element: <LoginPage />,
+            element: (
+                <RestrictedRoute>
+                    <LoginPage />
+                </RestrictedRoute>
+            ),
+        },
+        {
+            path: 'register',
+            element: (
+                <RestrictedRoute>
+                    <RegisterPage />
+                </RestrictedRoute>
+            ),
         },
         {
             element: <SimpleLayout />,

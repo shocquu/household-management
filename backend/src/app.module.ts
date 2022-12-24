@@ -8,22 +8,10 @@ import { AppService } from './app.service';
 import { PrismaModule } from './prisma/prisma.module';
 import { PrismaService } from './prisma/prisma.service';
 import { UserModule } from './user/user.module';
+import { CommonModule } from './common/common.module';
 
 @Module({
-  imports: [
-    GraphQLModule.forRoot<ApolloDriverConfig>({
-      driver: ApolloDriver,
-      playground: false,
-      plugins: [ApolloServerPluginLandingPageLocalDefault()],
-      typePaths: ['./**/*.graphql'],
-      definitions: {
-        path: join(process.cwd(), 'src/types/graphql.ts'),
-        outputAs: 'class',
-      },
-    }),
-    PrismaModule,
-    UserModule,
-  ],
+  imports: [CommonModule, PrismaModule, UserModule],
   controllers: [AppController],
   providers: [AppService, PrismaService],
 })

@@ -6,7 +6,7 @@ import { Box, Link, SxProps } from '@mui/material';
 
 interface LogoProps {
     disabledLink?: boolean;
-    sx: SxProps;
+    sx?: SxProps;
 }
 
 const Logo = forwardRef(({ disabledLink = false, sx, ...other }: LogoProps, ref) => {

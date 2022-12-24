@@ -21,13 +21,24 @@ input UpdateUserInput {
   avatar_url: String
 }
 
+input LoginUserInput {
+  email: String!
+  password: String!
+}
+
+type LoggedUserOutput {
+  access_token: String
+}
+
 type Query {
   users: [User]!
   user(id: Int!): User
+  whoami: User
 }
 
 type Mutation {
   createUser(createUserInput: CreateUserInput!): User!
   updateUser(updateUserInput: UpdateUserInput!): User!
   removeUser(id: Int!): User
+  loginUser(loginUserInput: LoginUserInput!): LoggedUserOutput!
 }
