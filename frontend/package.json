@@ -25,7 +25,8 @@
     "react": "latest",
     "react-dom": "latest",
     "react-helmet-async": "^1.3.0",
-    "react-router-dom": "^6.5.0",
+    "react-router": "^6.6.1",
+    "react-router-dom": "^6.6.1",
     "simplebar-react": "^2.4.3",
     "yarn": "^1.22.19",
     "yup": "^0.32.11"

@@ -1,15 +1,9 @@
 import { gql, useQuery } from '@apollo/client';
 import { createContext, ReactNode, useContext, useMemo } from 'react';
-
-interface User {
-    email: string;
-    password: string;
-    name: string;
-    avatar_url: string;
-}
+import { User } from '../types';
 
 interface AuthContextType {
-    user?: any;
+    user?: User;
     loading: boolean;
     error?: any;
 }

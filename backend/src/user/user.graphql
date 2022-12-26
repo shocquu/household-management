@@ -4,6 +4,9 @@ type User {
   email: String!
   password: String!
   avatar_url: String!
+
+  tasks: [Task]
+  comments: [Comment]
 }
 
 input CreateUserInput {
@@ -11,6 +14,9 @@ input CreateUserInput {
   email: String!
   password: String!
   avatar_url: String!
+
+  taskId: Int
+  commentId: Int
 }
 
 input UpdateUserInput {

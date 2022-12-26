@@ -1,10 +1,4 @@
-import {
-  forwardRef,
-  HttpException,
-  HttpStatus,
-  Inject,
-  Injectable,
-} from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import {
   CreateUserInput,
@@ -46,24 +40,64 @@ export class UserService {
 
     return this.prisma.user.create({
       data: { email, password: hashed, name, avatar_url },
+      include: {
+        tasks: {
+          include: {
+            tags: true,
+            _count: {
+              // select: { comments: true },
+            },
+          },
+        },
+      },
     });
   }
 
   findAll() {
-    return this.prisma.user.findMany();
+    return this.prisma.user.findMany({
+      include: {
+        tasks: {
+          include: {
+            tags: true,
+            comments: true,
+            // _count: {
+            //   select: { comments: true },
+            // },
+          },
+        },
+      },
+    });
   }
 
   findById(id: number) {
     return this.prisma.user.findUnique({
       where: { id },
-      select: { id: true, name: true, email: true, avatar_url: true },
+      include: {
+        tasks: {
+          include: {
+            tags: true,
+            _count: {
+              select: { comments: true },
+            },
+          },
+        },
+      },
     });
   }
 
   findByEmail(email: string) {
     return this.prisma.user.findUnique({
       where: { email },
-      select: { id: true, password: true },
+      include: {
+        tasks: {
+          include: {
+            tags: true,
+            _count: {
+              select: { comments: true },
+            },
+          },
+        },
+      },
     });
   }
 
@@ -71,12 +105,14 @@ export class UserService {
     return this.prisma.user.update({
       where: { id },
       data: { name },
+      include: { tasks: true },
     });
   }
 
   remove(id: number) {
     return this.prisma.user.delete({
       where: { id },
+      include: { tasks: true },
     });
   }
 }

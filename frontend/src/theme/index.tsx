@@ -19,7 +19,7 @@ export default function ThemeProvider({ children }: ThemeProviderProps) {
             shape: { borderRadius: 6 },
             typography,
             shadows: shadows(),
-            // customShadows: customShadows(),
+            customShadows: customShadows(),
         }),
         []
     );

@@ -8,11 +8,52 @@
 /* tslint:disable */
 /* eslint-disable */
 
+export class CreateCommentInput {
+    taskId: number;
+    authorId: number;
+    message: string;
+}
+
+export class UpdateCommentInput {
+    id: number;
+    taskId: number;
+    authorId: number;
+    message?: Nullable<string>;
+}
+
+export class CreateTagInput {
+    label: string;
+    color: string;
+}
+
+export class UpdateTagInput {
+    id: number;
+    label?: Nullable<string>;
+    color?: Nullable<string>;
+}
+
+export class CreateTaskInput {
+    title: string;
+    description?: Nullable<string>;
+    userId: number;
+    commentId?: Nullable<number>;
+}
+
+export class UpdateTaskInput {
+    id: number;
+    title?: Nullable<string>;
+    description?: Nullable<string>;
+    userId?: Nullable<number>;
+    commentId?: Nullable<number>;
+}
+
 export class CreateUserInput {
     name: string;
     email: string;
     password: string;
     avatar_url: string;
+    taskId?: Nullable<number>;
+    commentId?: Nullable<number>;
 }
 
 export class UpdateUserInput {
@@ -28,19 +69,28 @@ export class LoginUserInput {
     password: string;
 }
 
-export class User {
+export class Comment {
     id: number;
-    name: string;
-    email: string;
-    password: string;
-    avatar_url: string;
-}
-
-export class LoggedUserOutput {
-    access_token?: Nullable<string>;
+    task: Task;
+    author: User;
+    message: string;
+    createdAt: string;
+    updatedAt: string;
 }
 
 export abstract class IQuery {
+    abstract comments(): Nullable<Comment>[] | Promise<Nullable<Comment>[]>;
+
+    abstract comment(id: number): Nullable<Comment> | Promise<Nullable<Comment>>;
+
+    abstract tags(): Nullable<Tag>[] | Promise<Nullable<Tag>[]>;
+
+    abstract tag(id: number): Nullable<Tag> | Promise<Nullable<Tag>>;
+
+    abstract tasks(): Nullable<Task>[] | Promise<Nullable<Task>[]>;
+
+    abstract task(id: number): Nullable<Task> | Promise<Nullable<Task>>;
+
     abstract users(): Nullable<User>[] | Promise<Nullable<User>[]>;
 
     abstract user(id: number): Nullable<User> | Promise<Nullable<User>>;
@@ -49,6 +99,24 @@ export abstract class IQuery {
 }
 
 export abstract class IMutation {
+    abstract createComment(createCommentInput: CreateCommentInput): Comment | Promise<Comment>;
+
+    abstract updateComment(updateCommentInput: UpdateCommentInput): Comment | Promise<Comment>;
+
+    abstract removeComment(id: number): Nullable<Comment> | Promise<Nullable<Comment>>;
+
+    abstract createTag(createTagInput: CreateTagInput): Tag | Promise<Tag>;
+
+    abstract updateTag(updateTagInput: UpdateTagInput): Tag | Promise<Tag>;
+
+    abstract removeTag(id: number): Nullable<Tag> | Promise<Nullable<Tag>>;
+
+    abstract createTask(createTaskInput: CreateTaskInput): Task | Promise<Task>;
+
+    abstract updateTask(updateTaskInput: UpdateTaskInput): Task | Promise<Task>;
+
+    abstract removeTask(id: number): Nullable<Task> | Promise<Nullable<Task>>;
+
     abstract createUser(createUserInput: CreateUserInput): User | Promise<User>;
 
     abstract updateUser(updateUserInput: UpdateUserInput): User | Promise<User>;
@@ -56,6 +124,38 @@ export abstract class IMutation {
     abstract removeUser(id: number): Nullable<User> | Promise<Nullable<User>>;
 
     abstract loginUser(loginUserInput: LoginUserInput): LoggedUserOutput | Promise<LoggedUserOutput>;
+}
+
+export class Tag {
+    id: number;
+    label: string;
+    color: string;
+    tasks?: Nullable<Nullable<Task>[]>;
+}
+
+export class Task {
+    id: number;
+    title: string;
+    description?: Nullable<string>;
+    createdAt: string;
+    updatedAt: string;
+    user: User;
+    tags?: Nullable<Nullable<Tag>[]>;
+    comments?: Nullable<Nullable<Comment>[]>;
+}
+
+export class User {
+    id: number;
+    name: string;
+    email: string;
+    password: string;
+    avatar_url: string;
+    tasks?: Nullable<Nullable<Task>[]>;
+    comments?: Nullable<Nullable<Comment>[]>;
+}
+
+export class LoggedUserOutput {
+    access_token?: Nullable<string>;
 }
 
 type Nullable<T> = T | null;

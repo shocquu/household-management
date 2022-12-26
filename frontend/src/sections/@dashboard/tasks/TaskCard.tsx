@@ -1,9 +1,31 @@
 import { alpha, styled } from '@mui/material/styles';
-import { Box, Link, Card, Grid, Avatar, Typography, CardContent } from '@mui/material';
+import {
+    Box,
+    Link,
+    Card,
+    Grid,
+    Avatar,
+    Typography,
+    CardContent,
+    Chip,
+    Modal,
+    Paper,
+    TextField,
+    List,
+    ListItem,
+    ListItemAvatar,
+    ListItemText,
+    Button,
+} from '@mui/material';
 import { fDate } from '../../../utils/formatTime';
 import { fShortenNumber } from '../../../utils/formatNumber';
 import SvgColor from '../../../components/svg-color';
 import Iconify from '../../../components/iconify';
+import { Task } from '../../../types';
+import ScheduleIcon from '@mui/icons-material/Schedule';
+import SegmentIcon from '@mui/icons-material/Segment';
+import { useState } from 'react';
+import TaskModal from './TaskModal';
 
 const StyledCardMedia = styled('div')({
     position: 'relative',
@@ -27,97 +49,68 @@ const StyledAvatar = styled(Avatar)(({ theme }) => ({
     bottom: theme.spacing(-2),
 }));
 
-const StyledInfo = styled('div')(({ theme }) => ({
-    display: 'flex',
-    flexWrap: 'wrap',
-    justifyContent: 'flex-end',
-    marginTop: theme.spacing(3),
-    color: theme.palette.text.disabled,
-}));
-
-const StyledCover = styled('img')({
-    top: 0,
-    width: '100%',
-    height: '50px',
-    objectFit: 'cover',
-    position: 'absolute',
-});
-
-interface Author {
-    name: string;
-    avatarUrl: string;
-}
-
-interface Post {
-    cover: string;
-    title: string;
-    author: Author;
-    view: number;
-    comment: number;
-    share: number;
-    isRequired: boolean;
-    createdAt: string;
-}
-
 interface BlogPostCardProps {
-    post: Post;
+    task: Task;
 }
 
-export default function TaskCard({ post }: BlogPostCardProps) {
-    const { cover, title, view, comment, share, author, createdAt } = post;
+const TaskCard = ({ task }: BlogPostCardProps) => {
+    const { id, title, description, createdAt, comments, tags } = task;
 
-    const POST_INFO = [
-        { number: comment, icon: 'eva:message-circle-fill' },
-        { number: view, icon: 'eva:eye-fill' },
-        { number: share, icon: 'eva:share-fill' },
-    ];
+    const [open, setOpen] = useState(false);
+    const handleOpen = () => setOpen(true);
+    const handleClose = () => setOpen(false);
 
     return (
-        <Card sx={{ position: 'relative' }}>
-            <StyledCardMedia>
-                <SvgColor
-                    color='paper'
-                    src='/assets/icons/shape-avatar.svg'
-                    sx={{
-                        width: 80,
-                        height: 36,
-                        zIndex: 9,
-                        bottom: -15,
-                        position: 'absolute',
-                        color: 'background.paper',
-                    }}
-                />
-                <StyledAvatar alt={author.name} src={author.avatarUrl} />
+        <>
+            <Card key={id} elevation={3} sx={{ p: 2 }} onClick={handleOpen}>
+                {tags?.map(({ label, color }) => (
+                    <Chip
+                        key={label}
+                        size='small'
+                        label={label}
+                        sx={{ bgcolor: color, color: 'common.white', mr: 1 }}
+                    />
+                ))}
 
-                <StyledCover alt={title} src={cover} />
-            </StyledCardMedia>
-
-            <CardContent
-                sx={{
-                    pt: 4,
-                }}>
-                <Typography gutterBottom variant='caption' sx={{ color: 'text.disabled', display: 'block' }}>
-                    {fDate(createdAt)}
+                <Typography variant='subtitle1' sx={{ py: 1 }}>
+                    {title}
                 </Typography>
 
-                <StyledTitle color='inherit' variant='subtitle2' underline='hover'>
-                    {title}
-                </StyledTitle>
+                {Boolean(description) && (
+                    <Chip
+                        icon={<SegmentIcon color='disabled' />}
+                        size='small'
+                        variant='outlined'
+                        sx={{ border: 0, color: 'text.disabled' }}
+                    />
+                )}
+                <Chip
+                    icon={<ScheduleIcon color='disabled' />}
+                    size='small'
+                    label={fDate(createdAt, 'dd MMM')}
+                    variant='outlined'
+                    sx={{ border: 0, color: 'text.disabled' }}
+                />
 
-                <StyledInfo>
-                    {POST_INFO.map((info, index) => (
-                        <Box
-                            key={index}
-                            sx={{
-                                display: 'flex',
-                                alignItems: 'center',
-                            }}>
-                            <Iconify icon={info.icon} sx={{ width: 16, height: 16, mr: 0.5 }} />
-                            <Typography variant='caption'>{fShortenNumber(info.number)}</Typography>
-                        </Box>
-                    ))}
-                </StyledInfo>
-            </CardContent>
-        </Card>
+                {comments.length > 0 && (
+                    <Chip
+                        icon={
+                            <Iconify
+                                color='text.disabled'
+                                icon={'eva:message-circle-fill'}
+                                sx={{ width: 16, height: 16, mr: 0.5 }}
+                            />
+                        }
+                        size='small'
+                        label={comments.length}
+                        variant='outlined'
+                        sx={{ border: 0, color: 'text.disabled' }}
+                    />
+                )}
+            </Card>
+            <TaskModal taskId={id} open={open} handleClose={handleClose} />
+        </>
     );
-}
+};
+
+export default TaskCard;
