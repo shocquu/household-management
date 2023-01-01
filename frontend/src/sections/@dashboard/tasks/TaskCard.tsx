@@ -16,8 +16,10 @@ import {
     ListItemAvatar,
     ListItemText,
     Button,
+    Tooltip,
 } from '@mui/material';
-import { fDate } from '../../../utils/formatTime';
+import TaskAltIcon from '@mui/icons-material/TaskAlt';
+import { fDate, fDateTime } from '../../../utils/formatTime';
 import { fShortenNumber } from '../../../utils/formatNumber';
 import SvgColor from '../../../components/svg-color';
 import Iconify from '../../../components/iconify';
@@ -62,7 +64,7 @@ const TaskCard = ({ task }: BlogPostCardProps) => {
 
     return (
         <>
-            <Card key={id} elevation={3} sx={{ p: 2 }} onClick={handleOpen}>
+            <Card key={id} elevation={3} sx={{ position: 'relative', p: 2 }} onClick={handleOpen}>
                 {tags?.map(({ label, color }) => (
                     <Chip
                         key={label}
@@ -77,40 +79,64 @@ const TaskCard = ({ task }: BlogPostCardProps) => {
                 </Typography>
 
                 {Boolean(description) && (
+                    <Tooltip enterDelay={1500} title={'This card has a description'}>
+                        <Chip
+                            icon={<SegmentIcon color='disabled' />}
+                            size='small'
+                            variant='outlined'
+                            sx={{ border: 0, color: 'text.disabled' }}
+                        />
+                    </Tooltip>
+                )}
+                <Tooltip enterDelay={1500} title={fDateTime(createdAt)}>
                     <Chip
-                        icon={<SegmentIcon color='disabled' />}
+                        icon={<ScheduleIcon color='disabled' />}
                         size='small'
+                        label={fDate(createdAt, 'dd MMM')}
                         variant='outlined'
                         sx={{ border: 0, color: 'text.disabled' }}
                     />
-                )}
-                <Chip
-                    icon={<ScheduleIcon color='disabled' />}
-                    size='small'
-                    label={fDate(createdAt, 'dd MMM')}
-                    variant='outlined'
-                    sx={{ border: 0, color: 'text.disabled' }}
-                />
+                </Tooltip>
 
                 {comments.length > 0 && (
-                    <Chip
-                        icon={
-                            <Iconify
-                                color='text.disabled'
-                                icon={'eva:message-circle-fill'}
-                                sx={{ width: 16, height: 16, mr: 0.5 }}
-                            />
-                        }
-                        size='small'
-                        label={comments.length}
-                        variant='outlined'
-                        sx={{ border: 0, color: 'text.disabled' }}
-                    />
+                    <Tooltip enterDelay={1500} title={`This card has ${comments.length} comments`}>
+                        <Chip
+                            icon={
+                                <Iconify
+                                    color='text.disabled'
+                                    icon={'eva:message-circle-fill'}
+                                    sx={{ width: 16, height: 16, mr: 0.5 }}
+                                />
+                            }
+                            size='small'
+                            label={comments.length}
+                            variant='outlined'
+                            sx={{ border: 0, color: 'text.disabled' }}
+                        />
+                    </Tooltip>
                 )}
+                {/* <Overlay>
+                    <TaskAltIcon
+                        color='inherit'
+                        fontSize='large'
+                        sx={{ position: 'relative', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}
+                    />
+                </Overlay> */}
             </Card>
             <TaskModal taskId={id} open={open} handleClose={handleClose} />
         </>
     );
 };
+
+const Overlay = styled('div')(({ theme }) => ({
+    background: alpha(theme.palette.common.white, 0.8),
+    color: theme.palette.grey[500],
+    position: 'absolute',
+    top: 0,
+    bottom: 0,
+    left: 0,
+    right: 0,
+    zIndex: 99,
+}));
 
 export default TaskCard;

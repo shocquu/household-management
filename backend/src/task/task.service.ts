@@ -9,9 +9,9 @@ export class TaskService {
   create({ userId, title, description }: CreateTaskInput) {
     return this.prisma.task.create({
       data: {
-        userId,
         title,
-        description,
+        user: { connect: { id: userId } },
+        description: description != null ? description : undefined,
       },
       include: { user: true, tags: true },
     });
@@ -42,7 +42,7 @@ export class TaskService {
     return this.prisma.task.update({
       where: { id },
       data: { userId, title, description },
-      include: { user: true, tags: true },
+      include: { user: true, tags: true, comments: true },
     });
   }
 

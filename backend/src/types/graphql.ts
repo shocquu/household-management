@@ -33,9 +33,9 @@ export class UpdateTagInput {
 }
 
 export class CreateTaskInput {
+    userId: number;
     title: string;
     description?: Nullable<string>;
-    userId: number;
     commentId?: Nullable<number>;
 }
 

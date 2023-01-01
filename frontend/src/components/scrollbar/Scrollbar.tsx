@@ -1,8 +1,9 @@
 import { memo, ReactNode } from 'react';
+import SimpleBar from 'simplebar-react';
 import { Box, SxProps } from '@mui/material';
 import { StyledRootScrollbar, StyledScrollbar } from './styles';
-
-interface ScrollBarProps {
+import 'simplebar/dist/simplebar.min.css';
+interface ScrollBarProps extends SimpleBar.Props {
     children: ReactNode;
     sx?: SxProps;
 }

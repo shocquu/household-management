@@ -9,8 +9,9 @@ import Logo from '../../../components/logo';
 import Scrollbar from '../../../components/scrollbar';
 import NavSection from '../../../components/nav-section';
 import navConfig from './config';
+import useAuth from '../../../hooks/useAuth';
 
-const NAV_WIDTH = 280;
+const NAV_WIDTH = 220;
 
 const StyledAccount = styled('div')(({ theme }) => ({
     display: 'flex',
@@ -27,6 +28,7 @@ Nav.propTypes = {
 
 export default function Nav({ openNav, onCloseNav }) {
     const { pathname } = useLocation();
+    const { user } = useAuth();
 
     useEffect(() => {
         if (openNav) {
@@ -48,16 +50,16 @@ export default function Nav({ openNav, onCloseNav }) {
             <Box sx={{ mb: 5, mx: 2.5 }}>
                 <Link underline='none'>
                     <StyledAccount>
-                        <Avatar src={account.photoURL} alt='photoURL' />
+                        <Avatar src={user.avatar_url} alt='photoURL' />
 
                         <Box sx={{ ml: 2 }}>
                             <Typography variant='subtitle2' sx={{ color: 'text.primary' }}>
-                                {account.displayName}
+                                {user.name}
                             </Typography>
 
-                            <Typography variant='body2' sx={{ color: 'text.secondary' }}>
-                                {account.role}
-                            </Typography>
+                            {/* <Typography variant='body2' sx={{ color: 'text.secondary' }}>
+                                {user.role}
+                            </Typography> */}
                         </Box>
                     </StyledAccount>
                 </Link>
@@ -68,30 +70,9 @@ export default function Nav({ openNav, onCloseNav }) {
             <Box sx={{ flexGrow: 1 }} />
 
             <Box sx={{ px: 2.5, pb: 3, mt: 10 }}>
-                <Stack alignItems='center' spacing={3} sx={{ pt: 5, borderRadius: 2, position: 'relative' }}>
-                    <Box
-                        component='img'
-                        src='/assets/illustrations/illustration_avatar.png'
-                        sx={{ width: 100, position: 'absolute', top: -50 }}
-                    />
-
-                    <Box sx={{ textAlign: 'center' }}>
-                        <Typography gutterBottom variant='h6'>
-                            Get more?
-                        </Typography>
-
-                        <Typography variant='body2' sx={{ color: 'text.secondary' }}>
-                            From only $69
-                        </Typography>
-                    </Box>
-
-                    <Button
-                        href='https://material-ui.com/store/items/minimal-dashboard/'
-                        target='_blank'
-                        variant='contained'>
-                        Upgrade to Pro
-                    </Button>
-                </Stack>
+                <Typography variant='body2' textAlign='center' sx={{ color: 'text.secondary' }}>
+                    AGH 2023
+                </Typography>
             </Box>
         </Scrollbar>
     );

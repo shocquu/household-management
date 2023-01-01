@@ -10,9 +10,9 @@ type Task {
 }
 
 input CreateTaskInput {
+  userId: Int!
   title: String!
   description: String
-  userId: Int!
   commentId: Int
 }
 

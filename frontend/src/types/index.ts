@@ -11,11 +11,11 @@ export type User = {
 export type Task = {
     id: number;
     title: string;
-    description: string;
-    tags: Tag[];
-    comments: Comment[];
-    createdAt: string;
-    updatedAt: string;
+    description?: string;
+    tags?: Tag[];
+    comments?: Comment[];
+    createdAt: number;
+    updatedAt: number;
 };
 
 export type Tag = {
@@ -26,7 +26,7 @@ export type Tag = {
 
 export type Comment = {
     id: number;
-    authorId: number;
+    author: User;
     message: string;
     createdAt: string;
     updatedAt: string;

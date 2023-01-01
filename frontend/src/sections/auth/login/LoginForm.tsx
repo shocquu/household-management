@@ -39,7 +39,7 @@ export default function LoginForm() {
     const [login, { data, loading, error }] = useMutation(LOGIN_MUTATION, {
         onCompleted: ({ loginUser }) => {
             localStorage.setItem('access_token', loginUser.access_token);
-            navigate('/dashboard', { replace: true });
+            navigate('/board', { replace: true });
         },
         onError: (error) => {
             formik.setStatus({

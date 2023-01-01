@@ -11,9 +11,8 @@ import useAuth from './hooks/useAuth';
 
 const ProtectedRoute = ({ children }) => {
     const { user, loading } = useAuth();
-    console.log(user);
-    if (!user) return <Navigate to='/login' replace />;
 
+    if (!user) return <Navigate to='/login' replace />;
     if (!loading) return children;
 };
 
@@ -28,19 +27,19 @@ const RestrictedRoute = ({ children }) => {
 const Routes = () => {
     const routes = useRoutes([
         {
-            path: '/dashboard',
+            path: '/board',
             element: (
                 <ProtectedRoute>
                     <DashboardLayout />
                 </ProtectedRoute>
             ),
             children: [
-                { element: <Navigate to='/dashboard/app' />, index: true },
+                { element: <Navigate to='/board/tasks' />, index: true },
                 {
-                    path: 'app',
+                    path: 'tasks',
                     element: <DashboardAppPage />,
                 },
-                { path: 'user', element: <UserPage /> },
+                { path: 'tags', element: <UserPage /> },
                 { path: 'products', element: <ProductsPage /> },
             ],
         },
@@ -63,7 +62,7 @@ const Routes = () => {
         {
             element: <SimpleLayout />,
             children: [
-                { element: <Navigate to='/dashboard/app' />, index: true },
+                { element: <Navigate to='/board' />, index: true },
                 { path: '404', element: <Page404 /> },
                 { path: '*', element: <Navigate to='/404' /> },
             ],
