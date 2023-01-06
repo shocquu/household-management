@@ -15,7 +15,7 @@ export class UserService {
   ) {}
 
   async login({ email, password }: LoginUserInput) {
-    const user = await this.authService.validate(email, password);
+    const user = await this.authService.validateUser(email, password);
 
     if (!user)
       throw new HttpException('Invalid credentials', HttpStatus.UNAUTHORIZED);
@@ -44,9 +44,6 @@ export class UserService {
         tasks: {
           include: {
             tags: true,
-            _count: {
-              // select: { comments: true },
-            },
           },
         },
       },
@@ -60,9 +57,6 @@ export class UserService {
           include: {
             tags: true,
             comments: true,
-            // _count: {
-            //   select: { comments: true },
-            // },
           },
         },
       },

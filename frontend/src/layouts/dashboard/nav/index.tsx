@@ -1,4 +1,3 @@
-import PropTypes from 'prop-types';
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { styled, alpha } from '@mui/material/styles';
@@ -21,12 +20,12 @@ const StyledAccount = styled('div')(({ theme }) => ({
     backgroundColor: alpha(theme.palette.grey[500], 0.12),
 }));
 
-Nav.propTypes = {
-    openNav: PropTypes.bool,
-    onCloseNav: PropTypes.func,
-};
+interface Nav {
+    openNav: boolean;
+    onCloseNav: () => void;
+}
 
-export default function Nav({ openNav, onCloseNav }) {
+export default function Nav({ openNav, onCloseNav }: Nav) {
     const { pathname } = useLocation();
     const { user } = useAuth();
 
@@ -56,10 +55,9 @@ export default function Nav({ openNav, onCloseNav }) {
                             <Typography variant='subtitle2' sx={{ color: 'text.primary' }}>
                                 {user.name}
                             </Typography>
-
-                            {/* <Typography variant='body2' sx={{ color: 'text.secondary' }}>
+                            <Typography variant='body2' sx={{ color: 'text.secondary' }}>
                                 {user.role}
-                            </Typography> */}
+                            </Typography>
                         </Box>
                     </StyledAccount>
                 </Link>

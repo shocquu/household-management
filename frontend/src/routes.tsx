@@ -8,28 +8,27 @@ import ProductsPage from './pages/ProductsPage';
 import DashboardAppPage from './pages/DashboardAppPage';
 import RegisterPage from './pages/RegisterPage';
 import useAuth from './hooks/useAuth';
+import { useAccessToken } from './hooks/useAccessToken';
+import { useUserQuery } from './hooks/useUserQuery';
+import { User } from './types';
+import { CircularProgress } from '@mui/material';
 
-const ProtectedRoute = ({ children }) => {
-    const { user, loading } = useAuth();
-
+const ProtectedRoute = ({ user, children }) => {
     if (!user) return <Navigate to='/login' replace />;
-    if (!loading) return children;
+    return children;
 };
 
-const RestrictedRoute = ({ children }) => {
-    const { user, loading } = useAuth();
-
+const RestrictedRoute = ({ user, children }) => {
     if (user) return <Navigate to='/' replace />;
-
-    if (!loading) return children;
+    return children;
 };
 
-const Routes = () => {
+const Routes = ({ user }: { user: User }) => {
     const routes = useRoutes([
         {
             path: '/board',
             element: (
-                <ProtectedRoute>
+                <ProtectedRoute user={user}>
                     <DashboardLayout />
                 </ProtectedRoute>
             ),
@@ -46,7 +45,7 @@ const Routes = () => {
         {
             path: 'login',
             element: (
-                <RestrictedRoute>
+                <RestrictedRoute user={user}>
                     <LoginPage />
                 </RestrictedRoute>
             ),
@@ -54,7 +53,7 @@ const Routes = () => {
         {
             path: 'register',
             element: (
-                <RestrictedRoute>
+                <RestrictedRoute user={user}>
                     <RegisterPage />
                 </RestrictedRoute>
             ),
@@ -76,10 +75,16 @@ const Routes = () => {
     return routes;
 };
 
-const RoutesWrapper = () => (
-    <Router>
-        <Routes />
-    </Router>
-);
+const RoutesWrapper = () => {
+    const { user, loading } = useAuth();
+
+    if (loading) return <CircularProgress />;
+
+    return (
+        <Router>
+            <Routes user={user} />
+        </Router>
+    );
+};
 
 export default RoutesWrapper;

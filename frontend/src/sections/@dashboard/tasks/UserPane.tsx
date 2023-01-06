@@ -17,6 +17,7 @@ import {
     Skeleton,
     Stack,
     styled,
+    SxProps,
     TextField,
     Tooltip,
     Typography,
@@ -41,9 +42,9 @@ interface UserPane {
     loading: boolean;
 }
 
-const EmptyState = () => {
+const EmptyState = ({ sx }: { sx?: SxProps }) => {
     return (
-        <Stack alignItems='center' justifyContent='center' height='100%' sx={{ minWidth: 210 }}>
+        <Stack alignItems='center' justifyContent='center' height='100%' sx={{ minWidth: 210, ...sx }}>
             <img src='/assets/illustrations/illustration_avatar.png' alt='Empty' width={85} />
             <Typography variant='subtitle1' textAlign='center'>
                 You don't have any tasks 🥳
@@ -74,7 +75,7 @@ const UserPane = ({ loading, user, index = 1 }: UserPane) => {
                 elevation={5}
                 sx={{
                     position: 'relative',
-                    height: '100%',
+                    height: 'calc(100vh - 7rem)',
                     minWidth: 242,
                     overflow: 'hidden',
                     bgcolor: 'background.neutral',
@@ -133,7 +134,7 @@ const UserPane = ({ loading, user, index = 1 }: UserPane) => {
                         </Scrollbar>
                     ) : (
                         <>
-                            {!isAdding && <EmptyState />}
+                            {!isAdding && <EmptyState sx={{ mt: -1.5 }} />}
                             {isAdding && <NewCard userId={id} setIsAdding={setIsAdding} />}
                         </>
                     )}

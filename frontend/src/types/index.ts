@@ -3,6 +3,7 @@ export type User = {
     email: string;
     password: string;
     name: string;
+    role: ERole;
     avatar_url: string;
     tasks?: Task[];
     comments?: Comment[];
@@ -31,3 +32,8 @@ export type Comment = {
     createdAt: string;
     updatedAt: string;
 };
+
+export enum ERole {
+    ADMIN = 'ADMIN',
+    USER = 'USER',
+}

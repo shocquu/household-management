@@ -4,34 +4,34 @@ import ModeEditIcon from '@mui/icons-material/ModeEdit';
 
 interface EditableText extends TypographyProps {
     text?: string;
+    name?: string;
     minRows?: number;
     maxRows?: number;
     fullWidth?: boolean;
     showButtons?: boolean;
     component?: ElementType;
     onBlur?: (event: any) => void;
+    onChange?: (event: any) => void;
     onClick?: (event: any) => void;
 }
 
 const EditableText = ({
     text,
+    name,
     minRows,
     maxRows,
     fullWidth,
     showButtons,
     variant,
     component,
+    sx,
     onClick,
+    onChange,
     onBlur,
     ...restProps
 }: EditableText) => {
     const [isFocused, setIsFocused] = useState(false);
     const [value, setValue] = useState(text);
-
-    const disableFocus = () => {
-        onBlur?.(event);
-        setIsFocused(false);
-    };
 
     const handleCancel = () => {
         setValue(text);
@@ -69,13 +69,18 @@ const EditableText = ({
                 fullWidth
                 multiline
                 size='small'
+                name={name}
                 value={value}
                 minRows={minRows}
                 maxRows={maxRows}
                 onChange={(event) => {
+                    onChange?.(event);
                     setValue(event.target.value);
                 }}
-                onBlur={disableFocus}
+                onBlur={(event) => {
+                    onBlur?.(event);
+                    setIsFocused(false);
+                }}
             />
             {showButtons && (
                 <Stack direction='row' spacing={1} mt={1}>

@@ -64,7 +64,18 @@ const TaskCard = ({ task }: BlogPostCardProps) => {
 
     return (
         <>
-            <Card key={id} elevation={3} sx={{ position: 'relative', p: 2 }} onClick={handleOpen}>
+            <Card
+                key={id}
+                elevation={3}
+                sx={{
+                    position: 'relative',
+                    cursor: 'pointer',
+                    p: 2,
+                    '& > *': {
+                        cursor: 'inherit',
+                    },
+                }}
+                onClick={handleOpen}>
                 {tags?.map(({ label, color }) => (
                     <Chip
                         key={label}

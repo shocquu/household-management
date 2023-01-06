@@ -8,6 +8,11 @@
 /* tslint:disable */
 /* eslint-disable */
 
+export enum Role {
+    ADMIN = "ADMIN",
+    USER = "USER"
+}
+
 export class CreateCommentInput {
     taskId: number;
     authorId: number;
@@ -150,6 +155,7 @@ export class User {
     email: string;
     password: string;
     avatar_url: string;
+    role: Role;
     tasks?: Nullable<Nullable<Task>[]>;
     comments?: Nullable<Nullable<Comment>[]>;
 }

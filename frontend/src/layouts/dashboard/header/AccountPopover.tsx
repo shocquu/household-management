@@ -21,7 +21,7 @@ export default function AccountPopover() {
     const [open, setOpen] = useState(null);
     const client = useApolloClient();
     const navigate = useNavigate();
-    const { user } = useAuth();
+    const { user, logout } = useAuth();
 
     const handleOpen = (event) => {
         setOpen(event.currentTarget);
@@ -32,8 +32,7 @@ export default function AccountPopover() {
     };
 
     const handleLogout = () => {
-        localStorage.removeItem('access_token');
-        client.resetStore();
+        logout();
         navigate('/login');
     };
 

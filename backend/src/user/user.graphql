@@ -4,6 +4,7 @@ type User {
   email: String!
   password: String!
   avatar_url: String!
+  role: Role!
 
   tasks: [Task]
   comments: [Comment]
@@ -47,4 +48,9 @@ type Mutation {
   updateUser(updateUserInput: UpdateUserInput!): User!
   removeUser(id: Int!): User
   loginUser(loginUserInput: LoginUserInput!): LoggedUserOutput!
+}
+
+enum Role {
+  ADMIN
+  USER
 }

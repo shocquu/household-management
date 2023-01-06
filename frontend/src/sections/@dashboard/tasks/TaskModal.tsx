@@ -14,6 +14,7 @@ import {
     ListSubheader,
     Modal,
     Paper,
+    Skeleton,
     Stack,
     styled,
     TextField,
@@ -71,6 +72,7 @@ const CloseButton = styled(IconButton)(({ theme }) => ({
     top: theme.spacing(1),
     right: theme.spacing(1),
     color: theme.palette.grey[500],
+    zIndex: 20,
     '&:hover': {
         backgroundColor: 'transparent',
     },
@@ -86,13 +88,16 @@ const UPDATE_TASK_MUTATION = gql`
 
 const TaskModal = ({ taskId, open, handleClose }: TaskModal) => {
     const { user: loggedInUser } = useAuth();
-    const { data, loading, error } = useQuery(TASK_QUERY, { variables: { taskId } });
-    const [updateTask] = useMutation(UPDATE_TASK_MUTATION, {
-        refetchQueries: [{ query: USERS_QUERY }, 'Users'],
+    const { data, loading, refetch } = useQuery(TASK_QUERY, {
+        variables: { taskId },
+        skip: !open,
+        fetchPolicy: 'cache-and-network', // Update to cache
     });
-    const client = useApolloClient();
+    const [updateTask] = useMutation(UPDATE_TASK_MUTATION, {
+        refetchQueries: [{ query: USERS_QUERY }],
+    });
 
-    const { title = '', description = '', user = '', comments = [], tags: appliedTasks = [] } = data?.task || {};
+    const { title = '', description = '', comments = [], tags: appliedTasks = [] } = data?.task || {};
 
     const formik = useFormik({
         initialValues: {
@@ -102,36 +107,44 @@ const TaskModal = ({ taskId, open, handleClose }: TaskModal) => {
         },
         enableReinitialize: true,
         onSubmit: ({ title, description }) => {
-            updateTask({ variables: { updateTaskInput: { id: taskId, title, description } } });
+            updateTask({
+                variables: { updateTaskInput: { id: taskId, title, description } },
+            });
+            formik.resetForm();
         },
     });
 
     const onClose = () => {
+        if (formik.dirty) formik.submitForm();
         handleClose();
-        client.refetchQueries({});
-        formik.submitForm();
     };
 
     return (
         <Modal aria-labelledby='task-title' aria-describedby='task-description' open={open} onClose={onClose}>
             <>
                 <ModalContent sx={{ position: 'relative' }}>
-                    <CloseButton size='small' aria-label='Close' onClick={handleClose}>
-                        <CloseIcon />
-                    </CloseButton>
-
-                    <EditableText
-                        id='task-title'
-                        variant='h6'
-                        component='h2'
-                        fullWidth
-                        text={formik.values.title}
-                        onBlur={(e) => formik.setFieldValue('title', e.target.value)}
-                    />
-
                     <Grid container spacing={2}>
                         <Grid item xs={9}>
                             <form onSubmit={formik.handleSubmit}>
+                                <header style={{ maxWidth: '90%' }}>
+                                    <CloseButton size='small' aria-label='Close' onClick={handleClose}>
+                                        <CloseIcon />
+                                    </CloseButton>
+
+                                    {!loading && title ? (
+                                        <EditableText
+                                            id='task-title'
+                                            variant='h6'
+                                            component='h2'
+                                            fullWidth
+                                            text={title}
+                                            name='title'
+                                            onBlur={(e) => formik.setFieldValue('title', e.target.value)}
+                                        />
+                                    ) : (
+                                        <Skeleton variant='text' width='30%' sx={{ fontSize: '1rem' }} />
+                                    )}
+                                </header>
                                 {appliedTasks.length > 0 && (
                                     <>
                                         <Typography
@@ -155,12 +168,14 @@ const TaskModal = ({ taskId, open, handleClose }: TaskModal) => {
                                 <Typography variant='subtitle2' mt={1}>
                                     Description
                                 </Typography>
-                                {formik.values.description ? (
+                                {loading ? (
+                                    <Skeleton variant='rounded' width='100%' height={60} sx={{ mt: 0.5 }} />
+                                ) : description ? (
                                     <EditableText
                                         id='task-description'
                                         minRows={2}
                                         showButtons
-                                        text={formik.values.description}
+                                        text={description}
                                         onBlur={(e) => formik.setFieldValue('description', e.target.value)}
                                     />
                                 ) : (
@@ -191,9 +206,25 @@ const TaskModal = ({ taskId, open, handleClose }: TaskModal) => {
                                     </ListItemAvatar>
                                     <ListItemText primary={<NewComment authorId={loggedInUser.id} taskId={taskId} />} />
                                 </ListItem>
-                                {comments?.map((comment) => (
-                                    <CommentBlock comment={comment} />
-                                ))}
+                                {loading ? (
+                                    <ListItem dense disableGutters>
+                                        <ListItemAvatar>
+                                            <Skeleton variant='circular'>
+                                                <Avatar />
+                                            </Skeleton>
+                                        </ListItemAvatar>
+                                        <ListItemText
+                                            primary={
+                                                <Skeleton variant='text' width='30%' sx={{ fontSize: '0.875rem' }} />
+                                            }
+                                            secondary={
+                                                <Skeleton variant='text' width='50%' sx={{ fontSize: '0.875rem' }} />
+                                            }
+                                        />
+                                    </ListItem>
+                                ) : (
+                                    comments?.map((comment) => <CommentBlock comment={comment} />)
+                                )}
                             </List>
                         </Grid>
                         <Grid item xs={3}>
@@ -281,7 +312,7 @@ const ADD_COMMENT_MUTATION = gql`
 const NewComment = ({ authorId, taskId }: { authorId: number; taskId: number }) => {
     const [isFocused, setIsFocused] = useState(false);
     const [postComment] = useMutation(ADD_COMMENT_MUTATION, {
-        refetchQueries: [TASK_QUERY, 'Task'],
+        refetchQueries: [TASK_QUERY, USERS_QUERY],
     });
 
     const formik = useFormik({

@@ -20,6 +20,8 @@ import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { gql, useMutation } from '@apollo/client';
 import Iconify from '../../../components/iconify';
+import useAuth from '../../../hooks/useAuth';
+import { useLoginMutation } from '../../../hooks/useLoginMutation';
 
 const LOGIN_MUTATION = gql`
     mutation Login($loginUserInput: LoginUserInput!) {
@@ -36,17 +38,24 @@ const validationSchema = yup.object({
 
 export default function LoginForm() {
     const [showPassword, setShowPassword] = useState(false);
-    const [login, { data, loading, error }] = useMutation(LOGIN_MUTATION, {
-        onCompleted: ({ loginUser }) => {
-            localStorage.setItem('access_token', loginUser.access_token);
-            navigate('/board', { replace: true });
-        },
-        onError: (error) => {
-            formik.setStatus({
-                response: error,
-            });
-        },
-    });
+    // const { getUser } = useAuth();
+    const [login] = useLoginMutation();
+    // const [login, { data, loading, error }] = useMutation(LOGIN_MUTATION, {
+    //     onCompleted: ({ loginUser }) => {
+    //         localStorage.setItem('access_token', loginUser.access_token);
+    //         navigate('/board/tasks', { replace: true });
+    //         // getUser({
+    //         //     variables: {
+    //         //         access_token: loginUser.access_token,
+    //         //     },
+    //         // });
+    //     },
+    //     onError: (error) => {
+    //         formik.setStatus({
+    //             response: error,
+    //         });
+    //     },
+    // });
 
     const navigate = useNavigate();
     const formik = useFormik({
@@ -55,8 +64,8 @@ export default function LoginForm() {
             password: '',
         },
         validationSchema: validationSchema,
-        onSubmit: (credentials) => {
-            login({ variables: { loginUserInput: credentials } });
+        onSubmit: ({ email, password }) => {
+            login(email, password);
         },
     });
 
@@ -69,7 +78,7 @@ export default function LoginForm() {
                     label='Email address'
                     value={formik.values.email}
                     onChange={formik.handleChange}
-                    error={formik.touched.email && (Boolean(formik.errors.email) || Boolean(error))}
+                    error={formik.touched.email && Boolean(formik.errors.email)}
                     helperText={formik.touched.email && formik.errors.email}
                 />
                 <TextField
@@ -89,10 +98,10 @@ export default function LoginForm() {
                     value={formik.values.password}
                     onBlur={formik.handleBlur}
                     onChange={formik.handleChange}
-                    error={formik.touched.password && (Boolean(formik.errors.password) || Boolean(error))}
+                    error={formik.touched.password && Boolean(formik.errors.password)}
                     helperText={formik.touched.password && formik.errors.password}
                 />
-                {error && <FormHelperText error>{error.message}</FormHelperText>}
+                {/* {error && <FormHelperText error>{error.message}</FormHelperText>} */}
             </Stack>
 
             <Stack direction='row' alignItems='center' justifyContent='space-between' sx={{ my: 2 }}>
@@ -104,7 +113,7 @@ export default function LoginForm() {
 
             <LoadingButton
                 fullWidth
-                loading={loading}
+                // loading={loading}
                 size='large'
                 type='submit'
                 variant='contained'

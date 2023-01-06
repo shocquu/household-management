@@ -1,10 +1,11 @@
 import { UseGuards } from '@nestjs/common';
 import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
 import { JwtAuthGuard } from 'src/common/auth/jwt-auth.guard';
+import { Roles } from 'src/role/role.decorator';
 import {
   CreateUserInput,
-  LoggedUserOutput,
   LoginUserInput,
+  Role,
   UpdateUserInput,
   User,
 } from 'src/types/graphql';
@@ -21,6 +22,7 @@ export class UserResolver {
   }
 
   @Query('users')
+  @Roles(Role.ADMIN)
   findAll() {
     return this.userService.findAll();
   }
@@ -32,17 +34,19 @@ export class UserResolver {
 
   @Query('whoami')
   @UseGuards(JwtAuthGuard)
-  getCurrentUser(@CurrentUser() user: any) {
-    return this.userService.findById(user.userId);
+  getCurrentUser(@CurrentUser() user: User) {
+    return this.userService.findById(user.id);
   }
 
   @UseGuards(JwtAuthGuard)
+  @Roles(Role.ADMIN)
   @Mutation('updateUser')
   update(@Args('updateUserInput') updateUserInput: UpdateUserInput) {
     return this.userService.update(updateUserInput.id, updateUserInput);
   }
 
   @UseGuards(JwtAuthGuard)
+  @Roles(Role.ADMIN)
   @Mutation('removeUser')
   remove(@Args('id') id: number) {
     return this.userService.remove(id);
