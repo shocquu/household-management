@@ -1,27 +1,26 @@
 import { gql, useMutation } from '@apollo/client';
 import { useNavigate } from 'react-router';
+import { AVATARS_BASE_PATH } from '../constants';
 import { useAccessToken } from './useAccessToken';
 import useAuth from './useAuth';
-import { CURRENT_USER_QUERY } from './useUserQuery';
 
 const LOGIN_MUTATION = gql`
     mutation SignIn($loginUserInput: LoginUserInput!) {
         loginUser(loginUserInput: $loginUserInput) {
-            access_token
+            accessToken
         }
     }
 `;
 
 export const useLoginMutation = () => {
     const { setAccessToken } = useAccessToken();
-    const { user, setUser } = useAuth();
+    const { setUser } = useAuth();
     const navigate = useNavigate();
 
     const [mutation, mutationResults] = useMutation(LOGIN_MUTATION, {
         onCompleted: ({ loginUser }) => {
-            setAccessToken(loginUser.access_token);
+            setAccessToken(loginUser.accessToken);
         },
-        // refetchQueries: [{ query: CURRENT_USER_QUERY }, 'GetUser'],
     });
 
     const login = (email, password) => {
@@ -29,9 +28,9 @@ export const useLoginMutation = () => {
             variables: {
                 loginUserInput: { email, password },
             },
-            update(proxy, { data: { whoami: userData } }) {
-                setUser(userData);
-                navigate('/board/tasks', { replace: true });
+            update(_proxy, { data: { whoami: userData } }) {
+                setUser({ ...userData, avatarUrl: AVATARS_BASE_PATH + userData?.avatarUrl });
+                navigate('/', { replace: true });
             },
         });
     };

@@ -2,9 +2,10 @@ export type User = {
     id: number;
     email: string;
     password: string;
-    name: string;
+    username: string;
+    displayName: string;
+    avatarUrl: string;
     role: ERole;
-    avatar_url: string;
     tasks?: Task[];
     comments?: Comment[];
 };

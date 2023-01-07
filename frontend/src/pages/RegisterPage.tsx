@@ -1,44 +1,19 @@
 import { Helmet } from 'react-helmet-async';
 import { styled } from '@mui/material/styles';
-import { Link, Container, Typography, Divider, Stack, Button } from '@mui/material';
+import { Link, Container, Typography, Divider, Stack, Button, Box } from '@mui/material';
 import useResponsive from '../hooks/useResponsive';
 import Logo from '../components/logo';
 import Iconify from '../components/iconify';
 import { LoginForm } from '../sections/auth/login';
+import { RegisterForm } from '../sections/auth/register';
 
-const StyledRoot = styled('div')(({ theme }) => ({
-    [theme.breakpoints.up('md')]: {
-        display: 'flex',
-    },
-}));
-
-const StyledSection = styled('div')(({ theme }) => ({
-    width: '100%',
-    maxWidth: 480,
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    // boxShadow: theme.customShadows.card,
-    backgroundColor: theme.palette.background.default,
-}));
-
-const StyledContent = styled('div')(({ theme }) => ({
-    maxWidth: 480,
-    margin: 'auto',
-    minHeight: '100vh',
-    display: 'flex',
-    justifyContent: 'center',
-    flexDirection: 'column',
-    padding: theme.spacing(12, 0),
-}));
-
-export default function LoginPage() {
-    const mdUp = useResponsive('up', 'md');
+const RegisterPage = () => {
+    const lgUp = useResponsive('up', 'lg');
 
     return (
         <>
             {/* <Helmet>
-                <title> Login | Hovee </title>
+                <title> Register | Hovee </title>
             </Helmet> */}
 
             <StyledRoot>
@@ -53,7 +28,7 @@ export default function LoginPage() {
                 <Container maxWidth='sm'>
                     <StyledContent>
                         <Typography variant='h4' gutterBottom>
-                            Sign in to Minimal
+                            Get started
                         </Typography>
 
                         <Typography variant='body2' sx={{ mb: 5 }}>
@@ -63,14 +38,17 @@ export default function LoginPage() {
                             </Link>
                         </Typography>
 
-                        <LoginForm />
+                        <RegisterForm />
                     </StyledContent>
                 </Container>
 
-                {mdUp && (
+                {lgUp && (
                     <StyledSection>
-                        <Typography variant='h3' sx={{ px: 5, mt: 10, mb: 5 }}>
-                            Hi, Welcome Back
+                        <Typography variant='h3' textAlign='center' sx={{ px: 5, mt: 10, mb: 5 }}>
+                            Manage your tasks more effectively with{' '}
+                            <Box fontWeight='inherit' display='inline' color='primary.main'>
+                                Hovee
+                            </Box>
                         </Typography>
                         <img src='/assets/illustrations/character_7.png' alt='register' />
                     </StyledSection>
@@ -78,4 +56,31 @@ export default function LoginPage() {
             </StyledRoot>
         </>
     );
-}
+};
+
+const StyledRoot = styled('div')(({ theme }) => ({
+    [theme.breakpoints.up('lg')]: {
+        display: 'flex',
+    },
+}));
+
+const StyledSection = styled('div')(({ theme }) => ({
+    width: '100%',
+    maxWidth: 480,
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    backgroundColor: theme.palette.background.default,
+}));
+
+const StyledContent = styled('div')(({ theme }) => ({
+    maxWidth: 480,
+    margin: 'auto',
+    minHeight: '100vh',
+    display: 'flex',
+    justifyContent: 'center',
+    flexDirection: 'column',
+    padding: theme.spacing(12, 0),
+}));
+
+export default RegisterPage;

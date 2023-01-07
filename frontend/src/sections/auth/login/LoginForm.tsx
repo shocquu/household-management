@@ -26,7 +26,7 @@ import { useLoginMutation } from '../../../hooks/useLoginMutation';
 const LOGIN_MUTATION = gql`
     mutation Login($loginUserInput: LoginUserInput!) {
         loginUser(loginUserInput: $loginUserInput) {
-            access_token
+            accessToken
         }
     }
 `;
@@ -38,33 +38,16 @@ const validationSchema = yup.object({
 
 export default function LoginForm() {
     const [showPassword, setShowPassword] = useState(false);
-    // const { getUser } = useAuth();
-    const [login] = useLoginMutation();
-    // const [login, { data, loading, error }] = useMutation(LOGIN_MUTATION, {
-    //     onCompleted: ({ loginUser }) => {
-    //         localStorage.setItem('access_token', loginUser.access_token);
-    //         navigate('/board/tasks', { replace: true });
-    //         // getUser({
-    //         //     variables: {
-    //         //         access_token: loginUser.access_token,
-    //         //     },
-    //         // });
-    //     },
-    //     onError: (error) => {
-    //         formik.setStatus({
-    //             response: error,
-    //         });
-    //     },
-    // });
+    const [login, { loading }] = useLoginMutation();
 
-    const navigate = useNavigate();
     const formik = useFormik({
         initialValues: {
             email: '',
             password: '',
+            remember: false,
         },
         validationSchema: validationSchema,
-        onSubmit: ({ email, password }) => {
+        onSubmit: ({ email, password, remember }) => {
             login(email, password);
         },
     });
@@ -105,7 +88,16 @@ export default function LoginForm() {
             </Stack>
 
             <Stack direction='row' alignItems='center' justifyContent='space-between' sx={{ my: 2 }}>
-                <FormControlLabel control={<Checkbox name='remember' />} label='Remember me' />
+                <FormControlLabel
+                    control={
+                        <Checkbox
+                            name='remember'
+                            checked={formik.values.remember}
+                            onClick={() => formik.setFieldValue('remember', !formik.values.remember)}
+                        />
+                    }
+                    label='Remember me'
+                />
                 <Link variant='subtitle2' underline='hover'>
                     Forgot password?
                 </Link>
@@ -113,7 +105,8 @@ export default function LoginForm() {
 
             <LoadingButton
                 fullWidth
-                // loading={loading}
+                loading={loading}
+                loadingPosition='start'
                 size='large'
                 type='submit'
                 variant='contained'

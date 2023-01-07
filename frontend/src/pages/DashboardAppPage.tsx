@@ -24,8 +24,8 @@ export const USERS_QUERY = gql`
     query Users {
         users {
             id
-            name
-            avatar_url
+            displayName
+            avatarUrl
             tasks {
                 id
                 title

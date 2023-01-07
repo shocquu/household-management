@@ -1,6 +1,7 @@
 import { ApolloError, gql, useLazyQuery, useMutation, useQuery } from '@apollo/client';
 import { createContext, ReactNode, useContext, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
+import { AVATARS_BASE_PATH } from '../constants';
 import { useAppApolloClient } from '../services/apolloClient';
 import { User } from '../types';
 import { useAccessToken } from './useAccessToken';
@@ -17,7 +18,7 @@ interface AuthContextType {
 const LOGIN_MUTATION = gql`
     mutation SignIn($loginUserInput: LoginUserInput!) {
         loginUser(loginUserInput: $loginUserInput) {
-            access_token
+            accessToken
         }
     }
 `;
@@ -25,22 +26,22 @@ const LOGIN_MUTATION = gql`
 const REGISTER_MUTATION = gql`
     mutation SignUp($createUserInput: CreateUserInput!) {
         createUser(createUserInput: $createUserInput) {
-            name
             email
-            password
-            avatar_url
+            username
+            avatarUrl
         }
     }
 `;
 
-export const CURRENT_USER_QUERY = gql`
+const CURRENT_USER_QUERY = gql`
     query GetUser {
         whoami {
             id
-            name
             role
             email
-            avatar_url
+            avatarUrl
+            username
+            displayName
         }
     }
 `;
@@ -51,11 +52,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const [user, setUser] = useState<User>(null);
     const { accessToken, removeAccessToken } = useAccessToken();
     const client = useAppApolloClient();
-    // const navigate = useNavigate();
 
     const [getUser, { loading, error }] = useLazyQuery(CURRENT_USER_QUERY, {
         onCompleted: ({ whoami }) => {
-            setUser(whoami);
+            setUser({ ...whoami, avatarUrl: AVATARS_BASE_PATH + whoami?.avatarUrl });
         },
     });
 
@@ -63,7 +63,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         client.resetStore();
         removeAccessToken();
         setUser(null);
-        // navigate('/login');
     };
 
     const value = useMemo(
@@ -79,14 +78,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     useEffect(() => {
         if (accessToken) getUser();
-        // if (userData.data && accessToken) setUser(userData.data?.whoami);
-    }, [user]);
+    }, [accessToken]);
 
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
-const useAuth = () => {
-    return useContext(AuthContext);
-};
+const useAuth = () => useContext(AuthContext);
 
 export default useAuth;

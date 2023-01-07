@@ -1,27 +1,28 @@
 import { useState } from 'react';
 import { alpha } from '@mui/material/styles';
-import { Box, Divider, Typography, Stack, MenuItem, Avatar, IconButton, Popover } from '@mui/material';
-import account from '../../../_mock/account';
-import { gql, useApolloClient, useQuery } from '@apollo/client';
+import { Box, Divider, Typography, Stack, MenuItem, Avatar, IconButton, Popover, Link } from '@mui/material';
 import useAuth from '../../../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 
 const MENU_OPTIONS = [
     {
-        label: 'Profile',
+        label: 'Account',
+        path: '/user/account',
         icon: 'eva:person-fill',
     },
     {
         label: 'Settings',
+        path: '/user/settings',
         icon: 'eva:settings-2-fill',
     },
 ];
 
 export default function AccountPopover() {
     const [open, setOpen] = useState(null);
-    const client = useApolloClient();
     const navigate = useNavigate();
     const { user, logout } = useAuth();
+
+    console.log(user);
 
     const handleOpen = (event) => {
         setOpen(event.currentTarget);
@@ -54,7 +55,7 @@ export default function AccountPopover() {
                         },
                     }),
                 }}>
-                <Avatar src={user.avatar_url} alt='photoURL' />
+                <Avatar src={user.avatarUrl} alt={user.displayName} />
             </IconButton>
 
             <Popover
@@ -77,7 +78,7 @@ export default function AccountPopover() {
                 }}>
                 <Box sx={{ my: 1.5, px: 2.5 }}>
                     <Typography variant='subtitle2' noWrap>
-                        {user.name}
+                        {user.displayName}
                     </Typography>
                     <Typography variant='body2' sx={{ color: 'text.secondary' }} noWrap>
                         {user.email}
@@ -88,7 +89,7 @@ export default function AccountPopover() {
 
                 <Stack sx={{ p: 1 }}>
                     {MENU_OPTIONS.map((option) => (
-                        <MenuItem key={option.label} onClick={handleClose}>
+                        <MenuItem key={option.label} href={option.path} component={Link}>
                             {option.label}
                         </MenuItem>
                     ))}

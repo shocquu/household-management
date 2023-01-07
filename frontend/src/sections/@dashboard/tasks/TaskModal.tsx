@@ -32,6 +32,7 @@ import useAuth from '../../../hooks/useAuth';
 import { Comment, User } from '../../../types';
 import Iconify from '../../../components/iconify';
 import { USERS_QUERY } from '../../../pages/DashboardAppPage';
+import { AVATARS_BASE_PATH } from '../../../constants';
 
 const TASK_QUERY = gql`
     query Task($taskId: Int!) {
@@ -39,15 +40,15 @@ const TASK_QUERY = gql`
             title
             description
             user {
-                name
-                avatar_url
+                displayName
+                avatarUrl
             }
             comments {
                 id
                 author {
                     id
                     name
-                    avatar_url
+                    avatarUrl
                 }
                 message
                 createdAt
@@ -202,7 +203,7 @@ const TaskModal = ({ taskId, open, handleClose }: TaskModal) => {
                                 sx={{ width: '100%', minHeight: 50, bgcolor: 'background.paper' }}>
                                 <ListItem dense disableGutters>
                                     <ListItemAvatar>
-                                        <Avatar alt={loggedInUser.name} src={loggedInUser.avatar_url} />
+                                        <Avatar alt={loggedInUser.displayName} src={loggedInUser.avatarUrl} />
                                     </ListItemAvatar>
                                     <ListItemText primary={<NewComment authorId={loggedInUser.id} taskId={taskId} />} />
                                 </ListItem>
@@ -270,12 +271,12 @@ const CommentBlock = ({ comment }: { comment: Comment }) => {
                 },
             }}>
             <ListItemAvatar>
-                <Avatar alt={author.name} src={author.avatar_url} />
+                <Avatar alt={author.displayName} src={AVATARS_BASE_PATH + author.avatarUrl} />
             </ListItemAvatar>
             <ListItemText
                 primary={
                     <>
-                        <b>{author.name}</b>
+                        <b>{author.displayName}</b>
                         <Typography variant='caption' color='text.secondary' ml={0.5}>
                             {fToNow(createdAt)}
                         </Typography>

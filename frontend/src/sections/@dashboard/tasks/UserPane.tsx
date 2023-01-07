@@ -35,6 +35,7 @@ import TaskCard from './TaskCard';
 import { createRef, Dispatch, SetStateAction, useRef, useState } from 'react';
 import { useFormik } from 'formik';
 import NewCard from './NewCard';
+import { AVATARS_BASE_PATH } from '../../../constants';
 
 interface UserPane {
     user?: User;
@@ -57,7 +58,7 @@ const EmptyState = ({ sx }: { sx?: SxProps }) => {
 };
 
 const UserPane = ({ loading, user, index = 1 }: UserPane) => {
-    const { id, name, avatar_url, tasks } = user;
+    const { id, displayName, avatarUrl, tasks } = user;
 
     const [isAdding, setIsAdding] = useState(false);
     const scrollableNodeRef = createRef<any>();
@@ -96,11 +97,11 @@ const UserPane = ({ loading, user, index = 1 }: UserPane) => {
                             transform: 'translateX(-50%)',
                         }}
                     />
-                    <StyledAvatar alt={name} src={avatar_url} />
+                    <StyledAvatar alt={displayName} src={AVATARS_BASE_PATH + avatarUrl} />
                     <StyledCover alt={'Cover'} src={`/assets/images/covers/cover_${index}.jpg`} />
                 </StyledCardMedia>
                 <Typography gutterBottom variant='h6' textAlign='center' mt={4}>
-                    {name}
+                    {displayName}
                 </Typography>
                 <CardContent
                     sx={{

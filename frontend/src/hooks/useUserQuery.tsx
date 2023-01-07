@@ -4,10 +4,10 @@ export const CURRENT_USER_QUERY = gql`
     query GetUser {
         whoami {
             id
-            name
             role
             email
-            avatar_url
+            avatarUrl
+            displayName
         }
     }
 `;
