@@ -38,10 +38,6 @@ export const useRegisterMutation = () => {
             variables: {
                 createUserInput: createUserInput,
             },
-            // update(_proxy, { data: { whoami: userData } }) {
-            //     setUser(userData);
-            //     navigate('/board/tasks', { replace: true });
-            // },
         });
     };
 

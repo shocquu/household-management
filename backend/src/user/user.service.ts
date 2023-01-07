@@ -3,6 +3,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import {
   CreateUserInput,
   LoginUserInput,
+  UpdatePasswordInput,
   UpdateUserInput,
 } from 'src/types/graphql';
 import { AuthService } from 'src/common/auth/auth.service';
@@ -56,6 +57,44 @@ export class UserService {
     });
   }
 
+  async update(
+    id: number,
+    { email, displayName, password, avatarUrl }: UpdateUserInput,
+  ) {
+    const hashed = await bcrypt.hash(password, 10);
+
+    return this.prisma.user.update({
+      where: { id },
+      data: { email, displayName, password: hashed, avatarUrl },
+      include: { tasks: true },
+    });
+  }
+
+  async updatePassword(
+    id: number,
+    { oldPassword, newPassword }: UpdatePasswordInput,
+  ) {
+    const user = await this.prisma.user.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    if (!user) throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+
+    const isValidPassword = await bcrypt.compare(oldPassword, user.password);
+
+    if (!isValidPassword)
+      throw new HttpException('Invalid password', HttpStatus.BAD_REQUEST);
+
+    const hashed = await bcrypt.hash(newPassword, 10);
+
+    return this.prisma.user.update({
+      where: { id },
+      data: { password: hashed },
+    });
+  }
+
   findAll() {
     return this.prisma.user.findMany({
       include: {
@@ -98,17 +137,6 @@ export class UserService {
           },
         },
       },
-    });
-  }
-
-  update(
-    id: number,
-    { email, displayName, password, avatarUrl }: UpdateUserInput,
-  ) {
-    return this.prisma.user.update({
-      where: { id },
-      data: { email, displayName, password, avatarUrl },
-      include: { tasks: true },
     });
   }
 

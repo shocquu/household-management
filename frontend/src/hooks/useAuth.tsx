@@ -1,5 +1,13 @@
-import { ApolloError, gql, useLazyQuery, useMutation, useQuery } from '@apollo/client';
-import { createContext, ReactNode, useContext, useEffect, useMemo, useState } from 'react';
+import {
+    ApolloError,
+    gql,
+    LazyQueryExecFunction,
+    OperationVariables,
+    useLazyQuery,
+    useMutation,
+    useQuery,
+} from '@apollo/client';
+import { createContext, Dispatch, ReactNode, useContext, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { AVATARS_BASE_PATH } from '../constants';
 import { useAppApolloClient } from '../services/apolloClient';
@@ -8,40 +16,22 @@ import { useAccessToken } from './useAccessToken';
 import { useUserQuery } from './useUserQuery';
 
 interface AuthContextType {
-    user?: any;
-    setUser: any;
+    user?: User;
+    setUser: Dispatch<React.SetStateAction<User>>;
     loading: boolean;
-    error: any;
-    logout: any;
+    error: ApolloError;
+    logout: () => void;
 }
 
-const LOGIN_MUTATION = gql`
-    mutation SignIn($loginUserInput: LoginUserInput!) {
-        loginUser(loginUserInput: $loginUserInput) {
-            accessToken
-        }
-    }
-`;
-
-const REGISTER_MUTATION = gql`
-    mutation SignUp($createUserInput: CreateUserInput!) {
-        createUser(createUserInput: $createUserInput) {
-            email
-            username
-            avatarUrl
-        }
-    }
-`;
-
-const CURRENT_USER_QUERY = gql`
+export const CURRENT_USER_QUERY = gql`
     query GetUser {
         whoami {
             id
             role
             email
-            avatarUrl
             username
             displayName
+            avatarUrl
         }
     }
 `;
@@ -80,7 +70,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         if (accessToken) getUser();
     }, [accessToken]);
 
-    return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+    return (
+        <AuthContext.Provider
+            value={{
+                user,
+                setUser,
+                loading,
+                error,
+                logout,
+            }}>
+            {children}
+        </AuthContext.Provider>
+    );
 };
 
 const useAuth = () => useContext(AuthContext);

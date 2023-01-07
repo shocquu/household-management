@@ -22,8 +22,6 @@ export default function AccountPopover() {
     const navigate = useNavigate();
     const { user, logout } = useAuth();
 
-    console.log(user);
-
     const handleOpen = (event) => {
         setOpen(event.currentTarget);
     };

@@ -3,11 +3,12 @@ import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
 import { JwtAuthGuard } from 'src/common/auth/jwt-auth.guard';
 import { Roles } from 'src/role/role.decorator';
 import {
+  User,
+  Role,
   CreateUserInput,
   LoginUserInput,
-  Role,
   UpdateUserInput,
-  User,
+  UpdatePasswordInput,
 } from 'src/types/graphql';
 import { CurrentUser } from './user.decorator';
 import { UserService } from './user.service';
@@ -39,7 +40,6 @@ export class UserResolver {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Roles(Role.ADMIN)
   @Mutation('updateUser')
   update(@Args('updateUserInput') updateUserInput: UpdateUserInput) {
     return this.userService.update(updateUserInput.id, updateUserInput);
@@ -55,5 +55,16 @@ export class UserResolver {
   @Mutation('loginUser')
   login(@Args('loginUserInput') loginUserInput: LoginUserInput) {
     return this.userService.login(loginUserInput);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Mutation('updatePassword')
+  updatePassword(
+    @Args('updatePasswordInput') updatePasswordInput: UpdatePasswordInput,
+  ) {
+    return this.userService.updatePassword(
+      updatePasswordInput.id,
+      updatePasswordInput,
+    );
   }
 }

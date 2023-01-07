@@ -76,6 +76,12 @@ export class LoginUserInput {
     password: string;
 }
 
+export class UpdatePasswordInput {
+    id: number;
+    oldPassword?: Nullable<string>;
+    newPassword?: Nullable<string>;
+}
+
 export class Comment {
     id: number;
     task: Task;
@@ -131,6 +137,8 @@ export abstract class IMutation {
     abstract removeUser(id: number): Nullable<User> | Promise<Nullable<User>>;
 
     abstract loginUser(loginUserInput: LoginUserInput): LoggedUserOutput | Promise<LoggedUserOutput>;
+
+    abstract updatePassword(updatePasswordInput: UpdatePasswordInput): User | Promise<User>;
 }
 
 export class Tag {

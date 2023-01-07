@@ -12,6 +12,8 @@ import { useAccessToken } from './hooks/useAccessToken';
 import { useUserQuery } from './hooks/useUserQuery';
 import { User } from './types';
 import { CircularProgress } from '@mui/material';
+import AccountPage from './pages/AccountPage';
+import SettingsPage from './pages/SettingsPage';
 
 const ProtectedRoute = ({ user, children }) => {
     if (!user) return <Navigate to='/login' replace />;
@@ -24,22 +26,39 @@ const RestrictedRoute = ({ user, children }) => {
 };
 
 const Routes = ({ user }: { user: User }) => {
+    console.log(user);
     const routes = useRoutes([
         {
-            path: '/board',
+            path: '/dashboard',
             element: (
                 <ProtectedRoute user={user}>
                     <DashboardLayout />
                 </ProtectedRoute>
             ),
             children: [
-                { element: <Navigate to='/board/tasks' />, index: true },
+                { element: <Navigate to='/dashboard/app' />, index: true },
                 {
-                    path: 'tasks',
+                    path: 'app',
                     element: <DashboardAppPage />,
                 },
                 { path: 'tags', element: <UserPage /> },
                 { path: 'products', element: <ProductsPage /> },
+            ],
+        },
+        {
+            path: '/user',
+            element: (
+                <ProtectedRoute user={user}>
+                    <DashboardLayout />
+                </ProtectedRoute>
+            ),
+            children: [
+                { element: <Navigate to='/user/account' />, index: true },
+                {
+                    path: 'account',
+                    element: <AccountPage />,
+                },
+                { path: 'settings', element: <SettingsPage /> },
             ],
         },
         {
@@ -61,7 +80,7 @@ const Routes = ({ user }: { user: User }) => {
         {
             element: <SimpleLayout />,
             children: [
-                { element: <Navigate to='/board' />, index: true },
+                { element: <Navigate to='/dashboard' />, index: true },
                 { path: '404', element: <Page404 /> },
                 { path: '*', element: <Navigate to='/404' /> },
             ],
@@ -78,13 +97,7 @@ const Routes = ({ user }: { user: User }) => {
 const RoutesWrapper = () => {
     const { user, loading } = useAuth();
 
-    if (loading) return <CircularProgress />;
-
-    return (
-        <Router>
-            <Routes user={user} />
-        </Router>
-    );
+    return <Router>{user && !loading ? <Routes user={user} /> : <CircularProgress />}</Router>;
 };
 
 export default RoutesWrapper;
