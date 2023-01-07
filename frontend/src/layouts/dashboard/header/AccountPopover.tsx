@@ -30,10 +30,7 @@ export default function AccountPopover() {
         setOpen(null);
     };
 
-    const handleLogout = () => {
-        logout();
-        navigate('/login');
-    };
+    const handleLogout = () => logout();
 
     return (
         <>

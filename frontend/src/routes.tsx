@@ -26,7 +26,6 @@ const RestrictedRoute = ({ user, children }) => {
 };
 
 const Routes = ({ user }: { user: User }) => {
-    console.log(user);
     const routes = useRoutes([
         {
             path: '/dashboard',
@@ -95,9 +94,73 @@ const Routes = ({ user }: { user: User }) => {
 };
 
 const RoutesWrapper = () => {
-    const { user, loading } = useAuth();
+    const { user, loading, error } = useAuth();
 
-    return <Router>{user && !loading ? <Routes user={user} /> : <CircularProgress />}</Router>;
+    const routes = useRoutes([
+        {
+            path: '/dashboard',
+            element: (
+                <ProtectedRoute user={user}>
+                    <DashboardLayout />
+                </ProtectedRoute>
+            ),
+            children: [
+                { element: <Navigate to='/dashboard/app' />, index: true },
+                {
+                    path: 'app',
+                    element: <DashboardAppPage />,
+                },
+                { path: 'tags', element: <UserPage /> },
+                { path: 'products', element: <ProductsPage /> },
+            ],
+        },
+        {
+            path: '/user',
+            element: (
+                <ProtectedRoute user={user}>
+                    <DashboardLayout />
+                </ProtectedRoute>
+            ),
+            children: [
+                { element: <Navigate to='/user/account' />, index: true },
+                {
+                    path: 'account',
+                    element: <AccountPage />,
+                },
+                { path: 'settings', element: <SettingsPage /> },
+            ],
+        },
+        {
+            path: 'login',
+            element: (
+                <RestrictedRoute user={user}>
+                    <LoginPage />
+                </RestrictedRoute>
+            ),
+        },
+        {
+            path: 'register',
+            element: (
+                <RestrictedRoute user={user}>
+                    <RegisterPage />
+                </RestrictedRoute>
+            ),
+        },
+        {
+            element: <SimpleLayout />,
+            children: [
+                { element: <Navigate to='/dashboard' />, index: true },
+                { path: '404', element: <Page404 /> },
+                { path: '*', element: <Navigate to='/404' /> },
+            ],
+        },
+        {
+            path: '*',
+            element: <Navigate to='/404' replace />,
+        },
+    ]);
+
+    return routes;
 };
 
 export default RoutesWrapper;

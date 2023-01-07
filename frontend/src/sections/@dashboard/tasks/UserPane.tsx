@@ -65,7 +65,7 @@ const UserPane = ({ loading, user, index = 1 }: UserPane) => {
 
     const handleAdd = () => {
         setIsAdding(true);
-        scrollableNodeRef.current.scrollBottom = 0;
+        scrollableNodeRef.current.scrollTop = 0;
     };
 
     const handleCancel = () => setIsAdding(false);
