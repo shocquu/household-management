@@ -23,7 +23,13 @@ export class UserService {
     return this.authService.generateCredentials(user);
   }
 
-  async create({ email, password, name, avatar_url }: CreateUserInput) {
+  async create({
+    email,
+    password,
+    username,
+    displayName,
+    avatarUrl,
+  }: CreateUserInput) {
     const doesExist = await this.prisma.user.findUnique({
       where: {
         email,
@@ -39,7 +45,7 @@ export class UserService {
     const hashed = await bcrypt.hash(password, 10);
 
     return this.prisma.user.create({
-      data: { email, password: hashed, name, avatar_url },
+      data: { email, password: hashed, username, displayName, avatarUrl },
       include: {
         tasks: {
           include: {
@@ -95,10 +101,13 @@ export class UserService {
     });
   }
 
-  update(id: number, { name }: UpdateUserInput) {
+  update(
+    id: number,
+    { email, displayName, password, avatarUrl }: UpdateUserInput,
+  ) {
     return this.prisma.user.update({
       where: { id },
-      data: { name },
+      data: { email, displayName, password, avatarUrl },
       include: { tasks: true },
     });
   }

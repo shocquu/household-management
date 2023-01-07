@@ -1,9 +1,10 @@
 type User {
   id: Int!
-  name: String!
   email: String!
+  username: String!
+  displayName: String!
   password: String!
-  avatar_url: String!
+  avatarUrl: String!
   role: Role!
 
   tasks: [Task]
@@ -11,10 +12,11 @@ type User {
 }
 
 input CreateUserInput {
-  name: String!
   email: String!
+  username: String!
+  displayName: String!
   password: String!
-  avatar_url: String!
+  avatarUrl: String!
 
   taskId: Int
   commentId: Int
@@ -22,10 +24,11 @@ input CreateUserInput {
 
 input UpdateUserInput {
   id: Int!
-  name: String
   email: String
+  username: String
+  displayName: String
   password: String
-  avatar_url: String
+  avatarUrl: String
 }
 
 input LoginUserInput {
@@ -34,7 +37,7 @@ input LoginUserInput {
 }
 
 type LoggedUserOutput {
-  access_token: String
+  accessToken: String
 }
 
 type Query {

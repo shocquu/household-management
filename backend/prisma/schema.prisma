@@ -12,12 +12,13 @@ datasource db {
 }
 
 model User {
-  id          Int       @id @default(autoincrement())
-  name        String
-  password    String
-  email       String    @unique
-  avatar_url  String    @default("/assets/iamges/avatars/avatar_default.jpg")
-  role        Role      @default(USER)
+  id            Int       @id @default(autoincrement())
+  username      String
+  displayName   String
+  password      String
+  email         String    @unique
+  avatarUrl     String    @default("/assets/iamges/avatars/avatar_default.jpg")
+  role          Role      @default(USER)
 
   tasks       Task[]
   comments    Comment[]

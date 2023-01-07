@@ -53,20 +53,22 @@ export class UpdateTaskInput {
 }
 
 export class CreateUserInput {
-    name: string;
     email: string;
+    username: string;
+    displayName: string;
     password: string;
-    avatar_url: string;
+    avatarUrl: string;
     taskId?: Nullable<number>;
     commentId?: Nullable<number>;
 }
 
 export class UpdateUserInput {
     id: number;
-    name?: Nullable<string>;
     email?: Nullable<string>;
+    username?: Nullable<string>;
+    displayName?: Nullable<string>;
     password?: Nullable<string>;
-    avatar_url?: Nullable<string>;
+    avatarUrl?: Nullable<string>;
 }
 
 export class LoginUserInput {
@@ -151,17 +153,18 @@ export class Task {
 
 export class User {
     id: number;
-    name: string;
     email: string;
+    username: string;
+    displayName: string;
     password: string;
-    avatar_url: string;
+    avatarUrl: string;
     role: Role;
     tasks?: Nullable<Nullable<Task>[]>;
     comments?: Nullable<Nullable<Comment>[]>;
 }
 
 export class LoggedUserOutput {
-    access_token?: Nullable<string>;
+    accessToken?: Nullable<string>;
 }
 
 type Nullable<T> = T | null;
