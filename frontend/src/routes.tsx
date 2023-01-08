@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Navigate, useRoutes } from 'react-router-dom';
+import { Navigate, useRoutes } from 'react-router-dom';
 import DashboardLayout from './layouts/dashboard';
 import SimpleLayout from './layouts/simple';
 import UserPage from './pages/UserPage';
@@ -8,32 +8,28 @@ import ProductsPage from './pages/ProductsPage';
 import DashboardAppPage from './pages/DashboardAppPage';
 import RegisterPage from './pages/RegisterPage';
 import useAuth from './hooks/useAuth';
-import { useAccessToken } from './hooks/useAccessToken';
-import { useUserQuery } from './hooks/useUserQuery';
-import { User } from './types';
-import { CircularProgress } from '@mui/material';
 import AccountPage from './pages/AccountPage';
 import SettingsPage from './pages/SettingsPage';
+import LoadingScreen from './layouts/loadingScreen';
 
-const ProtectedRoute = ({ user, children }) => {
-    if (!user) return <Navigate to='/login' replace />;
+const ProtectedRoute = ({ isLoggedIn, children }) => {
+    if (!isLoggedIn) return <Navigate to='/login' replace />;
     return children;
 };
 
-const RestrictedRoute = ({ user, children }) => {
-    if (user) return <Navigate to='/' replace />;
+const RestrictedRoute = ({ isLoggedIn, children }) => {
+    if (isLoggedIn) return <Navigate to='/' replace />;
     return children;
 };
 
 const RoutesWrapper = () => {
-    const { user, loading, isLoggedIn } = useAuth();
-    console.log(user);
+    const { user, isLoggedIn } = useAuth();
 
     const routes = useRoutes([
         {
             path: '/dashboard',
             element: (
-                <ProtectedRoute user={user}>
+                <ProtectedRoute isLoggedIn={isLoggedIn}>
                     <DashboardLayout />
                 </ProtectedRoute>
             ),
@@ -50,7 +46,7 @@ const RoutesWrapper = () => {
         {
             path: '/user',
             element: (
-                <ProtectedRoute user={user}>
+                <ProtectedRoute isLoggedIn={isLoggedIn}>
                     <DashboardLayout />
                 </ProtectedRoute>
             ),
@@ -64,9 +60,17 @@ const RoutesWrapper = () => {
             ],
         },
         {
+            path: 'tags',
+            element: (
+                <ProtectedRoute isLoggedIn={isLoggedIn}>
+                    <UserPage />
+                </ProtectedRoute>
+            ),
+        },
+        {
             path: 'login',
             element: (
-                <RestrictedRoute user={user}>
+                <RestrictedRoute isLoggedIn={isLoggedIn}>
                     <LoginPage />
                 </RestrictedRoute>
             ),
@@ -74,7 +78,7 @@ const RoutesWrapper = () => {
         {
             path: 'register',
             element: (
-                <RestrictedRoute user={user}>
+                <RestrictedRoute isLoggedIn={isLoggedIn}>
                     <RegisterPage />
                 </RestrictedRoute>
             ),
@@ -93,6 +97,7 @@ const RoutesWrapper = () => {
         },
     ]);
 
+    if (isLoggedIn && !user) return <LoadingScreen />;
     return routes;
 };
 
