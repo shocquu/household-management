@@ -8,18 +8,20 @@ const LOGIN_MUTATION = gql`
     mutation SignIn($loginUserInput: LoginUserInput!) {
         loginUser(loginUserInput: $loginUserInput) {
             accessToken
+            refreshToken
         }
     }
 `;
 
 export const useLoginMutation = () => {
     const { setAccessToken } = useAccessToken();
-    const { setUser } = useAuth();
+    const { setUser, refetch } = useAuth();
     const navigate = useNavigate();
 
     const [mutation, mutationResults] = useMutation(LOGIN_MUTATION, {
         onCompleted: ({ loginUser }) => {
             setAccessToken(loginUser.accessToken);
+            refetch();
         },
     });
 

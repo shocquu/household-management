@@ -1,5 +1,6 @@
-import { UseGuards } from '@nestjs/common';
+import { Req, UseGuards } from '@nestjs/common';
 import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
+import { AuthService } from 'src/common/auth/auth.service';
 import { JwtAuthGuard } from 'src/common/auth/jwt-auth.guard';
 import { Roles } from 'src/role/role.decorator';
 import {
@@ -15,15 +16,18 @@ import { UserService } from './user.service';
 
 @Resolver('User')
 export class UserResolver {
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    private readonly userService: UserService,
+    private readonly authService: AuthService,
+  ) {}
 
   @Mutation('createUser')
   create(@Args('createUserInput') createUserInput: CreateUserInput) {
     return this.userService.create(createUserInput);
   }
 
-  @Query('users')
   @Roles(Role.ADMIN)
+  @Query('users')
   findAll() {
     return this.userService.findAll();
   }
@@ -31,12 +35,6 @@ export class UserResolver {
   @Query('user')
   findOne(@Args('id') id: number) {
     return this.userService.findById(id);
-  }
-
-  @Query('whoami')
-  @UseGuards(JwtAuthGuard)
-  getCurrentUser(@CurrentUser() user: User) {
-    return this.userService.findById(user.id);
   }
 
   @UseGuards(JwtAuthGuard)
@@ -66,5 +64,18 @@ export class UserResolver {
       updatePasswordInput.id,
       updatePasswordInput,
     );
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Query('whoami')
+  getCurrentUser(@CurrentUser() user: User) {
+    return this.userService.findById(user.id);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Query('refresh')
+  async refreshTokens(@CurrentUser() { id }: User) {
+    const { refreshToken } = await this.userService.findById(id);
+    return this.authService.refreshTokens(id, refreshToken);
   }
 }

@@ -1,4 +1,5 @@
 import { gql, useMutation } from '@apollo/client';
+import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { useAccessToken } from './useAccessToken';
 import useAuth from './useAuth';
@@ -24,16 +25,17 @@ type CreateUserInput = {
 };
 
 export const useRegisterMutation = () => {
+    const [password, setPassword] = useState('');
     const [login] = useLoginMutation();
 
     const [mutation, mutationResults] = useMutation(REGISTER_MUTATION, {
         onCompleted: ({ createUser }) => {
-            const { email, password } = createUser;
-            login(email, password);
+            login(createUser.email, password);
         },
     });
 
     const register = (createUserInput: CreateUserInput) => {
+        setPassword(createUserInput.password);
         return mutation({
             variables: {
                 createUserInput: createUserInput,

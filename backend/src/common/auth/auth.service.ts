@@ -1,4 +1,10 @@
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import {
+  forwardRef,
+  HttpException,
+  HttpStatus,
+  Inject,
+  Injectable,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UserService } from 'src/user/user.service';
 import { User } from 'src/types/graphql';
@@ -12,8 +18,8 @@ export class AuthService {
     private jwtTokenService: JwtService,
   ) {}
 
-  async validateUser(email: string, password: string): Promise<any> {
-    const user = await this.userService.findByEmail(email);
+  async validateUser(input: string, password: string): Promise<any> {
+    const user = await this.userService.findUser(input);
 
     if (user)
       if (await bcrypt.compare(password, user.password)) {
@@ -24,10 +30,43 @@ export class AuthService {
     return null;
   }
 
-  async generateCredentials(user: User) {
-    const payload = { email: user.email, sub: user.id };
+  async getTokens(userId: number, username: string) {
+    const payload = { sub: userId, username };
+    const [accessToken, refreshToken] = await Promise.all([
+      this.jwtTokenService.signAsync(payload, {
+        expiresIn: '15m',
+      }),
+      this.jwtTokenService.signAsync(payload, {
+        expiresIn: '7d',
+      }),
+    ]);
+
     return {
-      accessToken: this.jwtTokenService.sign(payload),
+      accessToken,
+      refreshToken,
     };
+  }
+
+  async refreshTokens(userId: number, refreshToken: string) {
+    const user = await this.userService.findById(userId);
+
+    if (!user || !user.refreshToken)
+      throw new HttpException('Access denied', HttpStatus.UNAUTHORIZED);
+
+    if (user.refreshToken !== refreshToken)
+      throw new HttpException('Access denied', HttpStatus.UNAUTHORIZED);
+
+    const tokens = await this.getTokens(user.id, user.username);
+    await this.updateRefreshToken(user.id, tokens.refreshToken);
+
+    return tokens;
+  }
+
+  async updateRefreshToken(userId: number, refreshToken: string) {
+    const hashedRefreshToken = await bcrypt.hash(refreshToken, 10);
+    await this.userService.update(userId, {
+      id: userId,
+      refreshToken: hashedRefreshToken,
+    });
   }
 }

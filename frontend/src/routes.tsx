@@ -25,76 +25,9 @@ const RestrictedRoute = ({ user, children }) => {
     return children;
 };
 
-const Routes = ({ user }: { user: User }) => {
-    const routes = useRoutes([
-        {
-            path: '/dashboard',
-            element: (
-                <ProtectedRoute user={user}>
-                    <DashboardLayout />
-                </ProtectedRoute>
-            ),
-            children: [
-                { element: <Navigate to='/dashboard/app' />, index: true },
-                {
-                    path: 'app',
-                    element: <DashboardAppPage />,
-                },
-                { path: 'tags', element: <UserPage /> },
-                { path: 'products', element: <ProductsPage /> },
-            ],
-        },
-        {
-            path: '/user',
-            element: (
-                <ProtectedRoute user={user}>
-                    <DashboardLayout />
-                </ProtectedRoute>
-            ),
-            children: [
-                { element: <Navigate to='/user/account' />, index: true },
-                {
-                    path: 'account',
-                    element: <AccountPage />,
-                },
-                { path: 'settings', element: <SettingsPage /> },
-            ],
-        },
-        {
-            path: 'login',
-            element: (
-                <RestrictedRoute user={user}>
-                    <LoginPage />
-                </RestrictedRoute>
-            ),
-        },
-        {
-            path: 'register',
-            element: (
-                <RestrictedRoute user={user}>
-                    <RegisterPage />
-                </RestrictedRoute>
-            ),
-        },
-        {
-            element: <SimpleLayout />,
-            children: [
-                { element: <Navigate to='/dashboard' />, index: true },
-                { path: '404', element: <Page404 /> },
-                { path: '*', element: <Navigate to='/404' /> },
-            ],
-        },
-        {
-            path: '*',
-            element: <Navigate to='/404' replace />,
-        },
-    ]);
-
-    return routes;
-};
-
 const RoutesWrapper = () => {
-    const { user, loading, error } = useAuth();
+    const { user, loading, isLoggedIn } = useAuth();
+    console.log(user);
 
     const routes = useRoutes([
         {

@@ -5,6 +5,7 @@ type User {
   displayName: String!
   password: String!
   avatarUrl: String!
+  refreshToken: String
   role: Role!
 
   tasks: [Task]
@@ -29,6 +30,7 @@ input UpdateUserInput {
   displayName: String
   password: String
   avatarUrl: String
+  refreshToken: String
 }
 
 input LoginUserInput {
@@ -44,12 +46,14 @@ input UpdatePasswordInput {
 
 type LoggedUserOutput {
   accessToken: String
+  refreshToken: String
 }
 
 type Query {
   users: [User]!
   user(id: Int!): User
   whoami: User
+  refresh: LoggedUserOutput
 }
 
 type Mutation {

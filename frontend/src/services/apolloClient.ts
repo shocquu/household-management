@@ -5,10 +5,10 @@ import { useAccessToken } from '../hooks/useAccessToken';
 const httpLink = new HttpLink({ uri: 'http://localhost:3000/graphql' });
 const cache = new InMemoryCache({});
 
-const authMiddleware = (aa: string) =>
-    new ApolloLink((operation, forward) => {
-        const accessToken = localStorage.getItem('accessToken');
+const authMiddleware = (aa: string) => {
+    const { accessToken } = useAccessToken();
 
+    return new ApolloLink((operation, forward) => {
         if (accessToken)
             operation.setContext({
                 headers: {
@@ -19,6 +19,7 @@ const authMiddleware = (aa: string) =>
 
         return forward(operation);
     });
+};
 
 export const useAppApolloClient = () => {
     const { accessToken } = useAccessToken();

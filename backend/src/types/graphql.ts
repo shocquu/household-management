@@ -69,6 +69,7 @@ export class UpdateUserInput {
     displayName?: Nullable<string>;
     password?: Nullable<string>;
     avatarUrl?: Nullable<string>;
+    refreshToken?: Nullable<string>;
 }
 
 export class LoginUserInput {
@@ -109,6 +110,8 @@ export abstract class IQuery {
     abstract user(id: number): Nullable<User> | Promise<Nullable<User>>;
 
     abstract whoami(): Nullable<User> | Promise<Nullable<User>>;
+
+    abstract refresh(): Nullable<LoggedUserOutput> | Promise<Nullable<LoggedUserOutput>>;
 }
 
 export abstract class IMutation {
@@ -166,6 +169,7 @@ export class User {
     displayName: string;
     password: string;
     avatarUrl: string;
+    refreshToken?: Nullable<string>;
     role: Role;
     tasks?: Nullable<Nullable<Task>[]>;
     comments?: Nullable<Nullable<Comment>[]>;
@@ -173,6 +177,7 @@ export class User {
 
 export class LoggedUserOutput {
     accessToken?: Nullable<string>;
+    refreshToken?: Nullable<string>;
 }
 
 type Nullable<T> = T | null;

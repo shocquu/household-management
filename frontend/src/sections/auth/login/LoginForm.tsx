@@ -23,14 +23,6 @@ import Iconify from '../../../components/iconify';
 import useAuth from '../../../hooks/useAuth';
 import { useLoginMutation } from '../../../hooks/useLoginMutation';
 
-const LOGIN_MUTATION = gql`
-    mutation Login($loginUserInput: LoginUserInput!) {
-        loginUser(loginUserInput: $loginUserInput) {
-            accessToken
-        }
-    }
-`;
-
 const validationSchema = yup.object({
     email: yup.string().email('Enter a valid email').required('Email is required'),
     password: yup.string().min(5, 'Password should be of minimum 5 characters length').required('Password is required'),

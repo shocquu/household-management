@@ -22,6 +22,8 @@ interface AuthContextType {
     loading: boolean;
     error: ApolloError;
     logout: () => void;
+    isLoggedIn: boolean;
+    refetch: any;
 }
 
 export const CURRENT_USER_QUERY = gql`
@@ -31,8 +33,9 @@ export const CURRENT_USER_QUERY = gql`
             role
             email
             username
-            displayName
             avatarUrl
+            displayName
+            refreshToken
         }
     }
 `;
@@ -45,7 +48,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const client = useAppApolloClient();
     const navigate = useNavigate();
 
-    const [getUser, { loading, error }] = useLazyQuery(CURRENT_USER_QUERY, {
+    const [getUser, { called, loading, error }] = useLazyQuery(CURRENT_USER_QUERY, {
         onCompleted: ({ whoami }) => {
             setUser({ ...whoami, avatarUrl: AVATARS_BASE_PATH + whoami?.avatarUrl });
         },
@@ -70,7 +73,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     };
 
     useEffect(() => {
-        getUser();
+        // if (accessToken) getUser();
     }, [accessToken]);
 
     return (
@@ -81,6 +84,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                 loading,
                 error,
                 logout,
+                refetch: getUser,
+                isLoggedIn: called && !loading,
             }}>
             {children}
         </AuthContext.Provider>

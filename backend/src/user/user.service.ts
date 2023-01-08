@@ -21,7 +21,10 @@ export class UserService {
     if (!user)
       throw new HttpException('Invalid credentials', HttpStatus.UNAUTHORIZED);
 
-    return this.authService.generateCredentials(user);
+    const tokens = await this.authService.getTokens(user.id, user.username);
+    await this.authService.updateRefreshToken(user.id, tokens.refreshToken);
+
+    return tokens;
   }
 
   async create({
@@ -59,13 +62,11 @@ export class UserService {
 
   async update(
     id: number,
-    { email, displayName, password, avatarUrl }: UpdateUserInput,
+    { email, displayName, avatarUrl, refreshToken }: UpdateUserInput,
   ) {
-    const hashed = await bcrypt.hash(password, 10);
-
     return this.prisma.user.update({
       where: { id },
-      data: { email, displayName, password: hashed, avatarUrl },
+      data: { email, displayName, avatarUrl, refreshToken },
       include: { tasks: true },
     });
   }
@@ -124,9 +125,9 @@ export class UserService {
     });
   }
 
-  findByEmail(email: string) {
-    return this.prisma.user.findUnique({
-      where: { email },
+  findUser(input: string) {
+    return this.prisma.user.findFirst({
+      where: { OR: [{ email: input }, { username: input }] },
       include: {
         tasks: {
           include: {
