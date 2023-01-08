@@ -1,0 +1,66 @@
+type User {
+  id: Int!
+  email: String!
+  username: String!
+  displayName: String!
+  password: String!
+  avatarUrl: String!
+  role: Role!
+
+  tasks: [Task]
+  comments: [Comment]
+}
+
+input CreateUserInput {
+  email: String!
+  username: String!
+  displayName: String!
+  password: String!
+  avatarUrl: String!
+
+  taskId: Int
+  commentId: Int
+}
+
+input UpdateUserInput {
+  id: Int!
+  email: String
+  username: String
+  displayName: String
+  password: String
+  avatarUrl: String
+}
+
+input LoginUserInput {
+  email: String!
+  password: String!
+}
+
+input UpdatePasswordInput {
+  id: Int!
+  oldPassword: String
+  newPassword: String
+}
+
+type LoggedUserOutput {
+  accessToken: String
+}
+
+type Query {
+  users: [User]!
+  user(id: Int!): User
+  whoami: User
+}
+
+type Mutation {
+  createUser(createUserInput: CreateUserInput!): User!
+  updateUser(updateUserInput: UpdateUserInput!): User!
+  removeUser(id: Int!): User
+  loginUser(loginUserInput: LoginUserInput!): LoggedUserOutput!
+  updatePassword(updatePasswordInput: UpdatePasswordInput!): User!
+}
+
+enum Role {
+  ADMIN
+  USER
+}
