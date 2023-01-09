@@ -6,7 +6,36 @@ interface NavSectionProps {
     data: any[];
 }
 
-export default function NavSection({ data = [], ...other }: NavSectionProps) {
+interface NavItemProps {
+    item: Record<string, any>;
+}
+
+const NavItem = ({ item }: NavItemProps) => {
+    const { title, path, icon, info } = item;
+
+    return (
+        <StyledNavItem
+            to={path}
+            component={RouterLink}
+            sx={{
+                '&.active': {
+                    color: 'text.primary',
+                    bgcolor: 'action.selected',
+                    fontWeight: 'fontWeightBold',
+
+                    svg: {
+                        color: 'primary.main',
+                    },
+                },
+            }}>
+            <StyledNavItemIcon>{icon && icon}</StyledNavItemIcon>
+            <ListItemText disableTypography primary={title} />
+            {info && info}
+        </StyledNavItem>
+    );
+};
+
+const NavSection = ({ data = [], ...other }: NavSectionProps) => {
     return (
         <Box {...other}>
             <List disablePadding sx={{ p: 1 }}>
@@ -16,29 +45,6 @@ export default function NavSection({ data = [], ...other }: NavSectionProps) {
             </List>
         </Box>
     );
-}
+};
 
-interface NavItemProps {
-    item: Record<string, any>;
-}
-
-function NavItem({ item }: NavItemProps) {
-    const { title, path, icon, info } = item;
-
-    return (
-        <StyledNavItem
-            component={RouterLink}
-            to={path}
-            sx={{
-                '&.active': {
-                    color: 'text.primary',
-                    bgcolor: 'action.selected',
-                    fontWeight: 'fontWeightBold',
-                },
-            }}>
-            <StyledNavItemIcon>{icon && icon}</StyledNavItemIcon>
-            <ListItemText disableTypography primary={title} />
-            {info && info}
-        </StyledNavItem>
-    );
-}
+export default NavSection;

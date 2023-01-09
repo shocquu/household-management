@@ -24,7 +24,7 @@ import {
 import Label from '../components/label';
 import Iconify from '../components/iconify';
 import Scrollbar from '../components/scrollbar';
-import { UserListHead, UserListToolbar } from '../sections/@dashboard/user';
+import { UserListHead, UserListToolbar } from '../sections/@app/user';
 import USERLIST from '../_mock/user';
 
 const TABLE_HEAD = [

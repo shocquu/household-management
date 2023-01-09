@@ -6,6 +6,20 @@ import Nav from './nav';
 
 const APP_BAR = 64;
 
+const MainLayout = () => {
+    const [open, setOpen] = useState(false);
+
+    return (
+        <StyledRoot>
+            <Header onOpenNav={() => setOpen(true)} />
+            <Nav openNav={open} onCloseNav={() => setOpen(false)} />
+            <Main>
+                <Outlet />
+            </Main>
+        </StyledRoot>
+    );
+};
+
 const StyledRoot = styled('div')({
     display: 'flex',
     minHeight: '100%',
@@ -19,16 +33,4 @@ const Main = styled('div')(() => ({
     paddingTop: APP_BAR + 24,
 }));
 
-export default function DashboardLayout() {
-    const [open, setOpen] = useState(false);
-
-    return (
-        <StyledRoot>
-            <Header onOpenNav={() => setOpen(true)} />
-            <Nav openNav={open} onCloseNav={() => setOpen(false)} />
-            <Main>
-                <Outlet />
-            </Main>
-        </StyledRoot>
-    );
-}
+export default MainLayout;

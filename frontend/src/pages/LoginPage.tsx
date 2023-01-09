@@ -37,10 +37,7 @@ export default function LoginPage() {
 
     return (
         <>
-            {/* <Helmet>
-                <title> Login | Hovee </title>
-            </Helmet> */}
-
+            <Helmet title='Sign in | Hovee' />
             <StyledRoot>
                 <Logo
                     sx={{

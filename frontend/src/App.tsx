@@ -1,11 +1,12 @@
 import Routes from './routes';
+import { HelmetProvider } from 'react-helmet-async';
 import { BrowserRouter as Router } from 'react-router-dom';
-import ScrollToTop from './components/scroll-to-top';
 import ThemeProvider from './theme';
-import { ApolloProvider, ApolloClient, createHttpLink, InMemoryCache } from '@apollo/client';
-import { setContext } from '@apollo/client/link/context';
+import { ApolloProvider } from '@apollo/client';
 import { AuthProvider } from './hooks/useAuth';
 import { useAppApolloClient } from './services/apolloClient';
+import { AlertProvider } from './hooks/useAlert';
+import Alert from './components/alert/Alert';
 
 export default function App() {
     const client = useAppApolloClient();
@@ -13,11 +14,16 @@ export default function App() {
     return (
         <ApolloProvider client={client}>
             <Router>
-                <AuthProvider>
-                    <ThemeProvider>
-                        <Routes />
-                    </ThemeProvider>
-                </AuthProvider>
+                <HelmetProvider context={{}}>
+                    <AuthProvider>
+                        <ThemeProvider>
+                            <AlertProvider>
+                                <Routes />
+                                <Alert />
+                            </AlertProvider>
+                        </ThemeProvider>
+                    </AuthProvider>
+                </HelmetProvider>
             </Router>
         </ApolloProvider>
     );

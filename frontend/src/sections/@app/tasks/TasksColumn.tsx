@@ -1,63 +1,77 @@
 import {
     Avatar,
-    Box,
-    Button,
-    Card,
-    CardActionArea,
     CardActions,
     CardContent,
-    Chip,
-    CircularProgress,
-    ClickAwayListener,
     Divider,
-    Grid,
     IconButton,
-    Link,
     Paper,
     Skeleton,
     Stack,
     styled,
     SxProps,
-    TextField,
     Tooltip,
     Typography,
-    useTheme,
 } from '@mui/material';
-import ScheduleIcon from '@mui/icons-material/Schedule';
-import SegmentIcon from '@mui/icons-material/Segment';
+import InventoryIcon from '@mui/icons-material/Inventory';
 import AddIcon from '@mui/icons-material/Add';
 import SvgColor from '../../../components/svg-color';
 import { User } from '../../../types';
-import { amber, blue, purple } from '@mui/material/colors';
 import Scrollbar from '../../../components/scrollbar';
-import Iconify from '../../../components/iconify';
 import TaskCard from './TaskCard';
-import { createRef, Dispatch, SetStateAction, useRef, useState } from 'react';
-import { useFormik } from 'formik';
+import { createRef, useState } from 'react';
 import NewCard from './NewCard';
 import { AVATARS_BASE_PATH } from '../../../constants';
+import useAuth from '../../../hooks/useAuth';
 
-interface UserPane {
+interface TasksColumn {
     user?: User;
     index?: number;
     loading: boolean;
 }
 
-const EmptyState = ({ sx }: { sx?: SxProps }) => {
+const EmptyState = ({ id, sx }: { id: number; sx?: SxProps }) => {
+    const { user: loggedInUser } = useAuth();
+
     return (
-        <Stack alignItems='center' justifyContent='center' height='100%' sx={{ minWidth: 210, ...sx }}>
-            <img src='/assets/illustrations/illustration_avatar.png' alt='Empty' width={85} />
-            <Typography variant='subtitle1' textAlign='center'>
-                You don't have any tasks 🥳
-            </Typography>
-            <Typography variant='body2' textAlign='center'>
-                Feel free to rest
-            </Typography>
+        <Stack
+            alignItems='center'
+            justifyContent='center'
+            height='100%'
+            my={2}
+            sx={{ minWidth: 210, minHeight: 140, ...sx }}>
+            {id === loggedInUser.id ? (
+                <>
+                    <img src='/assets/illustrations/illustration_avatar.png' alt='Empty' width={85} />
+                    <Typography variant='subtitle1' textAlign='center'>
+                        You don't have any tasks 🥳
+                    </Typography>
+                    <Typography variant='body2' textAlign='center'>
+                        Feel free to rest
+                    </Typography>
+                </>
+            ) : (
+                <>
+                    <InventoryIcon
+                        fontSize='large'
+                        color='disabled'
+                        sx={{
+                            fontSize: {
+                                sx: '2rem',
+                                md: '3rem',
+                                lg: '4rem',
+                            },
+                        }}
+                    />
+                    <Typography variant='subtitle1' textAlign='center' color='text.disabled'>
+                        Nothing to see here
+                    </Typography>
+                </>
+            )}
         </Stack>
     );
 };
 
-const UserPane = ({ loading, user, index = 1 }: UserPane) => {
+const TasksColumn = ({ loading, user, index = 1 }: TasksColumn) => {
     const { id, displayName, avatarUrl, tasks } = user;
 
     const [isAdding, setIsAdding] = useState(false);
@@ -76,7 +90,6 @@ const UserPane = ({ loading, user, index = 1 }: UserPane) => {
                 elevation={5}
                 sx={{
                     position: 'relative',
-                    height: 'calc(100vh - 7rem)',
                     minWidth: 242,
                     overflow: 'hidden',
                     bgcolor: 'background.neutral',
@@ -84,19 +97,7 @@ const UserPane = ({ loading, user, index = 1 }: UserPane) => {
                     flexDirection: 'column',
                 }}>
                 <StyledCardMedia>
-                    <SvgColor
-                        src='/assets/icons/shape-avatar.svg'
-                        sx={{
-                            width: 142,
-                            height: 40,
-                            zIndex: 9,
-                            bottom: -18,
-                            left: '50%',
-                            position: 'absolute',
-                            color: 'background.neutral',
-                            transform: 'translateX(-50%)',
-                        }}
-                    />
+                    <StyledAvatarOutlined src='/assets/icons/shape-avatar.svg' />
                     <StyledAvatar alt={displayName} src={AVATARS_BASE_PATH + avatarUrl} />
                     <StyledCover alt={'Cover'} src={`/assets/images/covers/cover_${index}.jpg`} />
                 </StyledCardMedia>
@@ -135,7 +136,7 @@ const UserPane = ({ loading, user, index = 1 }: UserPane) => {
                         </Scrollbar>
                     ) : (
                         <>
-                            {!isAdding && <EmptyState sx={{ mt: -1.5 }} />}
+                            {!isAdding && <EmptyState id={id} />}
                             {isAdding && <NewCard userId={id} setIsAdding={setIsAdding} />}
                         </>
                     )}
@@ -162,6 +163,10 @@ const UserPane = ({ loading, user, index = 1 }: UserPane) => {
 };
 
 const StyledAvatar = styled(Avatar)(({ theme }) => ({
+    [theme.breakpoints.up('lg')]: {
+        width: 75,
+        height: 75,
+    },
     zIndex: 9,
     width: 48,
     height: 48,
@@ -169,6 +174,22 @@ const StyledAvatar = styled(Avatar)(({ theme }) => ({
     bottom: theme.spacing(-4),
     left: '50%',
     transform: 'translateX(-50%)',
+}));
+
+const StyledAvatarOutlined = styled(SvgColor)(({ theme }) => ({
+    [theme.breakpoints.up('lg')]: {
+        width: 200,
+        height: 98,
+        bottom: -42,
+    },
+    width: 142,
+    height: 40,
+    zIndex: 9,
+    bottom: -18,
+    left: '50%',
+    position: 'absolute',
+    transform: 'translateX(-50%)',
+    color: theme.palette.background.neutral,
 }));
 
 const StyledCover = styled('img')({
@@ -184,4 +205,4 @@ const StyledCardMedia = styled('div')({
     paddingTop: '25%',
 });
 
-export default UserPane;
+export default TasksColumn;

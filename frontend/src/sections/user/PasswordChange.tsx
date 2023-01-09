@@ -5,6 +5,7 @@ import { gql, useMutation } from '@apollo/client';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import useAuth from '../../hooks/useAuth';
+import useAlert from '../../hooks/useAlert';
 
 const UPDATE_PASSWORD_MUTATION = gql`
     mutation Mutation($updatePasswordInput: UpdatePasswordInput!) {
@@ -19,11 +20,16 @@ const validationSchema = yup.object({
     newPassword: yup
         .string()
         .required('New password is required')
-        .min(5, 'Password must consist of 5 or more characters'),
-    confirmNewPassword: yup.string().oneOf([yup.ref('newPassword'), 'Passwords must match']),
+        .min(5, 'Password must consist of 5 or more characters')
+        .notOneOf([yup.ref('oldPassword'), 'New password cannot be the same as your old password']),
+    confirmNewPassword: yup
+        .string()
+        .oneOf([yup.ref('newPassword'), 'Passwords must match'])
+        .defined(),
 });
 
 const PasswordChange = () => {
+    const alert = useAlert();
     const { user } = useAuth();
     const [updatePassword, { loading }] = useMutation(UPDATE_PASSWORD_MUTATION);
 
@@ -35,18 +41,23 @@ const PasswordChange = () => {
         },
         validationSchema,
         validateOnBlur: true,
+        validateOnChange: false,
         onSubmit: ({ oldPassword, newPassword }) => {
             updatePassword({
                 variables: { updatePasswordInput: { id: user.id, oldPassword, newPassword } },
                 onError: (error) => {
                     formik.setErrors({ oldPassword: error.message });
+                    alert.error('Failed to update the password');
                 },
                 onCompleted: () => {
                     formik.resetForm();
+                    alert.success('Password updated');
                 },
             });
         },
     });
+
+    console.log(formik);
 
     return (
         <Card elevation={3}>
@@ -72,6 +83,7 @@ const PasswordChange = () => {
                             helperText={formik.errors.newPassword ? formik.errors.newPassword : <HelperText />}
                             value={formik.values.newPassword}
                             onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
                         />
                         <TextField
                             id='confirmNewPassword'
@@ -82,8 +94,14 @@ const PasswordChange = () => {
                             helperText={formik.errors.confirmNewPassword}
                             value={formik.values.confirmNewPassword}
                             onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
                         />
-                        <LoadingButton variant='contained' type='submit' loading={loading} sx={{ alignSelf: 'end' }}>
+                        <LoadingButton
+                            variant='contained'
+                            type='submit'
+                            loading={loading}
+                            disabled={!formik.dirty || (formik.dirty && !formik.isValid)}
+                            sx={{ alignSelf: 'end' }}>
                             Save changes
                         </LoadingButton>
                     </Stack>

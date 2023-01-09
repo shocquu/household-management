@@ -57,7 +57,7 @@ const EditableText = ({
                 onClick?.(event);
                 setIsFocused(true);
             }}>
-            <Typography {...restProps} fullWidth={fullWidth} variant={variant} component={component}>
+            <Typography {...restProps} variant={variant} component={component}>
                 {value}
             </Typography>
             <ModeEditIcon fontSize='small' sx={{ opacity: 0 }} />

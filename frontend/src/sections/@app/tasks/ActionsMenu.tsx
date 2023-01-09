@@ -7,7 +7,7 @@ import { gql, useMutation, useQuery } from '@apollo/client';
 import Iconify from '../../../components/iconify';
 import { Tag } from '../../../types';
 import ConfirmDialog from '../../../components/confirm-dialog';
-import { USERS_QUERY } from '../../../pages/DashboardAppPage';
+import { USERS_QUERY } from '../../../pages/TasksPage';
 
 const TAGS_QUERY = gql`
     query Tags {

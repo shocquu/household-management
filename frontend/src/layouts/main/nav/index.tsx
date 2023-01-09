@@ -12,20 +12,13 @@ import useAuth from '../../../hooks/useAuth';
 
 const NAV_WIDTH = 220;
 
-const StyledAccount = styled('div')(({ theme }) => ({
-    display: 'flex',
-    alignItems: 'center',
-    padding: theme.spacing(2, 2.5),
-    borderRadius: Number(theme.shape.borderRadius) * 1.5,
-    backgroundColor: alpha(theme.palette.grey[500], 0.12),
-}));
-
 interface Nav {
     openNav: boolean;
     onCloseNav: () => void;
 }
 
-export default function Nav({ openNav, onCloseNav }: Nav) {
+const Nav = ({ openNav, onCloseNav }: Nav) => {
+    const isDesktop = useResponsive('up', 'lg');
     const { pathname } = useLocation();
     const { user } = useAuth();
 
@@ -69,15 +62,46 @@ export default function Nav({ openNav, onCloseNav }: Nav) {
 
             <Box sx={{ px: 2.5, pb: 3, mt: 10 }}>
                 <Typography variant='body2' textAlign='center' sx={{ color: 'text.secondary' }}>
-                    AGH 2023
+                    <strong>AGH</strong> 2023
                 </Typography>
             </Box>
         </Scrollbar>
     );
 
     return (
-        <Box component='nav'>
-            <Drawer
+        <Box
+            component='nav'
+            sx={{
+                flexShrink: { lg: 0 },
+                width: { lg: NAV_WIDTH },
+            }}>
+            {isDesktop ? (
+                <Drawer
+                    open
+                    variant='permanent'
+                    PaperProps={{
+                        sx: {
+                            width: NAV_WIDTH,
+                            bgcolor: 'background.default',
+                            borderRightStyle: 'dashed',
+                        },
+                    }}>
+                    {renderContent}
+                </Drawer>
+            ) : (
+                <Drawer
+                    open={openNav}
+                    onClose={onCloseNav}
+                    ModalProps={{
+                        keepMounted: true,
+                    }}
+                    PaperProps={{
+                        sx: { width: NAV_WIDTH },
+                    }}>
+                    {renderContent}
+                </Drawer>
+            )}
+            {/* <Drawer
                 open={openNav}
                 onClose={onCloseNav}
                 ModalProps={{
@@ -87,7 +111,17 @@ export default function Nav({ openNav, onCloseNav }: Nav) {
                     sx: { width: NAV_WIDTH },
                 }}>
                 {renderContent}
-            </Drawer>
+            </Drawer> */}
         </Box>
     );
-}
+};
+
+const StyledAccount = styled('div')(({ theme }) => ({
+    display: 'flex',
+    alignItems: 'center',
+    padding: theme.spacing(2, 2.5),
+    borderRadius: Number(theme.shape.borderRadius) * 1.5,
+    backgroundColor: alpha(theme.palette.grey[500], 0.12),
+}));
+
+export default Nav;

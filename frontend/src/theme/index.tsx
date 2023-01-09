@@ -1,6 +1,6 @@
 import { ReactNode, useMemo } from 'react';
-import { CssBaseline, ThemeOptions } from '@mui/material';
-import { ThemeProvider as MUIThemeProvider, createTheme, StyledEngineProvider } from '@mui/material/styles';
+import { CssBaseline } from '@mui/material';
+import { ThemeProvider as MUIThemeProvider, StyledEngineProvider, createTheme } from '@mui/material/styles';
 import palette from './palette';
 import shadows from './shadows';
 import typography from './typography';
@@ -13,7 +13,7 @@ interface ThemeProviderProps {
 }
 
 export default function ThemeProvider({ children }: ThemeProviderProps) {
-    const themeOptions: any = useMemo(
+    const themeOptions = useMemo(
         () => ({
             palette,
             shape: { borderRadius: 6 },

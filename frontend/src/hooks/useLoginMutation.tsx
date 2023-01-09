@@ -15,15 +15,12 @@ const LOGIN_MUTATION = gql`
 
 export const useLoginMutation = () => {
     const { setAccessToken } = useAccessToken();
-    const { setUser } = useAuth();
     const navigate = useNavigate();
 
     const [mutation, mutationResults] = useMutation(LOGIN_MUTATION, {
         onCompleted: ({ loginUser }) => {
             setAccessToken(loginUser.accessToken);
-            // refetch();
             navigate('/', { replace: true });
-            // setUser((prevState) => ({ ...prevState, refreshToken: loginUser.refreshToken }));
         },
     });
 
@@ -31,10 +28,6 @@ export const useLoginMutation = () => {
         return mutation({
             variables: {
                 loginUserInput: { email, password },
-            },
-            update(_proxy, { data }) {
-                // if (userData) setUser({ ...userData, avatarUrl: AVATARS_BASE_PATH + userData?.avatarUrl });
-                // else setUser(null);
             },
         });
     };

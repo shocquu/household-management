@@ -2,7 +2,8 @@ import { Dispatch, forwardRef, SetStateAction } from 'react';
 import { useFormik } from 'formik';
 import { Card, ClickAwayListener, TextField } from '@mui/material';
 import { gql, useMutation } from '@apollo/client';
-import { USERS_QUERY } from '../../../pages/DashboardAppPage';
+import { USERS_QUERY } from '../../../pages/TasksPage';
+import useAlert from '../../../hooks/useAlert';
 
 const ADD_TASK_MUTATION = gql`
     mutation Mutation($createTaskInput: CreateTaskInput!) {
@@ -19,8 +20,12 @@ interface NewCard {
 }
 
 const NewCard = forwardRef(({ userId, setIsAdding }: NewCard, ref) => {
-    const [addTask, { loading }] = useMutation(ADD_TASK_MUTATION, {
+    const alert = useAlert();
+    const [addTask] = useMutation(ADD_TASK_MUTATION, {
         refetchQueries: [{ query: USERS_QUERY }, 'Users'],
+        onError: (error) => {
+            alert.error(error.message);
+        },
     });
     const formik = useFormik({
         initialValues: {
@@ -40,7 +45,7 @@ const NewCard = forwardRef(({ userId, setIsAdding }: NewCard, ref) => {
     return (
         <ClickAwayListener onClickAway={handleClickAway}>
             <form onSubmit={formik.handleSubmit}>
-                <Card key='new-card' elevation={3} sx={{ p: 2 }}>
+                <Card key='new-card' elevation={3} sx={{ p: 2, mb: 2, minHeight: 97 }}>
                     <TextField
                         autoFocus
                         multiline

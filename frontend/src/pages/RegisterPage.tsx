@@ -1,10 +1,8 @@
 import { Helmet } from 'react-helmet-async';
 import { styled } from '@mui/material/styles';
-import { Link, Container, Typography, Divider, Stack, Button, Box } from '@mui/material';
+import { Link, Container, Typography, Box } from '@mui/material';
 import useResponsive from '../hooks/useResponsive';
 import Logo from '../components/logo';
-import Iconify from '../components/iconify';
-import { LoginForm } from '../sections/auth/login';
 import { RegisterForm } from '../sections/auth/register';
 
 const RegisterPage = () => {
@@ -12,10 +10,7 @@ const RegisterPage = () => {
 
     return (
         <>
-            {/* <Helmet>
-                <title> Register | Hovee </title>
-            </Helmet> */}
-
+            <Helmet title='Sign up | Hovee' />
             <StyledRoot>
                 <Logo
                     sx={{

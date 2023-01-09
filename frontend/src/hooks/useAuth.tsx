@@ -23,7 +23,7 @@ interface AuthContextType {
     error: ApolloError;
     logout: () => void;
     isLoggedIn: boolean;
-    // refetch: any;
+    setIsLoggedIn: Dispatch<React.SetStateAction<boolean>>;
 }
 
 export const CURRENT_USER_QUERY = gql`
@@ -49,8 +49,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const client = useAppApolloClient();
     const navigate = useNavigate();
 
-    const { data, called, loading, error, refetch } = useQuery(CURRENT_USER_QUERY, {
-        skip: !!user,
+    const { loading, error, refetch } = useQuery(CURRENT_USER_QUERY, {
+        skip: !accessToken,
         fetchPolicy: 'network-only',
         context: {
             headers: {
@@ -60,31 +60,19 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         onCompleted: ({ whoami }) => {
             setUser({ ...whoami, avatarUrl: AVATARS_BASE_PATH + whoami?.avatarUrl });
         },
+        onError: ({ graphQLErrors }) => {
+            if (graphQLErrors) {
+                for (let err of graphQLErrors) {
+                    switch (err.extensions.code) {
+                        case 'UNAUTHENTICATED':
+                            setIsLoggedIn(false);
+                            removeAccessToken();
+                            break;
+                    }
+                }
+            }
+        },
     });
-    // const [getUser, { called, loading, error }] = useLazyQuery(CURRENT_USER_QUERY, {
-    //     context: {
-    //         headers: {
-    //             authorization: 'Bearer ' + accessToken,
-    //         },
-    //     },
-    //     onCompleted: ({ whoami }) => {
-    //         setUser({ ...whoami, avatarUrl: AVATARS_BASE_PATH + whoami?.avatarUrl });
-    //     },
-    //     onError: ({ graphQLErrors }) => {
-    //         if (graphQLErrors) {
-    //             for (let err of graphQLErrors) {
-    //                 switch (err.extensions.code) {
-    //                     case 'UNAUTHENTICATED':
-    //                         // logout();
-    //                         setUser(null);
-    //                         // removeAccessToken();
-    //                         // navigate('/login', { replace: true });
-    //                         break;
-    //                 }
-    //             }
-    //         }
-    //     },
-    // });
 
     const logout = () => {
         client.resetStore();
@@ -95,16 +83,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     };
 
     useEffect(() => {
-        // console.log(user);
-        // console.log(accessToken, user);
+        if (accessToken) refetch();
         if (accessToken && user && !loading) setIsLoggedIn(true);
-        // setIsLoggedIn(Boolean(accessToken) && Boolean(user) && !loading);
     }, [accessToken, user]);
-
-    useEffect(() => {
-        // if(!user && isLoggedIn) refetch();
-        // console.log(user, isLoggedIn);
-    }, [user, isLoggedIn]);
 
     return (
         <AuthContext.Provider
@@ -115,7 +96,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                 loading,
                 error,
                 logout,
-                // refetch: getUser,
+                setIsLoggedIn,
             }}>
             {children}
         </AuthContext.Provider>

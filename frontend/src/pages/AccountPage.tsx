@@ -33,7 +33,6 @@ const AccountPage = () => {
                 <Tab icon={<KeyIcon />} iconPosition='start' label='Change password' />
             </Tabs>
             <Box mt={4}>{getContent()}</Box>
-            {/* <Card></Card> */}
         </Container>
     );
 };

@@ -19,6 +19,7 @@ import * as yup from 'yup';
 import useAuth, { CURRENT_USER_QUERY } from '../../hooks/useAuth';
 import { AVATARS_BASE_PATH } from '../../constants';
 import { gql, useMutation } from '@apollo/client';
+import useAlert from '../../hooks/useAlert';
 
 type FormikValues = {
     email: string;
@@ -44,8 +45,15 @@ const validationSchema = yup.object({
 const General = () => {
     const [open, setOpen] = useState(false);
     const { user } = useAuth();
+    const alert = useAlert();
     const [updateUser, { loading }] = useMutation(UPDATE_USER_MUTATION, {
         refetchQueries: [{ query: CURRENT_USER_QUERY }],
+        onCompleted: () => {
+            alert.success('Successfuly updated');
+        },
+        onError: () => {
+            alert.error('Failed to update');
+        },
     });
 
     const formik = useFormik({
@@ -57,10 +65,12 @@ const General = () => {
         },
         validationSchema,
         validateOnBlur: true,
-        onSubmit: ({ email, displayName, avatarUrl }) => {
-            updateUser({
-                variables: { updateUserInput: { id: user.id, email, displayName, avatarUrl } },
-            });
+        onSubmit: ({ email, displayName, avatarUrl, username }) => {
+            if (formik.dirty)
+                updateUser({
+                    variables: { updateUserInput: { id: user.id, email, displayName, avatarUrl } },
+                });
+            formik.resetForm({ values: { email, displayName, avatarUrl, username } });
         },
     });
 
@@ -135,6 +145,7 @@ const General = () => {
                                         variant='contained'
                                         type='submit'
                                         loading={loading}
+                                        disabled={!formik.dirty}
                                         sx={{ alignSelf: 'end' }}>
                                         Save changes
                                     </LoadingButton>

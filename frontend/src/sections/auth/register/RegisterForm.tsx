@@ -14,22 +14,23 @@ import { useFormik } from 'formik';
 import { ChangeEvent, useState } from 'react';
 import * as yup from 'yup';
 import Iconify from '../../../components/iconify';
+import { AVATARS_COUNT } from '../../../constants';
 import { useRegisterMutation } from '../../../hooks/useRegisterMutation';
 
-const AVATARS_COUNT = 24;
 const AVATARS_PER_PAGE_COUNT = 8;
 
 const validationSchema = yup.object({
     email: yup.string().email('Enter a valid email').required('Email is required'),
-    password: yup.string().min(5, 'Password should be of minimum 5 characters length').required('Password is required'),
+    username: yup.string().required('Username is required'),
+    displayName: yup.string().required('Display name is required'),
+    password: yup.string().required('Password is required').min(5, 'Password should be of minimum 5 characters length'),
 });
 
 const RegisterForm = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [page, setPage] = useState(1);
-    const [register, { loading, error }] = useRegisterMutation();
+    const [register, { loading }] = useRegisterMutation();
 
-    const avatars = [-1, ...Array(AVATARS_COUNT).keys()];
     const theme = useTheme();
     const formik = useFormik({
         initialValues: {
@@ -37,21 +38,21 @@ const RegisterForm = () => {
             displayName: '',
             username: '',
             password: '',
-            avatarKey: -1,
+            avatarKey: undefined,
         },
         validationSchema: validationSchema,
         onSubmit: (values) => {
             const { avatarKey, ...data } = values;
-            register({ ...data, avatarUrl: mapAvatarKey(values.avatarKey) });
+            register({
+                ...data,
+                avatarUrl: avatarKey
+                    ? `avatar_${values.avatarKey}.jpg`
+                    : `avatar_${Math.floor(Math.random() * AVATARS_COUNT) + 1}.jpg`,
+            });
         },
     });
 
-    const mapAvatarKey = (key: number) => {
-        if (key === -1) return 'avatar_default.jpg';
-        return `avatar_${key + 1}.jpg`;
-    };
-
-    const handlePageChange = (event: ChangeEvent<unknown>, value: number) => {
+    const handlePageChange = (_event: ChangeEvent<unknown>, value: number) => {
         setPage(value);
     };
 
@@ -59,39 +60,49 @@ const RegisterForm = () => {
         <form onSubmit={formik.handleSubmit}>
             <Stack spacing={3}>
                 <TextField
+                    required
                     id='email'
                     name='email'
                     label='Email address'
                     value={formik.values.email}
                     onChange={formik.handleChange}
+                    inputProps={{ autoComplete: 'off' }}
                     error={formik.touched.email && Boolean(formik.errors.email)}
                     helperText={formik.touched.email && formik.errors.email}
                 />
                 <Stack direction='row' spacing={2}>
                     <TextField
+                        required
                         fullWidth
                         id='username'
                         name='username'
                         label='Username'
-                        autoComplete='off'
+                        inputProps={{ autoComplete: 'off' }}
                         value={formik.values.username}
                         onChange={formik.handleChange}
+                        error={formik.touched.username && Boolean(formik.errors.username)}
+                        helperText={formik.touched.username && formik.errors.username}
                     />
                     <TextField
+                        required
                         fullWidth
                         id='displayName'
                         name='displayName'
                         label='Display name'
+                        inputProps={{ autoComplete: 'off' }}
                         value={formik.values.displayName}
                         onChange={formik.handleChange}
+                        error={formik.touched.displayName && Boolean(formik.errors.displayName)}
+                        helperText={formik.touched.displayName && formik.errors.displayName}
                     />
                 </Stack>
 
                 <TextField
+                    required
                     id='password'
                     name='password'
                     label='Password'
-                    autoComplete='off'
+                    inputProps={{ autoComplete: 'new-password' }}
                     type={showPassword ? 'text' : 'password'}
                     InputProps={{
                         endAdornment: (
@@ -110,21 +121,23 @@ const RegisterForm = () => {
                 />
                 <Typography variant='subtitle1'>Select avatar</Typography>
                 <Grid container spacing={3}>
-                    {avatars
+                    {[...Array(AVATARS_COUNT).keys()]
                         .slice((page - 1) * AVATARS_PER_PAGE_COUNT, page * AVATARS_PER_PAGE_COUNT)
-                        .map((key, index) => (
-                            <Grid key={index} item xs={3}>
+                        .map((key) => (
+                            <Grid key={key} item xs={3}>
                                 <IconButton
                                     sx={
-                                        formik.values.avatarKey === key && {
-                                            bgcolor: `${theme.palette.primary.light} !important`,
-                                        }
+                                        formik.values.avatarKey === key
+                                            ? {
+                                                  bgcolor: `${theme.palette.primary.light} !important`,
+                                              }
+                                            : undefined
                                     }
                                     disabled={formik.values.avatarKey === key}
                                     onClick={() => formik.setFieldValue('avatarKey', key)}>
                                     <Avatar
-                                        alt={`Avatar ${index + 2}`}
-                                        src={`/assets/images/avatars/${mapAvatarKey(key)}`}
+                                        alt={`Avatar ${key + 1}`}
+                                        src={`/assets/images/avatars/avatar_${key + 1}.jpg`}
                                         sx={{ width: 64, height: 64 }}
                                     />
                                 </IconButton>
@@ -132,19 +145,18 @@ const RegisterForm = () => {
                         ))}
                 </Grid>
                 <Pagination
-                    count={Math.ceil((AVATARS_COUNT + 1) / AVATARS_PER_PAGE_COUNT)}
+                    count={Math.ceil(AVATARS_COUNT / AVATARS_PER_PAGE_COUNT)}
                     page={page}
                     onChange={handlePageChange}
                 />
                 <LoadingButton
                     fullWidth
-                    // loading
-                    loadingPosition='start'
+                    loading={loading}
+                    // loadingPosition='start'
                     size='large'
                     type='submit'
                     variant='contained'
-                    // disabled={!!Object.keys(formik.errors).length}
-                >
+                    disabled={!formik.dirty || (formik.dirty && !formik.isValid)}>
                     Create account
                 </LoadingButton>
             </Stack>

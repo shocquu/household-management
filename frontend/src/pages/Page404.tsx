@@ -16,10 +16,7 @@ const StyledContent = styled('div')(({ theme }) => ({
 export default function Page404() {
     return (
         <>
-            {/* <Helmet>
-        <title> 404 Page Not Found | Minimal UI </title>
-      </Helmet> */}
-
+            <Helmet title='Page not found| Hovee' />
             <Container>
                 <StyledContent sx={{ textAlign: 'center', alignItems: 'center' }}>
                     <Typography variant='h3' paragraph>

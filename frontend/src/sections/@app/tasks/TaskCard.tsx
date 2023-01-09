@@ -1,29 +1,12 @@
 import { alpha, styled } from '@mui/material/styles';
-import {
-    Box,
-    Link,
-    Card,
-    Grid,
-    Avatar,
-    Typography,
-    CardContent,
-    Chip,
-    Modal,
-    Paper,
-    TextField,
-    List,
-    ListItem,
-    ListItemAvatar,
-    ListItemText,
-    Button,
-    Tooltip,
-} from '@mui/material';
+import { Link, Card, Avatar, Typography, Stack, Box, Chip, Tooltip } from '@mui/material';
 import TaskAltIcon from '@mui/icons-material/TaskAlt';
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import { fDate, fDateTime } from '../../../utils/formatTime';
 import { fShortenNumber } from '../../../utils/formatNumber';
 import SvgColor from '../../../components/svg-color';
 import Iconify from '../../../components/iconify';
-import { Task } from '../../../types';
+import { Task, Comment } from '../../../types';
 import ScheduleIcon from '@mui/icons-material/Schedule';
 import SegmentIcon from '@mui/icons-material/Segment';
 import { useState } from 'react';
@@ -84,13 +67,55 @@ const TaskCard = ({ task }: BlogPostCardProps) => {
                         sx={{ bgcolor: color, color: 'common.white', mr: 1 }}
                     />
                 ))}
-
                 <Typography variant='subtitle1' sx={{ py: 1 }}>
                     {title}
                 </Typography>
+                <TaskDetails
+                    details={{
+                        createdAt,
+                        comments,
+                        showDescription: Boolean(description),
+                    }}
+                />
+                {/* <Overlay>
+                    <TaskAltIcon
+                        color='inherit'
+                        fontSize='large'
+                        sx={{ position: 'relative', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}
+                    />
+                </Overlay> */}
+            </Card>
+            <TaskModal taskId={id} open={open} handleClose={handleClose} />
+        </>
+    );
+};
 
-                {Boolean(description) && (
-                    <Tooltip enterDelay={1500} title={'This card has a description'}>
+const TaskDetails = ({
+    details,
+}: {
+    details: {
+        createdAt: number;
+        dueDate?: number;
+        comments?: Comment[];
+        showDescription?: boolean;
+    };
+}) => {
+    const { createdAt, dueDate, showDescription, comments } = details;
+
+    return (
+        <Stack direction='row' alignItems='center' justifyContent='space-between'>
+            <Box>
+                <Tooltip enterDelay={1000} title={fDateTime(createdAt)}>
+                    <Chip
+                        icon={<CalendarMonthIcon color='disabled' sx={{ mb: '2px' }} />}
+                        size='small'
+                        label={fDate(createdAt, 'dd MMM')}
+                        variant='outlined'
+                        sx={{ border: 0, color: 'text.disabled' }}
+                    />
+                </Tooltip>
+                {showDescription && (
+                    <Tooltip enterDelay={1000} title={'This card has a description'}>
                         <Chip
                             icon={<SegmentIcon color='disabled' />}
                             size='small'
@@ -99,18 +124,14 @@ const TaskCard = ({ task }: BlogPostCardProps) => {
                         />
                     </Tooltip>
                 )}
-                <Tooltip enterDelay={1500} title={fDateTime(createdAt)}>
-                    <Chip
-                        icon={<ScheduleIcon color='disabled' />}
-                        size='small'
-                        label={fDate(createdAt, 'dd MMM')}
-                        variant='outlined'
-                        sx={{ border: 0, color: 'text.disabled' }}
-                    />
-                </Tooltip>
-
                 {comments.length > 0 && (
-                    <Tooltip enterDelay={1500} title={`This card has ${comments.length} comments`}>
+                    <Tooltip
+                        enterDelay={1000}
+                        title={
+                            comments.length === 1
+                                ? 'This card has a comment'
+                                : `This card has ${comments.length} comments`
+                        }>
                         <Chip
                             icon={
                                 <Iconify
@@ -126,16 +147,16 @@ const TaskCard = ({ task }: BlogPostCardProps) => {
                         />
                     </Tooltip>
                 )}
-                {/* <Overlay>
-                    <TaskAltIcon
-                        color='inherit'
-                        fontSize='large'
-                        sx={{ position: 'relative', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}
-                    />
-                </Overlay> */}
-            </Card>
-            <TaskModal taskId={id} open={open} handleClose={handleClose} />
-        </>
+            </Box>
+            <Tooltip title={'2 days left'}>
+                <Chip
+                    icon={<ScheduleIcon color='disabled' />}
+                    size='small'
+                    variant='outlined'
+                    sx={{ border: 0, color: 'text.disabled' }}
+                />
+            </Tooltip>
+        </Stack>
     );
 };
 

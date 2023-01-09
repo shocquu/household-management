@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import {
     Avatar,
     Button,
@@ -27,11 +28,10 @@ import { fToNow } from '../../../utils/formatTime';
 import ActionsMenu from './ActionsMenu';
 import EditableText from '../../../components/editable-text/EditableText';
 import { useFormik } from 'formik';
-import { useEffect, useState } from 'react';
 import useAuth from '../../../hooks/useAuth';
-import { Comment, User } from '../../../types';
+import { Comment } from '../../../types';
 import Iconify from '../../../components/iconify';
-import { USERS_QUERY } from '../../../pages/DashboardAppPage';
+import { USERS_QUERY } from '../../../pages/TasksPage';
 import { AVATARS_BASE_PATH } from '../../../constants';
 
 const TASK_QUERY = gql`
@@ -47,8 +47,8 @@ const TASK_QUERY = gql`
                 id
                 author {
                     id
-                    name
                     avatarUrl
+                    displayName
                 }
                 message
                 createdAt
@@ -89,13 +89,12 @@ const UPDATE_TASK_MUTATION = gql`
 
 const TaskModal = ({ taskId, open, handleClose }: TaskModal) => {
     const { user: loggedInUser } = useAuth();
-    const { data, loading, refetch } = useQuery(TASK_QUERY, {
-        variables: { taskId },
+    const { data, loading } = useQuery(TASK_QUERY, {
         skip: !open,
-        fetchPolicy: 'cache-and-network', // Update to cache
+        variables: { taskId },
     });
     const [updateTask] = useMutation(UPDATE_TASK_MUTATION, {
-        refetchQueries: [{ query: USERS_QUERY }],
+        refetchQueries: [{ query: USERS_QUERY }, { query: TASK_QUERY, variables: { taskId } }],
     });
 
     const { title = '', description = '', comments = [], tags: appliedTasks = [] } = data?.task || {};
@@ -107,11 +106,15 @@ const TaskModal = ({ taskId, open, handleClose }: TaskModal) => {
             comments,
         },
         enableReinitialize: true,
-        onSubmit: ({ title, description }) => {
+        onSubmit: ({ title, description, comments }) => {
             updateTask({
-                variables: { updateTaskInput: { id: taskId, title, description } },
+                variables: {
+                    updateTaskInput: { id: taskId, title, description },
+                    onCompleted: (values) => {
+                        formik.setValues(values);
+                    },
+                },
             });
-            formik.resetForm();
         },
     });
 
@@ -132,13 +135,13 @@ const TaskModal = ({ taskId, open, handleClose }: TaskModal) => {
                                         <CloseIcon />
                                     </CloseButton>
 
-                                    {!loading && title ? (
+                                    {!loading && formik.values.title ? (
                                         <EditableText
+                                            fullWidth
                                             id='task-title'
                                             variant='h6'
                                             component='h2'
-                                            fullWidth
-                                            text={title}
+                                            text={formik.values.title}
                                             name='title'
                                             onBlur={(e) => formik.setFieldValue('title', e.target.value)}
                                         />
@@ -249,10 +252,10 @@ const REMOVE_COMMENT_MUTATION = gql`
 const CommentBlock = ({ comment }: { comment: Comment }) => {
     const { id, createdAt, message, author } = comment;
 
+    const { user } = useAuth();
     const [removeComment] = useMutation(REMOVE_COMMENT_MUTATION, {
         refetchQueries: [TASK_QUERY, 'Task'],
     });
-    const { user } = useAuth();
 
     const handleRemove = () => {
         removeComment({ variables: { removeCommentId: id } });

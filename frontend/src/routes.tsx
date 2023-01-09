@@ -1,11 +1,11 @@
 import { Navigate, useRoutes } from 'react-router-dom';
-import DashboardLayout from './layouts/dashboard';
+import MainLayout from './layouts/main';
 import SimpleLayout from './layouts/simple';
 import UserPage from './pages/UserPage';
 import LoginPage from './pages/LoginPage';
 import Page404 from './pages/Page404';
 import ProductsPage from './pages/ProductsPage';
-import DashboardAppPage from './pages/DashboardAppPage';
+import TasksPage from './pages/TasksPage';
 import RegisterPage from './pages/RegisterPage';
 import useAuth from './hooks/useAuth';
 import AccountPage from './pages/AccountPage';
@@ -27,17 +27,17 @@ const RoutesWrapper = () => {
 
     const routes = useRoutes([
         {
-            path: '/dashboard',
+            path: '/',
             element: (
                 <ProtectedRoute isLoggedIn={isLoggedIn}>
-                    <DashboardLayout />
+                    <MainLayout />
                 </ProtectedRoute>
             ),
             children: [
-                { element: <Navigate to='/dashboard/app' />, index: true },
+                { element: <Navigate to='/assigments' />, index: true },
                 {
-                    path: 'app',
-                    element: <DashboardAppPage />,
+                    path: 'assigments',
+                    element: <TasksPage />,
                 },
                 { path: 'tags', element: <UserPage /> },
                 { path: 'products', element: <ProductsPage /> },
@@ -47,7 +47,7 @@ const RoutesWrapper = () => {
             path: '/user',
             element: (
                 <ProtectedRoute isLoggedIn={isLoggedIn}>
-                    <DashboardLayout />
+                    <MainLayout />
                 </ProtectedRoute>
             ),
             children: [
@@ -58,14 +58,6 @@ const RoutesWrapper = () => {
                 },
                 { path: 'settings', element: <SettingsPage /> },
             ],
-        },
-        {
-            path: 'tags',
-            element: (
-                <ProtectedRoute isLoggedIn={isLoggedIn}>
-                    <UserPage />
-                </ProtectedRoute>
-            ),
         },
         {
             path: 'login',
@@ -86,7 +78,7 @@ const RoutesWrapper = () => {
         {
             element: <SimpleLayout />,
             children: [
-                { element: <Navigate to='/dashboard' />, index: true },
+                { element: <Navigate to='/' />, index: true },
                 { path: '404', element: <Page404 /> },
                 { path: '*', element: <Navigate to='/404' /> },
             ],

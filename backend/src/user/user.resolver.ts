@@ -1,4 +1,4 @@
-import { Req, UseGuards } from '@nestjs/common';
+import { UseGuards } from '@nestjs/common';
 import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
 import { AuthService } from 'src/common/auth/auth.service';
 import { JwtAuthGuard } from 'src/common/auth/jwt-auth.guard';

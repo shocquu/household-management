@@ -38,3 +38,11 @@ export enum ERole {
     ADMIN = 'ADMIN',
     USER = 'USER',
 }
+
+export enum AlertStatus {
+    None = '',
+    Info = 'info',
+    Success = 'success',
+    Warning = 'warning',
+    Error = 'error',
+}
