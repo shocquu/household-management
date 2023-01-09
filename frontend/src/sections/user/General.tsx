@@ -103,7 +103,9 @@ const General = () => {
                                             }}
                                         />
                                     </IconButton>
-                                    <Button onClick={() => setOpen(true)}>Change avatar</Button>
+                                    <Button color='secondary' onClick={() => setOpen(true)}>
+                                        Change avatar
+                                    </Button>
                                 </Stack>
                             </CardContent>
                         </Card>

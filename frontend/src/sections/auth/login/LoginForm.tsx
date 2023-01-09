@@ -90,7 +90,7 @@ export default function LoginForm() {
                     }
                     label='Remember me'
                 />
-                <Link variant='subtitle2' underline='hover'>
+                <Link variant='subtitle2' underline='hover' color='secondary'>
                     Forgot password?
                 </Link>
             </Stack>

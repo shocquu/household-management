@@ -23,16 +23,17 @@ import {
     Typography,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import { gql, useApolloClient, useMutation, useQuery } from '@apollo/client';
-import { fToNow } from '../../../utils/formatTime';
+import { gql, useMutation, useQuery } from '@apollo/client';
+import { fDate, fToNow, fCountdown } from '../../../utils/formatTime';
 import ActionsMenu from './ActionsMenu';
 import EditableText from '../../../components/editable-text';
-import { useFormik } from 'formik';
+import { Form, FormikProvider, useFormik } from 'formik';
 import useAuth from '../../../hooks/useAuth';
-import { Comment, Role } from '../../../types';
+import { Comment, Role, User } from '../../../types';
 import Iconify from '../../../components/iconify';
 import { USERS_QUERY } from '../../../pages/TasksPage';
 import { AVATARS_BASE_PATH } from '../../../constants';
+import { getTimeColor } from '../../../utils/getTimeColor';
 
 export const TASK_QUERY = gql`
     query Task($taskId: Int!) {
@@ -100,7 +101,15 @@ const TaskModal = ({ taskId, open, handleClose }: TaskModal) => {
         refetchQueries: [{ query: TASK_QUERY, variables: { taskId } }],
     });
 
-    const { title = '', description = '', comments = [], tags: appliedTags = [], completed, user } = data?.task || {};
+    const {
+        title = '',
+        description = '',
+        comments = [],
+        tags: appliedTags = [],
+        dueDate,
+        completed,
+        user,
+    } = data?.task || {};
 
     const isAssignedTo = loggedInUser.id === user?.id;
     const showActionsMenu = isAssignedTo || loggedInUser.role === Role.Admin;
@@ -109,19 +118,32 @@ const TaskModal = ({ taskId, open, handleClose }: TaskModal) => {
             title,
             description,
             comments,
+            dueDate,
         },
         enableReinitialize: true,
-        onSubmit: ({ title, description }) => {
+        onSubmit: ({ title, description, dueDate }) => {
             updateTask({
                 variables: {
-                    updateTaskInput: { id: taskId, title, description },
-                    onCompleted: (values) => {
-                        formik.setValues(values);
-                    },
+                    updateTaskInput: { id: taskId, title, description, dueDate },
+                },
+                onCompleted: (values) => {
+                    formik.setValues(values);
+                },
+                update: (cache) => {
+                    cache.modify({
+                        fields: {
+                            users(cachedUsers: User[] = [], { readField }) {
+                                const foundUser = cachedUsers?.find((user) => user?.id === readField('id', user));
+                                return { ...cachedUsers, foundUser };
+                            },
+                        },
+                    });
                 },
             });
         },
     });
+    const timeLeft = formik.values?.dueDate && fCountdown(formik.values?.dueDate, ['days']);
+    const timeLeftColor = getTimeColor(+timeLeft?.split(' ')[0]);
 
     const onClose = () => {
         if (formik.dirty) formik.submitForm();
@@ -207,6 +229,26 @@ const TaskModal = ({ taskId, open, handleClose }: TaskModal) => {
                                 )}
                             </form>
 
+                            {formik.values?.dueDate && (
+                                <>
+                                    <Typography variant='subtitle2' mt={3} onClick={(e) => e.preventDefault()}>
+                                        Deadline
+                                    </Typography>
+                                    <Typography variant='body2' color={'success'} onClick={(e) => e.preventDefault()}>
+                                        {fDate(formik.values?.dueDate)}
+                                        {!completed && (
+                                            <Chip
+                                                size='small'
+                                                variant='outlined'
+                                                color={timeLeftColor}
+                                                label={timeLeft ? `${timeLeft} left` : 'Time is over'}
+                                                sx={{ ml: 1 }}
+                                            />
+                                        )}
+                                    </Typography>
+                                </>
+                            )}
+
                             <Typography variant='subtitle2' mt={3} onClick={(e) => e.preventDefault()}>
                                 Activity
                             </Typography>
@@ -252,12 +294,16 @@ const TaskModal = ({ taskId, open, handleClose }: TaskModal) => {
 
                         {showActionsMenu && (
                             <Grid item xs={3}>
-                                <ActionsMenu
-                                    taskId={taskId}
-                                    userId={user?.id}
-                                    completed={completed}
-                                    appliedTags={appliedTags}
-                                />
+                                <FormikProvider value={formik}>
+                                    <Form>
+                                        <ActionsMenu
+                                            taskId={taskId}
+                                            userId={user?.id}
+                                            completed={completed}
+                                            appliedTags={appliedTags}
+                                        />
+                                    </Form>
+                                </FormikProvider>
                             </Grid>
                         )}
                     </Grid>

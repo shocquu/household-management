@@ -1,7 +1,9 @@
-import { useState } from 'react';
+import { MouseEventHandler, useEffect, useState } from 'react';
 import {
     alpha,
     Avatar,
+    Box,
+    Button,
     Chip,
     Collapse,
     List,
@@ -10,7 +12,10 @@ import {
     ListItemIcon,
     ListItemText,
     ListSubheader,
+    TextField,
+    Tooltip,
 } from '@mui/material';
+import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 import CheckIcon from '@mui/icons-material/Check';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -24,6 +29,8 @@ import useAlert from '../../../hooks/useAlert';
 import { TASK_QUERY } from './TaskModal';
 import { useAppApolloClient } from '../../../services/apolloClient';
 import { AVATARS_BASE_PATH } from '../../../constants';
+import { format, parse } from 'date-fns';
+import { useFormikContext } from 'formik';
 
 const TAGS_QUERY = gql`
     query Tags {
@@ -124,10 +131,13 @@ const ActionsMenu = ({ taskId, userId, completed, appliedTags }: ActionsMenu) =>
 
             {user.role === Role.Admin && (
                 <>
+                    <DatePicker disabled={completed} />
+
                     <RemoveAction taskId={taskId} />
+
                     <ListItemButton
                         disableTouchRipple
-                        sx={{ color: 'primary.main' }}
+                        sx={{ color: 'primary.dark' }}
                         onClick={() => setUsersExpanded((prevState) => !prevState)}>
                         <ListItemIcon sx={{ minWidth: 28, color: 'inherit' }}>
                             <Iconify icon={'eva:people-outline'} />
@@ -135,6 +145,7 @@ const ActionsMenu = ({ taskId, userId, completed, appliedTags }: ActionsMenu) =>
                         <ListItemText primary='Assign to' />
                         {usersExpanded ? <ExpandLessIcon fontSize='small' /> : <ExpandMoreIcon fontSize='small' />}
                     </ListItemButton>
+
                     <Collapse in={usersExpanded} timeout='auto' unmountOnExit>
                         <List component='div' disablePadding>
                             {cachedUsers
@@ -200,7 +211,6 @@ const ActionsMenu = ({ taskId, userId, completed, appliedTags }: ActionsMenu) =>
                                         bgcolor: alpha(color, 0.6),
                                     },
                                 }}
-                                onClick={() => console.log('click')}
                             />
                         </ListItem>
                     ))}
@@ -242,6 +252,76 @@ const RemoveAction = ({ taskId }: { taskId: number }) => {
                 onClose={onClose}
             />
         </>
+    );
+};
+
+const DatePicker = ({ disabled }: { disabled: boolean }) => {
+    const [anchorEl, setAnchorEl] = useState(null);
+    const [date, setDate] = useState(format(new Date(), 'MM/dd/yyyy'));
+    const [open, setOpen] = useState(false);
+    const { setFieldValue } = useFormikContext();
+
+    const handleDateChange = (newDate) => {
+        setDate(newDate);
+        setFieldValue('dueDate', newDate);
+    };
+
+    const handleOpen = (event: any) => {
+        setOpen((prevState) => !prevState);
+        setAnchorEl(event.currentTarget);
+    };
+
+    return (
+        <Tooltip
+            title={disabled ? 'You cannot set deadline for completed task' : ''}
+            PopperProps={{
+                placement: 'left',
+                modifiers: [
+                    {
+                        name: 'offset',
+                        options: {
+                            offset: [0, -20],
+                        },
+                    },
+                ],
+            }}>
+            <span>
+                <ListItemButton disableTouchRipple sx={{ color: 'secondary.main' }} disabled={disabled}>
+                    <ListItemIcon sx={{ minWidth: 28, color: 'inherit' }}>
+                        <Iconify icon={'eva:calendar-outline'} />
+                    </ListItemIcon>
+                    <ListItemText
+                        primary={
+                            <DesktopDatePicker
+                                open={open}
+                                label='Due date'
+                                inputFormat='MM/dd/yyyy'
+                                minDate={format(new Date(), 'MM/dd/yyyy')}
+                                value={date}
+                                onClose={() => setOpen(false)}
+                                onAccept={handleDateChange}
+                                onChange={() => true}
+                                PopperProps={{
+                                    anchorEl,
+                                }}
+                                renderInput={({ ref, inputProps, disabled, onChange, value }) => (
+                                    <Box ref={ref} onClick={handleOpen}>
+                                        <input
+                                            style={{ display: 'none' }}
+                                            value={String(value)}
+                                            onChange={onChange}
+                                            disabled={disabled}
+                                            {...inputProps}
+                                        />
+                                        Set due date
+                                    </Box>
+                                )}
+                            />
+                        }
+                    />
+                </ListItemButton>
+            </span>
+        </Tooltip>
     );
 };
 

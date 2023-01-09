@@ -7,6 +7,8 @@ import { AuthProvider } from './hooks/useAuth';
 import { useAppApolloClient } from './services/apolloClient';
 import { AlertProvider } from './hooks/useAlert';
 import Alert from './components/alert/Alert';
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 
 export default function App() {
     const client = useAppApolloClient();
@@ -17,10 +19,12 @@ export default function App() {
                 <HelmetProvider context={{}}>
                     <AuthProvider>
                         <ThemeProvider>
-                            <AlertProvider>
-                                <Routes />
-                                <Alert />
-                            </AlertProvider>
+                            <LocalizationProvider dateAdapter={AdapterDateFns}>
+                                <AlertProvider>
+                                    <Routes />
+                                    <Alert />
+                                </AlertProvider>
+                            </LocalizationProvider>
                         </ThemeProvider>
                     </AuthProvider>
                 </HelmetProvider>

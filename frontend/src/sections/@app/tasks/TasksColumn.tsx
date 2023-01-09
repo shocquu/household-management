@@ -66,7 +66,7 @@ const EmptyState = ({ id, sx }: { id: number; sx?: SxProps }) => {
                         }}
                     />
                     <Typography variant='subtitle1' textAlign='center' color='text.disabled'>
-                        Nothing to see here
+                        Empty
                     </Typography>
                 </>
             )}
@@ -75,7 +75,7 @@ const EmptyState = ({ id, sx }: { id: number; sx?: SxProps }) => {
 };
 
 const TasksColumn = ({ loading, user, index = 1 }: TasksColumn) => {
-    const { id, displayName, avatarUrl, tasks } = user;
+    const { id, displayName, username, avatarUrl, tasks } = user;
     const { user: loggedInUser } = useAuth();
     const { preferences, setPreference } = useLocalPreferences();
     const [isAdding, setIsAdding] = useState(false);
@@ -119,8 +119,11 @@ const TasksColumn = ({ loading, user, index = 1 }: TasksColumn) => {
                     <StyledAvatar alt={displayName} src={AVATARS_BASE_PATH + avatarUrl} />
                     <StyledCover alt={'Cover'} src={`/assets/images/covers/cover_${index}.jpg`} />
                 </StyledCardMedia>
-                <Typography gutterBottom variant='h6' textAlign='center' mt={4}>
+                <Typography variant='h6' textAlign='center' mt={4}>
                     {displayName}
+                </Typography>
+                <Typography gutterBottom variant='caption' textAlign='center' color='text.disabled' mt={-0.5}>
+                    {username}
                 </Typography>
                 <CardContent
                     sx={{
@@ -145,28 +148,31 @@ const TasksColumn = ({ loading, user, index = 1 }: TasksColumn) => {
                                 borderTopStyle: 'dashed',
                             },
                         }}>
-                        <Button onClick={handleToggle}>{showCompleted ? 'Hide completed' : 'Show completed'}</Button>
+                        <Button color='secondary' onClick={handleToggle}>
+                            {showCompleted ? 'Hide completed' : 'Show completed'}
+                        </Button>
                     </Divider>
 
-                    {!loading && tasks.length ? (
-                        <Scrollbar
-                            scrollableNodeProps={{ ref: scrollableNodeRef }}
-                            sx={{
-                                height: `calc(100vh - 20rem)`,
-                            }}>
+                    <Scrollbar
+                        scrollableNodeProps={{ ref: scrollableNodeRef }}
+                        sx={{ maxHeight: 'calc(100vh - 22rem)' }}>
+                        {!loading && (nonCompletedTasks.length > 0 || showCompleted) ? (
                             <Stack mb={2} spacing={1}>
                                 {tasks
                                     .filter((task) => (!showCompleted ? !task.completed : task))
                                     .map((task) => (
                                         <TaskCard key={task.id} task={task} />
                                     ))}
-                                {!isAdding && !showCompleted && <EmptyState id={id} />}
+
                                 {isAdding && <NewCard userId={id} setIsAdding={setIsAdding} />}
                             </Stack>
-                        </Scrollbar>
-                    ) : (
-                        isAdding && <NewCard userId={id} setIsAdding={setIsAdding} />
-                    )}
+                        ) : (
+                            <>
+                                {!isAdding && !showCompleted && <EmptyState id={id} />}
+                                {isAdding && <NewCard userId={id} setIsAdding={setIsAdding} />}
+                            </>
+                        )}
+                    </Scrollbar>
                 </CardContent>
 
                 <Divider sx={{ m: 0, borderStyle: 'dashed' }} />

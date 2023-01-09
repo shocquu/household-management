@@ -1,4 +1,6 @@
-import { format, getTime, formatDistanceToNow } from 'date-fns';
+import { format, getTime, formatDistanceToNow, intervalToDuration, formatDuration } from 'date-fns';
+
+type FormatOptions = 'years' | 'months' | 'weeks' | 'days' | 'hours' | 'minutes' | 'seconds';
 
 export function fDate(date: string | number, newFormat?: string) {
     const fm = newFormat || 'dd MMM yyyy';
@@ -22,4 +24,16 @@ export function fToNow(date: string | number) {
               addSuffix: true,
           })
         : '';
+}
+
+export function fCountdown(date: string | number, format?: FormatOptions[]) {
+    const duration = intervalToDuration({
+        start: new Date(),
+        end: new Date(+date),
+    });
+
+    return formatDuration(duration, {
+        delimiter: ', ',
+        format,
+    });
 }

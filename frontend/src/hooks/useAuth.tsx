@@ -83,6 +83,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     useEffect(() => {
         if (accessToken && !user) refetch();
         if (accessToken && user && !loading) setIsLoggedIn(true);
+        if (!accessToken) logout();
     }, [accessToken, user]);
 
     return (

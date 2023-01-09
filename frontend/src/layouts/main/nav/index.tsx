@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { styled, alpha } from '@mui/material/styles';
-import { Box, Link, Button, Drawer, Typography, Avatar, Stack } from '@mui/material';
+import { Box, Link, Button, Drawer, Typography, Avatar, Stack, Chip } from '@mui/material';
 import account from '../../../_mock/account';
 import useResponsive from '../../../hooks/useResponsive';
 import Logo from '../../../components/logo';
@@ -60,10 +60,16 @@ const Nav = ({ openNav, onCloseNav }: Nav) => {
 
             <Box sx={{ flexGrow: 1 }} />
 
-            <Box sx={{ px: 2.5, pb: 3, mt: 10 }}>
-                <Typography variant='body2' textAlign='center' sx={{ color: 'text.secondary' }}>
-                    <strong>AGH</strong> 2023
-                </Typography>
+            <Box sx={{ px: 2.5, pb: 3, m: 'auto' }}>
+                <Chip
+                    label={
+                        <>
+                            <strong>AGH</strong> 2023
+                        </>
+                    }
+                    color='secondary'
+                    sx={{ width: 86, m: 'auto' }}
+                />
             </Box>
         </Scrollbar>
     );
