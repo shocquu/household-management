@@ -10,6 +10,7 @@ import {
     styled,
     SxProps,
     Tooltip,
+    Button,
     Typography,
 } from '@mui/material';
 import InventoryIcon from '@mui/icons-material/Inventory';
@@ -22,6 +23,7 @@ import { createRef, useState } from 'react';
 import NewCard from './NewCard';
 import { AVATARS_BASE_PATH, HEADER } from '../../../constants';
 import useAuth from '../../../hooks/useAuth';
+import useLocalPreferences from '../../../hooks/useLocalPreferences';
 
 interface TasksColumn {
     user?: User;
@@ -75,10 +77,12 @@ const EmptyState = ({ id, sx }: { id: number; sx?: SxProps }) => {
 const TasksColumn = ({ loading, user, index = 1 }: TasksColumn) => {
     const { id, displayName, avatarUrl, tasks } = user;
     const { user: loggedInUser } = useAuth();
-
+    const { preferences, setPreference } = useLocalPreferences();
     const [isAdding, setIsAdding] = useState(false);
+    const [showCompleted, setShowCompleted] = useState(preferences.showCompletedTasks);
     const scrollableNodeRef = createRef<any>();
     const isAdmin = loggedInUser.role === Role.Admin;
+    const nonCompletedTasks = tasks.filter((task) => !task.completed);
 
     const handleAdd = () => {
         setIsAdding(true);
@@ -91,6 +95,11 @@ const TasksColumn = ({ loading, user, index = 1 }: TasksColumn) => {
         if (!isAdmin) return 'Only users with the Admin role can add tasks';
         if (isAdding) return 'Cancel';
         return 'Add new task';
+    };
+
+    const handleToggle = () => {
+        setShowCompleted((prevState) => !prevState);
+        setPreference('showCompletedTasks', !showCompleted);
     };
 
     return (
@@ -126,6 +135,19 @@ const TasksColumn = ({ loading, user, index = 1 }: TasksColumn) => {
                             </Stack>
                         ))}
 
+                    <Divider
+                        sx={{
+                            mb: 1,
+                            '&::before': {
+                                borderTopStyle: 'dashed',
+                            },
+                            '&::after': {
+                                borderTopStyle: 'dashed',
+                            },
+                        }}>
+                        <Button onClick={handleToggle}>{showCompleted ? 'Hide completed' : 'Show completed'}</Button>
+                    </Divider>
+
                     {!loading && tasks.length ? (
                         <Scrollbar
                             scrollableNodeProps={{ ref: scrollableNodeRef }}
@@ -133,17 +155,17 @@ const TasksColumn = ({ loading, user, index = 1 }: TasksColumn) => {
                                 height: `calc(100vh - 20rem)`,
                             }}>
                             <Stack mb={2} spacing={1}>
-                                {tasks.map((task) => (
-                                    <TaskCard key={task.id} task={task} />
-                                ))}
+                                {tasks
+                                    .filter((task) => (!showCompleted ? !task.completed : task))
+                                    .map((task) => (
+                                        <TaskCard key={task.id} task={task} />
+                                    ))}
+                                {!isAdding && !showCompleted && <EmptyState id={id} />}
                                 {isAdding && <NewCard userId={id} setIsAdding={setIsAdding} />}
                             </Stack>
                         </Scrollbar>
                     ) : (
-                        <>
-                            {!isAdding && <EmptyState id={id} />}
-                            {isAdding && <NewCard userId={id} setIsAdding={setIsAdding} />}
-                        </>
+                        isAdding && <NewCard userId={id} setIsAdding={setIsAdding} />
                     )}
                 </CardContent>
 

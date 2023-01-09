@@ -26,10 +26,10 @@ import CloseIcon from '@mui/icons-material/Close';
 import { gql, useApolloClient, useMutation, useQuery } from '@apollo/client';
 import { fToNow } from '../../../utils/formatTime';
 import ActionsMenu from './ActionsMenu';
-import EditableText from '../../../components/editable-text/EditableText';
+import EditableText from '../../../components/editable-text';
 import { useFormik } from 'formik';
 import useAuth from '../../../hooks/useAuth';
-import { Comment } from '../../../types';
+import { Comment, Role } from '../../../types';
 import Iconify from '../../../components/iconify';
 import { USERS_QUERY } from '../../../pages/TasksPage';
 import { AVATARS_BASE_PATH } from '../../../constants';
@@ -97,12 +97,13 @@ const TaskModal = ({ taskId, open, handleClose }: TaskModal) => {
         variables: { taskId },
     });
     const [updateTask] = useMutation(UPDATE_TASK_MUTATION, {
-        refetchQueries: [{ query: USERS_QUERY }, { query: TASK_QUERY, variables: { taskId } }],
+        refetchQueries: [{ query: TASK_QUERY, variables: { taskId } }],
     });
 
     const { title = '', description = '', comments = [], tags: appliedTags = [], completed, user } = data?.task || {};
 
     const isAssignedTo = loggedInUser.id === user?.id;
+    const showActionsMenu = isAssignedTo || loggedInUser.role === Role.Admin;
     const formik = useFormik({
         initialValues: {
             title,
@@ -130,7 +131,7 @@ const TaskModal = ({ taskId, open, handleClose }: TaskModal) => {
     return (
         <Modal aria-labelledby='task-title' aria-describedby='task-description' open={open} onClose={onClose}>
             <>
-                <ModalContent sx={{ position: 'relative', width: !isAssignedTo ? 'fit-content' : 'unset' }}>
+                <ModalContent sx={{ position: 'relative', width: !showActionsMenu ? 'fit-content' : 'unset' }}>
                     <Grid container spacing={2}>
                         <Grid item xs={9} sx={{ minWidth: { xs: 300, md: 400, lg: 500 } }}>
                             <form onSubmit={formik.handleSubmit}>
@@ -244,12 +245,12 @@ const TaskModal = ({ taskId, open, handleClose }: TaskModal) => {
                                         />
                                     </ListItem>
                                 ) : (
-                                    comments?.map((comment) => <CommentBlock comment={comment} />)
+                                    comments?.map((comment) => <CommentBlock key={comment.id} comment={comment} />)
                                 )}
                             </List>
                         </Grid>
 
-                        {isAssignedTo && (
+                        {showActionsMenu && (
                             <Grid item xs={3}>
                                 <ActionsMenu
                                     taskId={taskId}
@@ -305,7 +306,7 @@ const CommentBlock = ({ comment }: { comment: Comment }) => {
                 primary={
                     <>
                         <b>{author.displayName}</b>
-                        <Typography variant='caption' color='text.secondary' ml={0.5}>
+                        <Typography variant='caption' component='span' color='text.secondary' ml={0.5}>
                             {fToNow(createdAt)}
                         </Typography>
                     </>

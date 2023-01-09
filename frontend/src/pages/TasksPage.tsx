@@ -1,9 +1,10 @@
 import { Helmet } from 'react-helmet-async';
 import { useTheme } from '@mui/material/styles';
 import { Grid, Container } from '@mui/material';
-import { gql, useQuery } from '@apollo/client';
+import { gql, useLazyQuery, useQuery } from '@apollo/client';
 import TasksColumn from '../sections/@app/tasks/TasksColumn';
 import Alert from '../components/alert/Alert';
+import { useEffect, useState } from 'react';
 
 export const USERS_QUERY = gql`
     query Users {
@@ -31,8 +32,13 @@ export const USERS_QUERY = gql`
 `;
 
 const TasksPage = () => {
-    const { data, loading } = useQuery(USERS_QUERY);
-    const theme = useTheme();
+    const [getUsers, { data, loading, called }] = useLazyQuery(USERS_QUERY, {
+        fetchPolicy: 'cache-first',
+    });
+
+    useEffect(() => {
+        if (!called) getUsers();
+    }, []);
 
     return (
         <>

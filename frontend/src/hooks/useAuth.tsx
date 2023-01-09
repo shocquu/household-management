@@ -49,8 +49,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const navigate = useNavigate();
 
     const { loading, error, refetch } = useQuery(CURRENT_USER_QUERY, {
-        skip: !accessToken,
-        fetchPolicy: 'network-only',
+        skip: !accessToken || !!user,
         context: {
             headers: {
                 authorization: 'Bearer ' + accessToken,
@@ -82,7 +81,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     };
 
     useEffect(() => {
-        if (accessToken) refetch();
+        if (accessToken && !user) refetch();
         if (accessToken && user && !loading) setIsLoggedIn(true);
     }, [accessToken, user]);
 

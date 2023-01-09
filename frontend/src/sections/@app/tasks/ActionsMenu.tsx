@@ -1,5 +1,16 @@
 import { useState } from 'react';
-import { Chip, Collapse, List, ListItemButton, ListItemIcon, ListItemText, ListSubheader } from '@mui/material';
+import {
+    alpha,
+    Avatar,
+    Chip,
+    Collapse,
+    List,
+    ListItem,
+    ListItemButton,
+    ListItemIcon,
+    ListItemText,
+    ListSubheader,
+} from '@mui/material';
 import CheckIcon from '@mui/icons-material/Check';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -11,6 +22,8 @@ import { USERS_QUERY } from '../../../pages/TasksPage';
 import useAuth from '../../../hooks/useAuth';
 import useAlert from '../../../hooks/useAlert';
 import { TASK_QUERY } from './TaskModal';
+import { useAppApolloClient } from '../../../services/apolloClient';
+import { AVATARS_BASE_PATH } from '../../../constants';
 
 const TAGS_QUERY = gql`
     query Tags {
@@ -46,28 +59,33 @@ interface ActionsMenu {
 }
 
 const ActionsMenu = ({ taskId, userId, completed, appliedTags }: ActionsMenu) => {
-    const [expanded, setExpanded] = useState(false);
+    const [usersExpanded, setUsersExpanded] = useState(false);
+    const [labelsExpanded, setLabelsExpanded] = useState(false);
     const alert = useAlert();
     const { user } = useAuth();
     const { data } = useQuery(TAGS_QUERY);
     const [updateTask] = useMutation(UPDATE_TASK_MUTATION, {
         refetchQueries: [{ query: TASK_QUERY, variables: { taskId } }],
+        onError: (error) => {
+            alert.error(error.message);
+        },
         update: (cache) => {
             cache.modify({
                 fields: {
                     users(cachedUsers: User[] = [], { readField }) {
-                        const foundUser = cachedUsers.find((user) => userId === readField('id', user));
+                        const foundUser = cachedUsers?.find((user) => userId === readField('id', user));
                         return { ...cachedUsers, foundUser };
                     },
                 },
             });
         },
-        onError: (error) => {
-            alert.error(error.message);
-        },
     });
 
-    const handleClick = () => setExpanded(!expanded);
+    const client = useAppApolloClient();
+    const cache = client.readQuery({
+        query: USERS_QUERY,
+    });
+    const cachedUsers = cache?.users;
 
     const isTagApplied = (taskId: number) => appliedTags.some((tag) => tag.id === taskId);
 
@@ -107,28 +125,70 @@ const ActionsMenu = ({ taskId, userId, completed, appliedTags }: ActionsMenu) =>
             {user.role === Role.Admin && (
                 <>
                     <RemoveAction taskId={taskId} />
-                    <ListItemButton disableTouchRipple sx={{ color: 'primary.main' }}>
+                    <ListItemButton
+                        disableTouchRipple
+                        sx={{ color: 'primary.main' }}
+                        onClick={() => setUsersExpanded((prevState) => !prevState)}>
                         <ListItemIcon sx={{ minWidth: 28, color: 'inherit' }}>
                             <Iconify icon={'eva:people-outline'} />
                         </ListItemIcon>
                         <ListItemText primary='Assign to' />
+                        {usersExpanded ? <ExpandLessIcon fontSize='small' /> : <ExpandMoreIcon fontSize='small' />}
                     </ListItemButton>
+                    <Collapse in={usersExpanded} timeout='auto' unmountOnExit>
+                        <List component='div' disablePadding>
+                            {cachedUsers
+                                ?.filter((user) => user.id !== userId)
+                                .map(({ id, displayName, avatarUrl }) => (
+                                    <ListItem key={id} sx={{ pl: 4 }}>
+                                        <Chip
+                                            size='small'
+                                            disabled={completed}
+                                            icon={
+                                                <Avatar
+                                                    src={AVATARS_BASE_PATH + avatarUrl}
+                                                    sx={{ width: 18, height: 18 }}
+                                                />
+                                            }
+                                            label={displayName}
+                                            sx={{
+                                                cursor: 'pointer',
+                                            }}
+                                            onClick={() =>
+                                                updateTask({
+                                                    variables: {
+                                                        updateTaskInput: {
+                                                            id: taskId,
+                                                            userId: id,
+                                                        },
+                                                    },
+                                                    onCompleted: () => {
+                                                        alert.success('Task assigned successfully');
+                                                    },
+                                                })
+                                            }
+                                        />
+                                    </ListItem>
+                                ))}
+                        </List>
+                    </Collapse>
                 </>
             )}
 
-            <ListItemButton disableTouchRipple onClick={handleClick}>
+            <ListItemButton disableTouchRipple onClick={() => setLabelsExpanded((prevState) => !prevState)}>
                 <ListItemIcon sx={{ minWidth: 28 }}>
                     <Iconify icon={'material-symbols:label-outline'} />
                 </ListItemIcon>
                 <ListItemText primary='Labels' />
-                {expanded ? <ExpandLessIcon fontSize='small' /> : <ExpandMoreIcon fontSize='small' />}
+                {labelsExpanded ? <ExpandLessIcon fontSize='small' /> : <ExpandMoreIcon fontSize='small' />}
             </ListItemButton>
-            <Collapse in={expanded} timeout='auto' unmountOnExit>
+            <Collapse in={labelsExpanded} timeout='auto' unmountOnExit>
                 <List component='div' disablePadding>
                     {data?.tags.map(({ id, label, color }) => (
-                        <ListItemButton key={id} sx={{ pl: 4 }}>
+                        <ListItem key={id} sx={{ pl: 4 }}>
                             <Chip
                                 size='small'
+                                disabled={completed}
                                 icon={isTagApplied(id) ? <CheckIcon color='inherit' fontSize='inherit' /> : undefined}
                                 label={label}
                                 sx={{
@@ -136,9 +196,13 @@ const ActionsMenu = ({ taskId, userId, completed, appliedTags }: ActionsMenu) =>
                                     p: '1px',
                                     color: 'common.white',
                                     bgcolor: color,
+                                    '&:hover': {
+                                        bgcolor: alpha(color, 0.6),
+                                    },
                                 }}
+                                onClick={() => console.log('click')}
                             />
-                        </ListItemButton>
+                        </ListItem>
                     ))}
                 </List>
             </Collapse>
@@ -149,7 +213,7 @@ const ActionsMenu = ({ taskId, userId, completed, appliedTags }: ActionsMenu) =>
 const RemoveAction = ({ taskId }: { taskId: number }) => {
     const [isOpen, setIsOpen] = useState(false);
     const alert = useAlert();
-    const [removeTask, { error }] = useMutation(REMOVE_TASK_MUTATION, {
+    const [removeTask] = useMutation(REMOVE_TASK_MUTATION, {
         refetchQueries: [{ query: USERS_QUERY }, 'Users'],
         onError: () => {
             alert.error('An error occured while deleting the task');
