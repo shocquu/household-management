@@ -14,7 +14,6 @@ import { AVATARS_BASE_PATH } from '../constants';
 import { useAppApolloClient } from '../services/apolloClient';
 import { User } from '../types';
 import { useAccessToken } from './useAccessToken';
-import { useUserQuery } from './useUserQuery';
 
 interface AuthContextType {
     user?: User;

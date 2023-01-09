@@ -34,6 +34,8 @@ model Task {
   id          Int       @id @default(autoincrement())
   title       String
   description String?
+  dueDate     DateTime?
+  completed   Boolean   @default(false)
 
   tags        Tag[]
   comments    Comment[]
@@ -77,5 +79,7 @@ enum Role {
   USER
   ADMIN
 }
+
+
 
 

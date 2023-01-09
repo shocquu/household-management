@@ -8,6 +8,11 @@
 /* tslint:disable */
 /* eslint-disable */
 
+export enum SortOrder {
+    ASC = "ASC",
+    DESC = "DESC"
+}
+
 export enum Role {
     ADMIN = "ADMIN",
     USER = "USER"
@@ -47,7 +52,9 @@ export class CreateTaskInput {
 export class UpdateTaskInput {
     id: number;
     title?: Nullable<string>;
+    dueDate?: Nullable<string>;
     description?: Nullable<string>;
+    completed?: Nullable<boolean>;
     userId?: Nullable<number>;
     commentId?: Nullable<number>;
 }
@@ -83,6 +90,11 @@ export class UpdatePasswordInput {
     newPassword?: Nullable<string>;
 }
 
+export class Sort {
+    field: string;
+    order?: Nullable<SortOrder>;
+}
+
 export class Comment {
     id: number;
     task: Task;
@@ -105,7 +117,7 @@ export abstract class IQuery {
 
     abstract task(id: number): Nullable<Task> | Promise<Nullable<Task>>;
 
-    abstract users(): Nullable<User>[] | Promise<Nullable<User>[]>;
+    abstract users(sortBy?: Nullable<Sort>): Nullable<User>[] | Promise<Nullable<User>[]>;
 
     abstract user(id: number): Nullable<User> | Promise<Nullable<User>>;
 
@@ -157,6 +169,8 @@ export class Task {
     description?: Nullable<string>;
     createdAt: string;
     updatedAt: string;
+    dueDate?: Nullable<string>;
+    completed: boolean;
     user: User;
     tags?: Nullable<Nullable<Tag>[]>;
     comments?: Nullable<Nullable<Comment>[]>;

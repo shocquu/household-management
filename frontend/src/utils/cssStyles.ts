@@ -1,6 +1,6 @@
 import { alpha } from '@mui/material/styles';
 
-export function bgBlur(props) {
+export function bgBlur(props): Record<string, any> {
     const color = props?.color || '#000000';
     const blur = props?.blur || 6;
     const opacity = props?.opacity || 0.8;

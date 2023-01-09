@@ -5,7 +5,7 @@ export type User = {
     username: string;
     displayName: string;
     avatarUrl: string;
-    role: ERole;
+    role: Role;
     tasks?: Task[];
     comments?: Comment[];
 };
@@ -14,8 +14,10 @@ export type Task = {
     id: number;
     title: string;
     description?: string;
+    completed: boolean;
     tags?: Tag[];
     comments?: Comment[];
+    dueDate: number;
     createdAt: number;
     updatedAt: number;
 };
@@ -34,9 +36,9 @@ export type Comment = {
     updatedAt: string;
 };
 
-export enum ERole {
-    ADMIN = 'ADMIN',
-    USER = 'USER',
+export enum Role {
+    Admin = 'ADMIN',
+    User = 'USER',
 }
 
 export enum AlertStatus {

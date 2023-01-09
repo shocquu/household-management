@@ -14,8 +14,10 @@ export const USERS_QUERY = gql`
             tasks {
                 id
                 title
-                description
+                dueDate
                 createdAt
+                description
+                completed
                 comments {
                     message
                 }

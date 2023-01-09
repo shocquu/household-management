@@ -57,8 +57,6 @@ const PasswordChange = () => {
         },
     });
 
-    console.log(formik);
-
     return (
         <Card elevation={3}>
             <CardContent>

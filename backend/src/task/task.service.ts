@@ -38,10 +38,13 @@ export class TaskService {
     });
   }
 
-  update(id: number, { userId, title, description }: UpdateTaskInput) {
+  update(
+    id: number,
+    { userId, title, description, dueDate, completed }: UpdateTaskInput,
+  ) {
     return this.prisma.task.update({
       where: { id },
-      data: { userId, title, description },
+      data: { userId, title, description, dueDate, completed },
       include: { user: true, tags: true, comments: true },
     });
   }

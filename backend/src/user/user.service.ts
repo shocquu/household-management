@@ -104,6 +104,7 @@ export class UserService {
             tags: true,
             comments: true,
           },
+          orderBy: [{ completed: 'asc' }, { createdAt: 'asc' }],
         },
       },
     });

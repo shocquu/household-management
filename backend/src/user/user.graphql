@@ -50,7 +50,7 @@ type LoggedUserOutput {
 }
 
 type Query {
-  users: [User]!
+  users(sortBy: Sort): [User]!
   user(id: Int!): User
   whoami: User
   refresh: LoggedUserOutput
@@ -62,6 +62,16 @@ type Mutation {
   removeUser(id: Int!): User
   loginUser(loginUserInput: LoginUserInput!): LoggedUserOutput!
   updatePassword(updatePasswordInput: UpdatePasswordInput!): User!
+}
+
+input Sort {
+  field: String!
+  order: SortOrder = ASC
+}
+
+enum SortOrder {
+  ASC
+  DESC
 }
 
 enum Role {

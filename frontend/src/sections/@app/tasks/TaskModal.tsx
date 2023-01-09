@@ -34,12 +34,15 @@ import Iconify from '../../../components/iconify';
 import { USERS_QUERY } from '../../../pages/TasksPage';
 import { AVATARS_BASE_PATH } from '../../../constants';
 
-const TASK_QUERY = gql`
+export const TASK_QUERY = gql`
     query Task($taskId: Int!) {
         task(id: $taskId) {
             title
             description
+            dueDate
+            completed
             user {
+                id
                 displayName
                 avatarUrl
             }
@@ -97,8 +100,9 @@ const TaskModal = ({ taskId, open, handleClose }: TaskModal) => {
         refetchQueries: [{ query: USERS_QUERY }, { query: TASK_QUERY, variables: { taskId } }],
     });
 
-    const { title = '', description = '', comments = [], tags: appliedTasks = [] } = data?.task || {};
+    const { title = '', description = '', comments = [], tags: appliedTags = [], completed, user } = data?.task || {};
 
+    const isAssignedTo = loggedInUser.id === user?.id;
     const formik = useFormik({
         initialValues: {
             title,
@@ -106,7 +110,7 @@ const TaskModal = ({ taskId, open, handleClose }: TaskModal) => {
             comments,
         },
         enableReinitialize: true,
-        onSubmit: ({ title, description, comments }) => {
+        onSubmit: ({ title, description }) => {
             updateTask({
                 variables: {
                     updateTaskInput: { id: taskId, title, description },
@@ -126,16 +130,20 @@ const TaskModal = ({ taskId, open, handleClose }: TaskModal) => {
     return (
         <Modal aria-labelledby='task-title' aria-describedby='task-description' open={open} onClose={onClose}>
             <>
-                <ModalContent sx={{ position: 'relative' }}>
+                <ModalContent sx={{ position: 'relative', width: !isAssignedTo ? 'fit-content' : 'unset' }}>
                     <Grid container spacing={2}>
-                        <Grid item xs={9}>
+                        <Grid item xs={9} sx={{ minWidth: { xs: 300, md: 400, lg: 500 } }}>
                             <form onSubmit={formik.handleSubmit}>
                                 <header style={{ maxWidth: '90%' }}>
                                     <CloseButton size='small' aria-label='Close' onClick={handleClose}>
                                         <CloseIcon />
                                     </CloseButton>
 
-                                    {!loading && formik.values.title ? (
+                                    {completed ? (
+                                        <Typography variant='h6' component='h2'>
+                                            {formik.values.title}
+                                        </Typography>
+                                    ) : !loading && formik.values.title ? (
                                         <EditableText
                                             fullWidth
                                             id='task-title'
@@ -149,7 +157,7 @@ const TaskModal = ({ taskId, open, handleClose }: TaskModal) => {
                                         <Skeleton variant='text' width='30%' sx={{ fontSize: '1rem' }} />
                                     )}
                                 </header>
-                                {appliedTasks.length > 0 && (
+                                {appliedTags.length > 0 && (
                                     <>
                                         <Typography
                                             paragraph
@@ -158,7 +166,7 @@ const TaskModal = ({ taskId, open, handleClose }: TaskModal) => {
                                             sx={{ mt: 0.5, mb: 0 }}>
                                             Labels
                                         </Typography>
-                                        {appliedTasks?.map(({ label, color }) => (
+                                        {appliedTags.map(({ label, color }) => (
                                             <Chip
                                                 key={label}
                                                 size='small'
@@ -174,7 +182,7 @@ const TaskModal = ({ taskId, open, handleClose }: TaskModal) => {
                                 </Typography>
                                 {loading ? (
                                     <Skeleton variant='rounded' width='100%' height={60} sx={{ mt: 0.5 }} />
-                                ) : description ? (
+                                ) : description && !completed ? (
                                     <EditableText
                                         id='task-description'
                                         minRows={2}
@@ -184,6 +192,7 @@ const TaskModal = ({ taskId, open, handleClose }: TaskModal) => {
                                     />
                                 ) : (
                                     <TextField
+                                        disabled={completed}
                                         fullWidth
                                         multiline
                                         minRows={2}
@@ -208,7 +217,15 @@ const TaskModal = ({ taskId, open, handleClose }: TaskModal) => {
                                     <ListItemAvatar>
                                         <Avatar alt={loggedInUser.displayName} src={loggedInUser.avatarUrl} />
                                     </ListItemAvatar>
-                                    <ListItemText primary={<NewComment authorId={loggedInUser.id} taskId={taskId} />} />
+                                    <ListItemText
+                                        primary={
+                                            <NewComment
+                                                disabled={completed}
+                                                authorId={loggedInUser.id}
+                                                taskId={taskId}
+                                            />
+                                        }
+                                    />
                                 </ListItem>
                                 {loading ? (
                                     <ListItem dense disableGutters>
@@ -231,9 +248,17 @@ const TaskModal = ({ taskId, open, handleClose }: TaskModal) => {
                                 )}
                             </List>
                         </Grid>
-                        <Grid item xs={3}>
-                            <ActionsMenu taskId={taskId} appliedTasks={appliedTasks} />
-                        </Grid>
+
+                        {isAssignedTo && (
+                            <Grid item xs={3}>
+                                <ActionsMenu
+                                    taskId={taskId}
+                                    userId={user?.id}
+                                    completed={completed}
+                                    appliedTags={appliedTags}
+                                />
+                            </Grid>
+                        )}
                     </Grid>
                 </ModalContent>
             </>
@@ -313,7 +338,7 @@ const ADD_COMMENT_MUTATION = gql`
     }
 `;
 
-const NewComment = ({ authorId, taskId }: { authorId: number; taskId: number }) => {
+const NewComment = ({ disabled, authorId, taskId }: { disabled: boolean; authorId: number; taskId: number }) => {
     const [isFocused, setIsFocused] = useState(false);
     const [postComment] = useMutation(ADD_COMMENT_MUTATION, {
         refetchQueries: [TASK_QUERY, USERS_QUERY],
@@ -334,17 +359,18 @@ const NewComment = ({ authorId, taskId }: { authorId: number; taskId: number }) 
     return (
         <Wrapper onSubmit={formik.handleSubmit}>
             <TextField
+                disabled={disabled}
                 fullWidth
                 multiline
                 size='small'
                 name='message'
                 value={formik.values.message}
-                placeholder='Write a comment'
+                placeholder={disabled ? 'Cannot post comments on completed tasks' : 'Write a comment'}
                 InputProps={{
                     sx: {
                         transition: 'padding .3s',
                         fontSize: '14px',
-                        pb: isFocused ? 6 : undefined,
+                        pb: isFocused && !disabled ? 6 : undefined,
                     },
                 }}
                 onChange={formik.handleChange}
@@ -356,7 +382,7 @@ const NewComment = ({ authorId, taskId }: { authorId: number; taskId: number }) 
                     if (!formik.values.message) setIsFocused(false);
                 }}
             />
-            {isFocused && (
+            {isFocused && !disabled && (
                 <Button
                     size='small'
                     type='submit'
@@ -380,7 +406,7 @@ const ModalContent = styled(Paper)(({ theme }) => ({
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    width: 700,
+    maxWidth: 700,
     padding: theme.spacing(3),
     outline: 0,
 }));

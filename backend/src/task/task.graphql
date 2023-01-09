@@ -4,6 +4,8 @@ type Task {
   description: String
   createdAt: String!
   updatedAt: String!
+  dueDate: String
+  completed: Boolean!
   user: User!
   tags: [Tag]
   comments: [Comment]
@@ -19,7 +21,9 @@ input CreateTaskInput {
 input UpdateTaskInput {
   id: Int!
   title: String
+  dueDate: String
   description: String
+  completed: Boolean
   userId: Int
   commentId: Int
 }

@@ -15,12 +15,12 @@ import {
 import InventoryIcon from '@mui/icons-material/Inventory';
 import AddIcon from '@mui/icons-material/Add';
 import SvgColor from '../../../components/svg-color';
-import { User } from '../../../types';
+import { Role, User } from '../../../types';
 import Scrollbar from '../../../components/scrollbar';
 import TaskCard from './TaskCard';
 import { createRef, useState } from 'react';
 import NewCard from './NewCard';
-import { AVATARS_BASE_PATH } from '../../../constants';
+import { AVATARS_BASE_PATH, HEADER } from '../../../constants';
 import useAuth from '../../../hooks/useAuth';
 
 interface TasksColumn {
@@ -37,7 +37,8 @@ const EmptyState = ({ id, sx }: { id: number; sx?: SxProps }) => {
             alignItems='center'
             justifyContent='center'
             height='100%'
-            my={2}
+            mt={2}
+            mb={4}
             sx={{ minWidth: 210, minHeight: 140, ...sx }}>
             {id === loggedInUser.id ? (
                 <>
@@ -73,9 +74,11 @@ const EmptyState = ({ id, sx }: { id: number; sx?: SxProps }) => {
 
 const TasksColumn = ({ loading, user, index = 1 }: TasksColumn) => {
     const { id, displayName, avatarUrl, tasks } = user;
+    const { user: loggedInUser } = useAuth();
 
     const [isAdding, setIsAdding] = useState(false);
     const scrollableNodeRef = createRef<any>();
+    const isAdmin = loggedInUser.role === Role.Admin;
 
     const handleAdd = () => {
         setIsAdding(true);
@@ -83,6 +86,12 @@ const TasksColumn = ({ loading, user, index = 1 }: TasksColumn) => {
     };
 
     const handleCancel = () => setIsAdding(false);
+
+    const getTitle = () => {
+        if (!isAdmin) return 'Only users with the Admin role can add tasks';
+        if (isAdding) return 'Cancel';
+        return 'Add new task';
+    };
 
     return (
         <>
@@ -121,16 +130,12 @@ const TasksColumn = ({ loading, user, index = 1 }: TasksColumn) => {
                         <Scrollbar
                             scrollableNodeProps={{ ref: scrollableNodeRef }}
                             sx={{
-                                minHeight: '100%',
-                                maxHeight: 440,
+                                height: `calc(100vh - 20rem)`,
                             }}>
                             <Stack mb={2} spacing={1}>
-                                {tasks
-                                    .slice()
-                                    .sort((a, b) => a.createdAt - b.createdAt)
-                                    .map((task) => (
-                                        <TaskCard key={task.id} task={task} />
-                                    ))}
+                                {tasks.map((task) => (
+                                    <TaskCard key={task.id} task={task} />
+                                ))}
                                 {isAdding && <NewCard userId={id} setIsAdding={setIsAdding} />}
                             </Stack>
                         </Scrollbar>
@@ -145,16 +150,19 @@ const TasksColumn = ({ loading, user, index = 1 }: TasksColumn) => {
                 <Divider sx={{ m: 0, borderStyle: 'dashed' }} />
 
                 <CardActions sx={{ display: 'flex', justifyContent: 'center' }}>
-                    <Tooltip title={isAdding ? 'Cancel' : 'Add new task'}>
-                        <IconButton
-                            color='primary'
-                            onClick={isAdding ? handleCancel : handleAdd}
-                            sx={{
-                                transition: 'transform .3s',
-                                transform: isAdding ? 'rotate(-45deg)' : 'rotate(0deg)',
-                            }}>
-                            <AddIcon />
-                        </IconButton>
+                    <Tooltip title={getTitle()}>
+                        <span>
+                            <IconButton
+                                disabled={!isAdmin}
+                                color='primary'
+                                onClick={isAdding ? handleCancel : handleAdd}
+                                sx={{
+                                    transition: 'transform .3s',
+                                    transform: isAdding ? 'rotate(-45deg)' : 'rotate(0deg)',
+                                }}>
+                                <AddIcon />
+                            </IconButton>
+                        </span>
                     </Tooltip>
                 </CardActions>
             </Paper>

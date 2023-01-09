@@ -6,23 +6,13 @@ import Searchbar from './Searchbar';
 import AccountPopover from './AccountPopover';
 import LanguagePopover from './LanguagePopover';
 import NotificationsPopover from './NotificationsPopover';
-
-const HEADER = 64;
-
-const StyledRoot = styled(AppBar)(({ theme }) => ({
-    ...bgBlur({ color: theme.palette.background.default }),
-    boxShadow: 'none',
-}));
-
-const StyledToolbar = styled(Toolbar)(({ theme }) => ({
-    minHeight: HEADER,
-}));
+import { HEADER } from '../../../constants';
 
 interface Header {
     onOpenNav: () => void;
 }
 
-export default function Header({ onOpenNav }: Header) {
+const Header = ({ onOpenNav }: Header) => {
     return (
         <StyledRoot>
             <StyledToolbar>
@@ -52,4 +42,15 @@ export default function Header({ onOpenNav }: Header) {
             </StyledToolbar>
         </StyledRoot>
     );
-}
+};
+
+const StyledRoot = styled(AppBar)(({ theme }) => ({
+    ...bgBlur({ color: theme.palette.background.default }),
+    boxShadow: 'none',
+}));
+
+const StyledToolbar = styled(Toolbar)(({ theme }) => ({
+    minHeight: HEADER,
+}));
+
+export default Header;

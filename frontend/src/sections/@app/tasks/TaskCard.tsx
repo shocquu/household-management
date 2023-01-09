@@ -39,7 +39,7 @@ interface BlogPostCardProps {
 }
 
 const TaskCard = ({ task }: BlogPostCardProps) => {
-    const { id, title, description, createdAt, comments, tags } = task;
+    const { id, title, description, createdAt, dueDate, comments, tags, completed } = task;
 
     const [open, setOpen] = useState(false);
     const handleOpen = () => setOpen(true);
@@ -77,13 +77,15 @@ const TaskCard = ({ task }: BlogPostCardProps) => {
                         showDescription: Boolean(description),
                     }}
                 />
-                {/* <Overlay>
-                    <TaskAltIcon
-                        color='inherit'
-                        fontSize='large'
-                        sx={{ position: 'relative', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}
-                    />
-                </Overlay> */}
+                {completed && (
+                    <Overlay>
+                        <TaskAltIcon
+                            color='info'
+                            fontSize='large'
+                            sx={{ position: 'relative', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}
+                        />
+                    </Overlay>
+                )}
             </Card>
             <TaskModal taskId={id} open={open} handleClose={handleClose} />
         </>
