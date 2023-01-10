@@ -69,7 +69,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     const [refreshTokens] = useLazyQuery(REFRESH_TOKENS_QUERY, {
         onCompleted: ({ refresh }) => {
-            console.log('got new token bro', refresh);
+            console.log('got new token bro');
             setAccessToken(refresh.accessToken);
         },
     });
