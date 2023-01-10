@@ -8,8 +8,15 @@ type User {
   refreshToken: String
   role: Role!
 
+  settings: Settings
+
   tasks: [Task]
   comments: [Comment]
+}
+
+type Settings {
+  dateFormat: String!
+  timeFormat: String!
 }
 
 input CreateUserInput {
@@ -31,6 +38,8 @@ input UpdateUserInput {
   password: String
   avatarUrl: String
   refreshToken: String
+  dateFormat: String
+  timeFormat: String
 }
 
 input LoginUserInput {

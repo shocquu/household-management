@@ -26,10 +26,6 @@ const RestrictedRoute = ({ isLoggedIn, children }) => {
 const RoutesWrapper = () => {
     const { user, isLoggedIn } = useAuth();
 
-    // useEffect(() => {
-    //     console.log(user, isLoggedIn);
-    // }, [isLoggedIn]);
-
     const routes = useRoutes([
         {
             path: '/',
@@ -40,28 +36,24 @@ const RoutesWrapper = () => {
             ),
             children: [
                 { element: <Navigate to='/assigments' />, index: true },
+
                 {
                     path: 'assigments',
                     element: <TasksPage />,
                 },
                 { path: 'tags', element: <UserPage /> },
-                { path: 'products', element: <ProductsPage /> },
-            ],
-        },
-        {
-            path: '/user',
-            element: (
-                <ProtectedRoute isLoggedIn={isLoggedIn}>
-                    <MainLayout />
-                </ProtectedRoute>
-            ),
-            children: [
-                { element: <Navigate to='/user/account' />, index: true },
+                { path: '/user/settings', element: <SettingsPage /> },
                 {
-                    path: 'account',
+                    path: '/user',
                     element: <AccountPage />,
+                    children: [
+                        { element: <Navigate to='/user/account' replace={true} />, index: true },
+                        {
+                            path: 'account',
+                            element: <AccountPage />,
+                        },
+                    ],
                 },
-                { path: 'settings', element: <SettingsPage /> },
             ],
         },
         {

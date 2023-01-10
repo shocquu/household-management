@@ -6,6 +6,11 @@ export type User = {
     displayName: string;
     avatarUrl: string;
     role: Role;
+    settings: {
+        dateFormat: string;
+        timeFormat: string;
+    };
+    refreshToken: string | null;
     tasks?: Task[];
     comments?: Comment[];
 };

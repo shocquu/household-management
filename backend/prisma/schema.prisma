@@ -19,6 +19,8 @@ model User {
   password      String
   avatarUrl     String    @default("/assets/iamges/avatars/avatar_default.jpg")
   role          Role      @default(USER)
+  dateFormat    String    @default("dd-MM-yyyy")
+  timeFormat    String    @default("HH:mm")
 
   tasks         Task[]
   comments      Comment[]
@@ -29,6 +31,7 @@ model User {
 
   @@map("user")
 }
+
 
 model Task {
   id          Int       @id @default(autoincrement())

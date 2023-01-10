@@ -37,6 +37,10 @@ export const CURRENT_USER_QUERY = gql`
             avatarUrl
             displayName
             refreshToken
+            settings {
+                dateFormat
+                timeFormat
+            }
         }
     }
 `;
@@ -67,27 +71,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const client = useAppApolloClient();
     const navigate = useNavigate();
 
-    const [refreshTokens] = useLazyQuery(REFRESH_TOKENS_QUERY, {
-        onCompleted: ({ refresh }) => {
-            console.log('got new token bro');
-            setAccessToken(refresh.accessToken);
-        },
-    });
-    const [logout] = useLazyQuery(LOGOUT_USER_QUERY, {
-        onCompleted: () => {
-            setUser(null);
-            client.resetStore();
-            removeAccessToken();
-            setIsLoggedIn(false);
-            navigate('/login', { replace: true });
-        },
-    });
     const { loading, error, refetch } = useQuery(CURRENT_USER_QUERY, {
-        skip: !accessToken,
+        skip: !localStorage.getItem('accessToken'),
         notifyOnNetworkStatusChange: true,
         context: {
             headers: {
-                authorization: 'Bearer ' + accessToken,
+                authorization: 'Bearer ' + localStorage.getItem('accessToken'),
             },
         },
         onCompleted: ({ whoami }) => {
@@ -103,6 +92,21 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                     }
                 }
             }
+        },
+    });
+    const [refreshTokens] = useLazyQuery(REFRESH_TOKENS_QUERY, {
+        onCompleted: ({ refresh }) => {
+            console.log('got new token bro');
+            setAccessToken(refresh.accessToken);
+        },
+    });
+    const [logout] = useLazyQuery(LOGOUT_USER_QUERY, {
+        onCompleted: () => {
+            setUser(null);
+            client.resetStore();
+            removeAccessToken();
+            setIsLoggedIn(false);
+            navigate('/login', { replace: true });
         },
     });
 

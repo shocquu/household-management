@@ -12,6 +12,7 @@ import SegmentIcon from '@mui/icons-material/Segment';
 import { useState } from 'react';
 import TaskModal from './TaskModal';
 import { getTimeColor } from '../../../utils/getTimeColor';
+import useAuth from '../../../hooks/useAuth';
 
 const StyledCardMedia = styled('div')({
     position: 'relative',
@@ -107,11 +108,12 @@ const TaskDetails = ({
     };
 }) => {
     const { completed, createdAt, dueDate, showDescription, comments } = details;
+    const { user } = useAuth();
 
     return (
         <Stack direction='row' alignItems='center' justifyContent='space-between'>
             <Box>
-                <Tooltip enterDelay={1000} title={fDateTime(createdAt)}>
+                <Tooltip enterDelay={1000} title={fDateTime(createdAt, `dd MMM yyyy ${user.settings.timeFormat}`)}>
                     <Chip
                         icon={<CalendarMonthIcon color='disabled' sx={{ mb: '2px' }} />}
                         size='small'

@@ -77,6 +77,8 @@ export class UpdateUserInput {
     password?: Nullable<string>;
     avatarUrl?: Nullable<string>;
     refreshToken?: Nullable<string>;
+    dateFormat?: Nullable<string>;
+    timeFormat?: Nullable<string>;
 }
 
 export class LoginUserInput {
@@ -188,8 +190,14 @@ export class User {
     avatarUrl: string;
     refreshToken?: Nullable<string>;
     role: Role;
+    settings?: Nullable<Settings>;
     tasks?: Nullable<Nullable<Task>[]>;
     comments?: Nullable<Nullable<Comment>[]>;
+}
+
+export class Settings {
+    dateFormat: string;
+    timeFormat: string;
 }
 
 export class LoggedInUserOutput {

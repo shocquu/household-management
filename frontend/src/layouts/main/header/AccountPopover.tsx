@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { alpha } from '@mui/material/styles';
-import { Box, Divider, Typography, Stack, MenuItem, Avatar, IconButton, Popover, Link } from '@mui/material';
+import { Box, Divider, Typography, Stack, MenuItem, Avatar, IconButton, Popover } from '@mui/material';
 import useAuth from '../../../hooks/useAuth';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const MENU_OPTIONS = [
     {
@@ -84,7 +84,7 @@ export default function AccountPopover() {
 
                 <Stack sx={{ p: 1 }}>
                     {MENU_OPTIONS.map((option) => (
-                        <MenuItem key={option.label} href={option.path} component={Link}>
+                        <MenuItem key={option.label} to={option.path} component={Link}>
                             {option.label}
                         </MenuItem>
                     ))}

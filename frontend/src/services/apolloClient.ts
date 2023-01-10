@@ -13,22 +13,6 @@ const headerLink = setContext((_request, previousContext) => ({
     },
 }));
 
-const authMiddleware = () => {
-    const { accessToken } = useAccessToken();
-
-    return new ApolloLink((operation, forward) => {
-        if (accessToken)
-            operation.setContext({
-                headers: {
-                    ...operation.getContext().headers,
-                    authorization: `Bearer ${accessToken}`,
-                },
-            });
-
-        return forward(operation);
-    });
-};
-
 export const useAppApolloClient = () => {
     return new ApolloClient({
         link: headerLink.concat(httpLink),

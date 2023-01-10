@@ -71,13 +71,10 @@ export class UserService {
     });
   }
 
-  async update(
-    id: number,
-    { email, displayName, avatarUrl, refreshToken }: UpdateUserInput,
-  ) {
+  async update(id: number, input: UpdateUserInput) {
     return this.prisma.user.update({
       where: { id },
-      data: { email, displayName, avatarUrl, refreshToken },
+      data: input,
       include: { tasks: true },
     });
   }
@@ -107,8 +104,8 @@ export class UserService {
     });
   }
 
-  findAll() {
-    return this.prisma.user.findMany({
+  async findAll() {
+    const foundUsers = await this.prisma.user.findMany({
       include: {
         tasks: {
           include: {
@@ -119,10 +116,21 @@ export class UserService {
         },
       },
     });
+
+    return foundUsers.map((user) => {
+      const { dateFormat, timeFormat, ...restUser } = user;
+      return {
+        ...restUser,
+        settings: {
+          dateFormat,
+          timeFormat,
+        },
+      };
+    });
   }
 
-  findById(id: number) {
-    return this.prisma.user.findUnique({
+  async findById(id: number) {
+    const user = await this.prisma.user.findUnique({
       where: { id },
       include: {
         tasks: {
@@ -135,10 +143,18 @@ export class UserService {
         },
       },
     });
+    const { dateFormat, timeFormat, ...restUser } = user;
+    return {
+      ...restUser,
+      settings: {
+        dateFormat,
+        timeFormat,
+      },
+    };
   }
 
-  findUser(input: string) {
-    return this.prisma.user.findFirst({
+  async findUser(input: string) {
+    const user = await this.prisma.user.findFirst({
       where: { OR: [{ email: input }, { username: input }] },
       include: {
         tasks: {
@@ -151,6 +167,14 @@ export class UserService {
         },
       },
     });
+    const { dateFormat, timeFormat, ...restUser } = user;
+    return {
+      ...restUser,
+      settings: {
+        dateFormat,
+        timeFormat,
+      },
+    };
   }
 
   remove(id: number) {
