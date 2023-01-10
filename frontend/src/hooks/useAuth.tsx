@@ -1,5 +1,6 @@
 import {
     ApolloError,
+    ApolloQueryResult,
     gql,
     LazyQueryExecFunction,
     OperationVariables,
@@ -23,6 +24,7 @@ interface AuthContextType {
     logout: () => void;
     isLoggedIn: boolean;
     setIsLoggedIn: Dispatch<React.SetStateAction<boolean>>;
+    refetch: (variables?: Partial<OperationVariables>) => Promise<ApolloQueryResult<any>>;
 }
 
 export const CURRENT_USER_QUERY = gql`
@@ -49,7 +51,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const navigate = useNavigate();
 
     const { loading, error, refetch } = useQuery(CURRENT_USER_QUERY, {
-        skip: !accessToken || !!user,
+        skip: !accessToken,
+        notifyOnNetworkStatusChange: true,
         context: {
             headers: {
                 authorization: 'Bearer ' + accessToken,
@@ -81,10 +84,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     };
 
     useEffect(() => {
-        if (accessToken && !user) refetch();
-        if (accessToken && user && !loading) setIsLoggedIn(true);
-        if (!accessToken) logout();
-    }, [accessToken, user]);
+        const token = localStorage.getItem('accessToken');
+        if (token && user && !loading) setIsLoggedIn(true);
+    }, [user, loading]);
 
     return (
         <AuthContext.Provider
@@ -95,6 +97,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                 loading,
                 error,
                 logout,
+                refetch,
                 setIsLoggedIn,
             }}>
             {children}

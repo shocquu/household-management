@@ -15,12 +15,23 @@ const LOGIN_MUTATION = gql`
 
 export const useLoginMutation = () => {
     const { setAccessToken } = useAccessToken();
+    const { refetch } = useAuth();
     const navigate = useNavigate();
 
     const [mutation, mutationResults] = useMutation(LOGIN_MUTATION, {
         onCompleted: ({ loginUser }) => {
+            if (!loginUser.accessToken) return;
+
             setAccessToken(loginUser.accessToken);
+            refetch({
+                context: {
+                    headers: {
+                        authorization: 'Bearer ' + loginUser.accessToken,
+                    },
+                },
+            });
             navigate('/', { replace: true });
+            // console.log('go to home page');
         },
     });
 

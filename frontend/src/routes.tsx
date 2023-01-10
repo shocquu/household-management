@@ -11,6 +11,7 @@ import useAuth from './hooks/useAuth';
 import AccountPage from './pages/AccountPage';
 import SettingsPage from './pages/SettingsPage';
 import LoadingScreen from './layouts/loadingScreen';
+import { useEffect } from 'react';
 
 const ProtectedRoute = ({ isLoggedIn, children }) => {
     if (!isLoggedIn) return <Navigate to='/login' replace />;
@@ -24,6 +25,10 @@ const RestrictedRoute = ({ isLoggedIn, children }) => {
 
 const RoutesWrapper = () => {
     const { user, isLoggedIn } = useAuth();
+
+    // useEffect(() => {
+    //     console.log(user, isLoggedIn);
+    // }, [isLoggedIn]);
 
     const routes = useRoutes([
         {
