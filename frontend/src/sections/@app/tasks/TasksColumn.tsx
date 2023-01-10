@@ -155,7 +155,7 @@ const TasksColumn = ({ loading, user, index = 1 }: TasksColumn) => {
 
                     <Scrollbar
                         scrollableNodeProps={{ ref: scrollableNodeRef }}
-                        sx={{ maxHeight: 'calc(100vh - 22rem)' }}>
+                        sx={{ maxHeight: 'calc(100vh - 24rem)' }}>
                         {!loading && (nonCompletedTasks.length > 0 || showCompleted) ? (
                             <Stack mb={2} spacing={1}>
                                 {tasks

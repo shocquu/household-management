@@ -41,7 +41,7 @@ export default function LoginForm() {
         },
         validationSchema: validationSchema,
         onSubmit: ({ email, password, remember }) => {
-            login(email, password);
+            login(email, password, remember);
         },
     });
 

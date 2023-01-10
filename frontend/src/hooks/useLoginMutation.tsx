@@ -31,14 +31,13 @@ export const useLoginMutation = () => {
                 },
             });
             navigate('/', { replace: true });
-            // console.log('go to home page');
         },
     });
 
-    const login = (email, password) => {
+    const login = (email, password, remember) => {
         return mutation({
             variables: {
-                loginUserInput: { email, password },
+                loginUserInput: { email, password, remember },
             },
         });
     };

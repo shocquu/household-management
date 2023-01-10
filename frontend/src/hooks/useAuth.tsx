@@ -41,15 +41,47 @@ export const CURRENT_USER_QUERY = gql`
     }
 `;
 
+const LOGOUT_USER_QUERY = gql`
+    query Logout {
+        logoutUser {
+            refreshToken
+        }
+    }
+`;
+
+const REFRESH_TOKENS_QUERY = gql`
+    query RefreshTokens {
+        refresh {
+            accessToken
+            refreshToken
+        }
+    }
+`;
+
 export const AuthContext = createContext<AuthContextType>({} as AuthContextType);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const [user, setUser] = useState<User>(null);
-    const { accessToken, removeAccessToken } = useAccessToken();
+    const { accessToken, setAccessToken, removeAccessToken } = useAccessToken();
     const [isLoggedIn, setIsLoggedIn] = useState(!!accessToken);
     const client = useAppApolloClient();
     const navigate = useNavigate();
 
+    const [refreshTokens] = useLazyQuery(REFRESH_TOKENS_QUERY, {
+        onCompleted: ({ refresh }) => {
+            console.log('got new token bro', refresh);
+            setAccessToken(refresh.accessToken);
+        },
+    });
+    const [logout] = useLazyQuery(LOGOUT_USER_QUERY, {
+        onCompleted: () => {
+            setUser(null);
+            client.resetStore();
+            removeAccessToken();
+            setIsLoggedIn(false);
+            navigate('/login', { replace: true });
+        },
+    });
     const { loading, error, refetch } = useQuery(CURRENT_USER_QUERY, {
         skip: !accessToken,
         notifyOnNetworkStatusChange: true,
@@ -66,22 +98,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                 for (let err of graphQLErrors) {
                     switch (err.extensions.code) {
                         case 'UNAUTHENTICATED':
-                            setIsLoggedIn(false);
-                            removeAccessToken();
+                            refreshTokens();
                             break;
                     }
                 }
             }
         },
     });
-
-    const logout = () => {
-        client.resetStore();
-        removeAccessToken();
-        setUser(null);
-        setIsLoggedIn(false);
-        navigate('/login', { replace: true });
-    };
 
     useEffect(() => {
         const token = localStorage.getItem('accessToken');
