@@ -82,6 +82,7 @@ export class UpdateUserInput {
 export class LoginUserInput {
     email: string;
     password: string;
+    remember?: Nullable<boolean>;
 }
 
 export class UpdatePasswordInput {
@@ -123,7 +124,9 @@ export abstract class IQuery {
 
     abstract whoami(): Nullable<User> | Promise<Nullable<User>>;
 
-    abstract refresh(): Nullable<LoggedUserOutput> | Promise<Nullable<LoggedUserOutput>>;
+    abstract refresh(): Nullable<LoggedInUserOutput> | Promise<Nullable<LoggedInUserOutput>>;
+
+    abstract logoutUser(): Nullable<User> | Promise<Nullable<User>>;
 }
 
 export abstract class IMutation {
@@ -151,7 +154,7 @@ export abstract class IMutation {
 
     abstract removeUser(id: number): Nullable<User> | Promise<Nullable<User>>;
 
-    abstract loginUser(loginUserInput: LoginUserInput): LoggedUserOutput | Promise<LoggedUserOutput>;
+    abstract loginUser(loginUserInput: LoginUserInput): LoggedInUserOutput | Promise<LoggedInUserOutput>;
 
     abstract updatePassword(updatePasswordInput: UpdatePasswordInput): User | Promise<User>;
 }
@@ -189,8 +192,12 @@ export class User {
     comments?: Nullable<Nullable<Comment>[]>;
 }
 
-export class LoggedUserOutput {
+export class LoggedInUserOutput {
     accessToken?: Nullable<string>;
+    refreshToken?: Nullable<string>;
+}
+
+export class LoggedOutUserOutput {
     refreshToken?: Nullable<string>;
 }
 

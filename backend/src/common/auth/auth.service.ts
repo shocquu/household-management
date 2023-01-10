@@ -7,7 +7,6 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UserService } from 'src/user/user.service';
-import { User } from 'src/types/graphql';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
@@ -30,14 +29,14 @@ export class AuthService {
     return null;
   }
 
-  async getTokens(userId: number, username: string) {
+  async getTokens(userId: number, username: string, remember?: boolean) {
     const payload = { sub: userId, username };
     const [accessToken, refreshToken] = await Promise.all([
       this.jwtTokenService.signAsync(payload, {
-        expiresIn: '60m',
+        expiresIn: '1m',
       }),
       this.jwtTokenService.signAsync(payload, {
-        expiresIn: '7d',
+        expiresIn: remember ? '30d' : '7d',
       }),
     ]);
 
@@ -53,7 +52,9 @@ export class AuthService {
     if (!user || !user.refreshToken)
       throw new HttpException('Access denied', HttpStatus.UNAUTHORIZED);
 
-    if (user.refreshToken !== refreshToken)
+    const tokenMatches = await bcrypt.compare(refreshToken, user.refreshToken);
+
+    if (!tokenMatches)
       throw new HttpException('Access denied', HttpStatus.UNAUTHORIZED);
 
     const tokens = await this.getTokens(user.id, user.username);

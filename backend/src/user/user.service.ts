@@ -15,16 +15,27 @@ export class UserService {
     private readonly authService: AuthService,
   ) {}
 
-  async login({ email, password }: LoginUserInput) {
+  async login({ email, password, remember }: LoginUserInput) {
     const user = await this.authService.validateUser(email, password);
 
     if (!user)
       throw new HttpException('Invalid credentials', HttpStatus.UNAUTHORIZED);
 
-    const tokens = await this.authService.getTokens(user.id, user.username);
+    const tokens = await this.authService.getTokens(
+      user.id,
+      user.username,
+      remember,
+    );
     await this.authService.updateRefreshToken(user.id, tokens.refreshToken);
 
     return tokens;
+  }
+
+  async logout(userId: number) {
+    return this.prisma.user.update({
+      where: { id: userId },
+      data: { refreshToken: null },
+    });
   }
 
   async create({

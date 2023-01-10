@@ -36,6 +36,7 @@ input UpdateUserInput {
 input LoginUserInput {
   email: String!
   password: String!
+  remember: Boolean
 }
 
 input UpdatePasswordInput {
@@ -44,8 +45,12 @@ input UpdatePasswordInput {
   newPassword: String
 }
 
-type LoggedUserOutput {
+type LoggedInUserOutput {
   accessToken: String
+  refreshToken: String
+}
+
+type LoggedOutUserOutput {
   refreshToken: String
 }
 
@@ -53,14 +58,15 @@ type Query {
   users(sortBy: Sort): [User]!
   user(id: Int!): User
   whoami: User
-  refresh: LoggedUserOutput
+  refresh: LoggedInUserOutput
+  logoutUser: User
 }
 
 type Mutation {
   createUser(createUserInput: CreateUserInput!): User!
   updateUser(updateUserInput: UpdateUserInput!): User!
   removeUser(id: Int!): User
-  loginUser(loginUserInput: LoginUserInput!): LoggedUserOutput!
+  loginUser(loginUserInput: LoginUserInput!): LoggedInUserOutput!
   updatePassword(updatePasswordInput: UpdatePasswordInput!): User!
 }
 

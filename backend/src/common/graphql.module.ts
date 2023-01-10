@@ -15,6 +15,7 @@ import { join } from 'path';
         path: join(process.cwd(), 'src/types/graphql.ts'),
         outputAs: 'class',
       },
+      context: ({ req, res }) => ({ req, res }),
     }),
   ],
 })

@@ -1,7 +1,9 @@
-import { UseGuards } from '@nestjs/common';
+import { Req, UseGuards } from '@nestjs/common';
 import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
+import { Request } from 'express';
 import { AuthService } from 'src/common/auth/auth.service';
-import { JwtAuthGuard } from 'src/common/auth/jwt-auth.guard';
+import { AccessTokenGuard } from 'src/common/auth/guards/accessToken.guard';
+import { RefreshTokenGuard } from 'src/common/auth/guards/refreshToken.guard';
 import { Roles } from 'src/role/role.decorator';
 import {
   User,
@@ -37,13 +39,13 @@ export class UserResolver {
     return this.userService.findById(id);
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(AccessTokenGuard)
   @Mutation('updateUser')
   update(@Args('updateUserInput') updateUserInput: UpdateUserInput) {
     return this.userService.update(updateUserInput.id, updateUserInput);
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(AccessTokenGuard)
   @Roles(Role.ADMIN)
   @Mutation('removeUser')
   remove(@Args('id') id: number) {
@@ -55,7 +57,20 @@ export class UserResolver {
     return this.userService.login(loginUserInput);
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(AccessTokenGuard)
+  @Query('logoutUser')
+  logout(@CurrentUser() user) {
+    return this.userService.logout(user.sub);
+  }
+
+  @UseGuards(RefreshTokenGuard)
+  @Query('refresh')
+  refreshTokens(@CurrentUser() user) {
+    const { sub, refreshToken } = user;
+    return this.authService.refreshTokens(sub, refreshToken);
+  }
+
+  @UseGuards(AccessTokenGuard)
   @Mutation('updatePassword')
   updatePassword(
     @Args('updatePasswordInput') updatePasswordInput: UpdatePasswordInput,
@@ -66,16 +81,9 @@ export class UserResolver {
     );
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(AccessTokenGuard)
   @Query('whoami')
-  getCurrentUser(@CurrentUser() user: User) {
-    return this.userService.findById(user.id);
-  }
-
-  @UseGuards(JwtAuthGuard)
-  @Query('refresh')
-  async refreshTokens(@CurrentUser() { id }: User) {
-    const { refreshToken } = await this.userService.findById(id);
-    return this.authService.refreshTokens(id, refreshToken);
+  getCurrentUser(@CurrentUser() user: Partial<User> & { sub: number }) {
+    return this.userService.findById(user.sub);
   }
 }
