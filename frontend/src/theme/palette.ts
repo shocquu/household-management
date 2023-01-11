@@ -1,4 +1,4 @@
-import { alpha } from '@mui/material/styles';
+import { alpha, Palette } from '@mui/material/styles';
 
 // ----------------------------------------------------------------------
 
@@ -70,7 +70,7 @@ const ERROR = {
     contrastText: '#fff',
 };
 
-const palette = {
+const palette: Palette = {
     common: { black: '#000', white: '#fff' },
     primary: PRIMARY,
     secondary: SECONDARY,

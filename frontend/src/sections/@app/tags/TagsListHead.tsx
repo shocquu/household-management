@@ -1,4 +1,3 @@
-import PropTypes from 'prop-types';
 import { Box, Checkbox, TableRow, TableCell, TableHead, TableSortLabel } from '@mui/material';
 
 const visuallyHidden = {
@@ -13,17 +12,21 @@ const visuallyHidden = {
     clip: 'rect(0 0 0 0)',
 };
 
-interface UserListHeadProps {
+interface TagsListHeadProps {
     order: 'asc' | 'desc';
     orderBy: string;
     rowCount: number;
-    headLabel: [];
+    headLabel: {
+        id: string;
+        label?: string;
+        alignRight?: boolean;
+    }[];
     numSelected: number;
-    onRequestSort: () => void;
-    onSelectAllClick: () => void;
+    onRequestSort: (event, property) => void;
+    onSelectAllClick: (event) => void;
 }
 
-export default function UserListHead({
+const TagsListHead = ({
     order,
     orderBy,
     rowCount,
@@ -31,7 +34,7 @@ export default function UserListHead({
     numSelected,
     onRequestSort,
     onSelectAllClick,
-}) {
+}: TagsListHeadProps) => {
     const createSortHandler = (property) => (event) => {
         onRequestSort(event, property);
     };
@@ -68,4 +71,6 @@ export default function UserListHead({
             </TableRow>
         </TableHead>
     );
-}
+};
+
+export default TagsListHead;

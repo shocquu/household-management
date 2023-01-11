@@ -8,8 +8,8 @@ const navConfig = [
         icon: <AssignmentIcon />,
     },
     {
-        title: 'tags',
-        path: '/tags',
+        title: 'labels',
+        path: '/labels',
         icon: <LocalOfferIcon />,
     },
 ];

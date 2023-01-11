@@ -4,7 +4,9 @@ import { CreateTaskInput, UpdateTaskInput } from 'src/types/graphql';
 
 @Injectable()
 export class TaskService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService, // private readonly tagService: TagService,
+  ) {}
 
   create({ userId, title, description }: CreateTaskInput) {
     return this.prisma.task.create({
@@ -17,35 +19,52 @@ export class TaskService {
     });
   }
 
-  findAll() {
-    return this.prisma.task.findMany({
+  async findAll() {
+    const tasks = await this.prisma.task.findMany({
       include: {
         user: true,
-        tags: true,
+        tags: { include: { tag: true } },
         comments: { include: { author: true } },
       },
     });
+
+    return tasks.map((task) => ({
+      ...task,
+      tags: task.tags.map((tag) => tag.tag),
+    }));
   }
 
-  findOne(id: number) {
-    return this.prisma.task.findUnique({
+  async findOne(id: number) {
+    const task = await this.prisma.task.findUnique({
       where: { id },
       include: {
         user: true,
-        tags: true,
+        tags: { include: { tag: true } },
         comments: { include: { author: true } },
       },
     });
+    return { ...task, tags: task.tags.map((tag) => tag.tag) };
   }
 
-  update(
-    id: number,
-    { userId, title, description, dueDate, completed }: UpdateTaskInput,
-  ) {
+  async update(id: number, updateTaskInput: UpdateTaskInput) {
     return this.prisma.task.update({
       where: { id },
-      data: { userId, title, description, dueDate, completed },
-      include: { user: true, tags: true, comments: true },
+      data: {
+        ...updateTaskInput,
+        tags: {
+          deleteMany: {},
+          create: [
+            ...updateTaskInput.tags?.map((tag) => ({
+              tag: { connect: tag },
+            })),
+          ],
+        },
+      },
+      include: {
+        user: true,
+        tags: true,
+        comments: true,
+      },
     });
   }
 

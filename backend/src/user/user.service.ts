@@ -109,7 +109,7 @@ export class UserService {
       include: {
         tasks: {
           include: {
-            tags: true,
+            tags: { include: { tag: true } },
             comments: true,
           },
           orderBy: [{ completed: 'asc' }, { createdAt: 'asc' }],
@@ -118,9 +118,13 @@ export class UserService {
     });
 
     return foundUsers.map((user) => {
-      const { dateFormat, timeFormat, ...restUser } = user;
+      const { dateFormat, timeFormat, tasks, ...restUser } = user;
       return {
         ...restUser,
+        tasks: tasks.map((task) => ({
+          ...task,
+          tags: task.tags.map((tag) => tag.tag),
+        })),
         settings: {
           dateFormat,
           timeFormat,
@@ -159,7 +163,7 @@ export class UserService {
       include: {
         tasks: {
           include: {
-            tags: true,
+            tags: { include: { tag: true } },
             _count: {
               select: { comments: true },
             },
@@ -167,9 +171,13 @@ export class UserService {
         },
       },
     });
-    const { dateFormat, timeFormat, ...restUser } = user;
+    const { dateFormat, timeFormat, tasks, ...restUser } = user;
     return {
       ...restUser,
+      tasks: tasks.map((task) => ({
+        ...task,
+        tags: task.tags.map((tag) => tag.tag),
+      })),
       settings: {
         dateFormat,
         timeFormat,

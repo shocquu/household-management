@@ -14,28 +14,6 @@ import TaskModal from './TaskModal';
 import { getTimeColor } from '../../../utils/getTimeColor';
 import useAuth from '../../../hooks/useAuth';
 
-const StyledCardMedia = styled('div')({
-    position: 'relative',
-    paddingTop: '25%',
-});
-
-const StyledTitle = styled(Link)({
-    height: 44,
-    overflow: 'hidden',
-    WebkitLineClamp: 2,
-    display: '-webkit-box',
-    WebkitBoxOrient: 'vertical',
-});
-
-const StyledAvatar = styled(Avatar)(({ theme }) => ({
-    zIndex: 9,
-    width: 32,
-    height: 32,
-    position: 'absolute',
-    left: theme.spacing(3),
-    bottom: theme.spacing(-2),
-}));
-
 interface BlogPostCardProps {
     task: Task;
 }
@@ -61,14 +39,16 @@ const TaskCard = ({ task }: BlogPostCardProps) => {
                     },
                 }}
                 onClick={handleOpen}>
-                {tags?.map(({ label, color }) => (
-                    <Chip
-                        key={label}
-                        size='small'
-                        label={label}
-                        sx={{ bgcolor: color, color: 'common.white', mr: 1 }}
-                    />
-                ))}
+                <Stack direction='row' flexWrap='wrap' sx={{ gap: 0.5 }}>
+                    {tags?.map(({ label, color }) => (
+                        <Chip
+                            key={label}
+                            size='small'
+                            label={label}
+                            sx={{ bgcolor: color, color: 'common.white', mr: 1 }}
+                        />
+                    ))}
+                </Stack>
                 <Typography variant='subtitle1' sx={{ py: 1 }}>
                     {title}
                 </Typography>

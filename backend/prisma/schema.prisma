@@ -40,7 +40,7 @@ model Task {
   dueDate     DateTime?
   completed   Boolean   @default(false)
 
-  tags        Tag[]
+  tags        TaskTags[]
   comments    Comment[]
 
   createdAt   DateTime  @default(now())
@@ -50,6 +50,24 @@ model Task {
   user        User?      @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   
   @@map("task")
+}
+
+model Tag {
+  id          Int       @id @default(autoincrement())
+  label       String    @unique
+  color       String
+
+  tasks       TaskTags[]
+
+  @@map("tag")
+}
+
+model TaskTags {
+  id          Int       @id @default(autoincrement())
+  task        Task?     @relation(fields: [taskId], references: [id])
+  tag         Tag?      @relation(fields: [tagId], references: [id])
+  taskId      Int?
+  tagId       Int?
 }
 
 model Comment {
@@ -66,16 +84,6 @@ model Comment {
   task        Task      @relation(fields: [taskId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   @@map("comment")
-}
-
-model Tag {
-  id          Int       @id @default(autoincrement())
-  label       String
-  color       String
-
-  tasks       Task[]    @relation
-
-  @@map("tag")
 }
 
 enum Role {

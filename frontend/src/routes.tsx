@@ -1,17 +1,15 @@
 import { Navigate, useRoutes } from 'react-router-dom';
 import MainLayout from './layouts/main';
 import SimpleLayout from './layouts/simple';
-import UserPage from './pages/UserPage';
 import LoginPage from './pages/LoginPage';
 import Page404 from './pages/Page404';
-import ProductsPage from './pages/ProductsPage';
 import TasksPage from './pages/TasksPage';
 import RegisterPage from './pages/RegisterPage';
 import useAuth from './hooks/useAuth';
 import AccountPage from './pages/AccountPage';
 import SettingsPage from './pages/SettingsPage';
 import LoadingScreen from './layouts/loadingScreen';
-import { useEffect } from 'react';
+import TagsPage from './pages/TagsPage';
 
 const ProtectedRoute = ({ isLoggedIn, children }) => {
     if (!isLoggedIn) return <Navigate to='/login' replace />;
@@ -41,7 +39,7 @@ const RoutesWrapper = () => {
                     path: 'assigments',
                     element: <TasksPage />,
                 },
-                { path: 'tags', element: <UserPage /> },
+                { path: 'labels', element: <TagsPage /> },
                 { path: '/user/settings', element: <SettingsPage /> },
                 {
                     path: '/user',

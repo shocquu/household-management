@@ -38,8 +38,8 @@ export class CreateTagInput {
 
 export class UpdateTagInput {
     id: number;
-    label?: Nullable<string>;
-    color?: Nullable<string>;
+    label: string;
+    color: string;
 }
 
 export class CreateTaskInput {
@@ -56,7 +56,15 @@ export class UpdateTaskInput {
     description?: Nullable<string>;
     completed?: Nullable<boolean>;
     userId?: Nullable<number>;
+    tagId?: Nullable<number>;
     commentId?: Nullable<number>;
+    tags?: Nullable<Nullable<TagInput>[]>;
+}
+
+export class TagInput {
+    id: number;
+    label: string;
+    color: string;
 }
 
 export class CreateUserInput {

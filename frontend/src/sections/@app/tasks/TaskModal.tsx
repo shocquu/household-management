@@ -3,16 +3,12 @@ import {
     Avatar,
     Button,
     Chip,
-    Collapse,
     Grid,
     IconButton,
     List,
     ListItem,
     ListItemAvatar,
-    ListItemButton,
-    ListItemIcon,
     ListItemText,
-    ListSubheader,
     Modal,
     Paper,
     Skeleton,
@@ -34,6 +30,7 @@ import Iconify from '../../../components/iconify';
 import { USERS_QUERY } from '../../../pages/TasksPage';
 import { AVATARS_BASE_PATH } from '../../../constants';
 import { getTimeColor } from '../../../utils/getTimeColor';
+import { getLabelColor } from '../../../utils/getLabelColor';
 
 export const TASK_QUERY = gql`
     query Task($taskId: Int!) {
@@ -154,8 +151,8 @@ const TaskModal = ({ taskId, open, handleClose }: TaskModal) => {
         <Modal aria-labelledby='task-title' aria-describedby='task-description' open={open} onClose={onClose}>
             <>
                 <ModalContent sx={{ position: 'relative', width: !showActionsMenu ? 'fit-content' : 'unset' }}>
-                    <Grid container spacing={2}>
-                        <Grid item xs={9} sx={{ minWidth: { xs: 300, md: 400, lg: 500 } }}>
+                    <Grid container spacing={2} columns={16}>
+                        <Grid item xs={12} sx={{ minWidth: { xs: 300, md: 400, lg: 500 } }}>
                             <form onSubmit={formik.handleSubmit}>
                                 <header style={{ maxWidth: '90%' }}>
                                     <CloseButton size='small' aria-label='Close' onClick={handleClose}>
@@ -189,14 +186,21 @@ const TaskModal = ({ taskId, open, handleClose }: TaskModal) => {
                                             sx={{ mt: 0.5, mb: 0 }}>
                                             Labels
                                         </Typography>
-                                        {appliedTags.map(({ label, color }) => (
-                                            <Chip
-                                                key={label}
-                                                size='small'
-                                                label={label}
-                                                sx={{ bgcolor: color, color: 'common.white', mr: 1, fontSize: 12 }}
-                                            />
-                                        ))}
+                                        <Stack direction='row' flexWrap='wrap' sx={{ rowGap: 0.5 }}>
+                                            {appliedTags.map(({ label, color }) => (
+                                                <Chip
+                                                    key={label}
+                                                    size='small'
+                                                    label={label}
+                                                    sx={{
+                                                        bgcolor: getLabelColor(color),
+                                                        color: 'common.white',
+                                                        mr: 1,
+                                                        fontSize: 12,
+                                                    }}
+                                                />
+                                            ))}
+                                        </Stack>
                                     </>
                                 )}
 
@@ -293,7 +297,7 @@ const TaskModal = ({ taskId, open, handleClose }: TaskModal) => {
                         </Grid>
 
                         {showActionsMenu && (
-                            <Grid item xs={3}>
+                            <Grid item xs={4}>
                                 <FormikProvider value={formik}>
                                     <Form>
                                         <ActionsMenu
@@ -453,7 +457,7 @@ const ModalContent = styled(Paper)(({ theme }) => ({
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    maxWidth: 700,
+    maxWidth: 800,
     padding: theme.spacing(3),
     outline: 0,
 }));

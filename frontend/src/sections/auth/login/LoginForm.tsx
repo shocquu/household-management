@@ -99,7 +99,6 @@ export default function LoginForm() {
             <LoadingButton
                 fullWidth
                 loading={loading}
-                // loadingPosition='start'
                 size='large'
                 type='submit'
                 variant='contained'

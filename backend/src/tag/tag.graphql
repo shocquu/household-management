@@ -12,8 +12,8 @@ input CreateTagInput {
 
 input UpdateTagInput {
   id: Int!
-  label: String
-  color: String
+  label: String!
+  color: String!
 }
 
 type Query {

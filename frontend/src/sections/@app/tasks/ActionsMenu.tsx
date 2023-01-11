@@ -6,12 +6,14 @@ import {
     Button,
     Chip,
     Collapse,
+    darken,
     List,
     ListItem,
     ListItemButton,
     ListItemIcon,
     ListItemText,
     ListSubheader,
+    Stack,
     TextField,
     Tooltip,
 } from '@mui/material';
@@ -21,7 +23,7 @@ import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { gql, useMutation, useQuery } from '@apollo/client';
 import Iconify from '../../../components/iconify';
-import { Role, Tag, User } from '../../../types';
+import { Role, Tag, Task, User } from '../../../types';
 import ConfirmDialog from '../../../components/confirm-dialog';
 import { USERS_QUERY } from '../../../pages/TasksPage';
 import useAuth from '../../../hooks/useAuth';
@@ -31,6 +33,7 @@ import { useAppApolloClient } from '../../../services/apolloClient';
 import { AVATARS_BASE_PATH } from '../../../constants';
 import { format, parse } from 'date-fns';
 import { useFormikContext } from 'formik';
+import { getLabelColor } from '../../../utils/getLabelColor';
 
 const TAGS_QUERY = gql`
     query Tags {
@@ -76,7 +79,7 @@ const ActionsMenu = ({ taskId, userId, completed, appliedTags }: ActionsMenu) =>
         onError: (error) => {
             alert.error(error.message);
         },
-        update: (cache) => {
+        update: (cache, { data: { task } }) => {
             cache.modify({
                 fields: {
                     users(cachedUsers: User[] = [], { readField }) {
@@ -95,6 +98,10 @@ const ActionsMenu = ({ taskId, userId, completed, appliedTags }: ActionsMenu) =>
     const cachedUsers = cache?.users;
 
     const isTagApplied = (taskId: number) => appliedTags.some((tag) => tag.id === taskId);
+
+    const handleDelete = (tagId: number) => {
+        console.info('You clicked the delete icon.', tagId);
+    };
 
     return (
         <List
@@ -147,41 +154,42 @@ const ActionsMenu = ({ taskId, userId, completed, appliedTags }: ActionsMenu) =>
                     </ListItemButton>
 
                     <Collapse in={usersExpanded} timeout='auto' unmountOnExit>
-                        <List component='div' disablePadding>
+                        <Stack direction='row' flexWrap='wrap' sx={{ ml: 4, mt: 1, gap: 0.5 }}>
                             {cachedUsers
                                 ?.filter((user) => user.id !== userId)
                                 .map(({ id, displayName, avatarUrl }) => (
-                                    <ListItem key={id} sx={{ pl: 4 }}>
-                                        <Chip
-                                            size='small'
-                                            disabled={completed}
-                                            icon={
-                                                <Avatar
-                                                    src={AVATARS_BASE_PATH + avatarUrl}
-                                                    sx={{ width: 18, height: 18 }}
-                                                />
-                                            }
-                                            label={displayName}
-                                            sx={{
-                                                cursor: 'pointer',
-                                            }}
-                                            onClick={() =>
-                                                updateTask({
-                                                    variables: {
-                                                        updateTaskInput: {
-                                                            id: taskId,
-                                                            userId: id,
-                                                        },
+                                    <Chip
+                                        size='small'
+                                        disabled={completed}
+                                        icon={
+                                            <Avatar
+                                                src={AVATARS_BASE_PATH + avatarUrl}
+                                                sx={{ width: 18, height: 18 }}
+                                            />
+                                        }
+                                        label={displayName}
+                                        sx={{
+                                            cursor: 'pointer',
+                                            '&:hover': {
+                                                bgcolor: 'secondary.lighter',
+                                            },
+                                        }}
+                                        onClick={() =>
+                                            updateTask({
+                                                variables: {
+                                                    updateTaskInput: {
+                                                        id: taskId,
+                                                        userId: id,
                                                     },
-                                                    onCompleted: () => {
-                                                        alert.success('Task assigned successfully');
-                                                    },
-                                                })
-                                            }
-                                        />
-                                    </ListItem>
+                                                },
+                                                onCompleted: () => {
+                                                    alert.success('Task assigned successfully');
+                                                },
+                                            })
+                                        }
+                                    />
                                 ))}
-                        </List>
+                        </Stack>
                     </Collapse>
                 </>
             )}
@@ -194,27 +202,83 @@ const ActionsMenu = ({ taskId, userId, completed, appliedTags }: ActionsMenu) =>
                 {labelsExpanded ? <ExpandLessIcon fontSize='small' /> : <ExpandMoreIcon fontSize='small' />}
             </ListItemButton>
             <Collapse in={labelsExpanded} timeout='auto' unmountOnExit>
-                <List component='div' disablePadding>
+                <Stack direction='row' flexWrap='wrap' sx={{ ml: 4, mt: 1, gap: 0.5 }}>
                     {data?.tags.map(({ id, label, color }) => (
-                        <ListItem key={id} sx={{ pl: 4 }}>
-                            <Chip
-                                size='small'
-                                disabled={completed}
-                                icon={isTagApplied(id) ? <CheckIcon color='inherit' fontSize='inherit' /> : undefined}
-                                label={label}
-                                sx={{
-                                    fontSize: '10px',
-                                    p: '1px',
-                                    color: 'common.white',
-                                    bgcolor: color,
-                                    '&:hover': {
-                                        bgcolor: alpha(color, 0.6),
+                        <Chip
+                            size='small'
+                            disabled={completed}
+                            label={label}
+                            sx={{
+                                p: '1px',
+                                fontSize: '10px',
+                                cursor: 'pointer',
+                                color: 'common.white',
+                                bgcolor: getLabelColor(color),
+                                '&:hover': {
+                                    bgcolor: alpha(getLabelColor(color), 0.75),
+                                },
+                            }}
+                            onDelete={
+                                isTagApplied(id)
+                                    ? (_event) => {
+                                          updateTask({
+                                              variables: {
+                                                  updateTaskInput: {
+                                                      id: taskId,
+                                                      tags: data?.tags
+                                                          .filter((tag) => tag.id !== id)
+                                                          .map((tag) => ({
+                                                              id: tag.id,
+                                                              label: tag.label,
+                                                              color: tag.color,
+                                                          })),
+                                                  },
+                                              },
+                                              onCompleted: () => {
+                                                  alert.success('Label deleted successfully');
+                                                  appliedTags = appliedTags.filter((tag) => tag.id !== id);
+                                              },
+                                              onError: (error) => {
+                                                  console.error(error);
+                                                  alert.error('An error occured while editing label');
+                                              },
+                                          });
+                                      }
+                                    : undefined
+                            }
+                            onClick={() =>
+                                updateTask({
+                                    variables: {
+                                        updateTaskInput: {
+                                            id: taskId,
+                                            tags: [
+                                                ...data?.tags.map((tag) => ({
+                                                    id: tag.id,
+                                                    label: tag.label,
+                                                    color: tag.color,
+                                                })),
+                                                { id, label, color },
+                                            ],
+                                        },
                                     },
-                                }}
-                            />
-                        </ListItem>
+                                    onCompleted: () => {
+                                        alert.success('Label applied successfully');
+                                    },
+                                    onError: () => {
+                                        alert.error('An error occured while editing label');
+                                    },
+                                    update: (cache, { data: { task } }) => {
+                                        const { tags } = cache.readQuery({ query: TASK_QUERY });
+                                        cache.writeQuery({
+                                            query: TASK_QUERY,
+                                            data: { tags: tags.concat([task]) },
+                                        });
+                                    },
+                                })
+                            }
+                        />
                     ))}
-                </List>
+                </Stack>
             </Collapse>
         </List>
     );

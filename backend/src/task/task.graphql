@@ -25,7 +25,15 @@ input UpdateTaskInput {
   description: String
   completed: Boolean
   userId: Int
+  tagId: Int
   commentId: Int
+  tags: [TagInput]
+}
+
+input TagInput {
+  id: Int!
+  label: String!
+  color: String!
 }
 
 type Query {
