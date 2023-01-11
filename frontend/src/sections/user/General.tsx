@@ -11,8 +11,9 @@ import {
     Grid,
     IconButton,
     TextField,
-    Typography,
+    useTheme,
 } from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
 import { Stack } from '@mui/system';
 import { FormikProps, useFormik } from 'formik';
 import * as yup from 'yup';
@@ -79,7 +80,7 @@ const General = () => {
             <AvatarSelection formik={formik} setOpen={setOpen} open={open} />
             <form onSubmit={formik.handleSubmit}>
                 <Grid container spacing={3}>
-                    <Grid item xs={4}>
+                    <Grid item xs={12} sm={4}>
                         <Card elevation={3}>
                             <CardContent
                                 sx={{
@@ -110,7 +111,7 @@ const General = () => {
                             </CardContent>
                         </Card>
                     </Grid>
-                    <Grid item xs={8}>
+                    <Grid item xs={12} sm={8}>
                         <Card elevation={3}>
                             <CardContent>
                                 <Stack spacing={3}>
@@ -171,10 +172,18 @@ const AvatarSelection = ({
     setOpen: Dispatch<React.SetStateAction<boolean>>;
 }) => {
     const handleClose = () => setOpen(false);
+    const theme = useTheme();
 
     return (
         <Dialog open={open} onClose={handleClose}>
-            <DialogTitle>Select avatar</DialogTitle>
+            <DialogTitle>
+                Select avatar
+                <IconButton
+                    sx={{ position: 'absolute', right: theme.spacing(1), top: theme.spacing(1) }}
+                    onClick={handleClose}>
+                    <CloseIcon />
+                </IconButton>
+            </DialogTitle>
             <DialogContent>
                 <Grid container columns={5} justifyContent='space-between'>
                     {Array.from(Array(25)).map((_, index) => (
@@ -183,6 +192,7 @@ const AvatarSelection = ({
                                 sx={() =>
                                     formik.values.avatarUrl === `avatar_${index + 1}.jpg` && {
                                         bgcolor: 'primary.light',
+
                                         padding: 1,
                                     }
                                 }
@@ -196,6 +206,9 @@ const AvatarSelection = ({
                                     sx={{
                                         width: 64,
                                         height: 64,
+                                        boxSizeing: 'border-box',
+                                        color: 'background.paper',
+                                        outline: '4px solid currentColor',
                                     }}
                                 />
                             </IconButton>

@@ -64,8 +64,8 @@ model Tag {
 
 model TaskTags {
   id          Int       @id @default(autoincrement())
-  task        Task?     @relation(fields: [taskId], references: [id])
-  tag         Tag?      @relation(fields: [tagId], references: [id])
+  task        Task?     @relation(fields: [taskId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  tag         Tag?      @relation(fields: [tagId], references: [id], onUpdate: Cascade, onDelete: Cascade)
   taskId      Int?
   tagId       Int?
 }

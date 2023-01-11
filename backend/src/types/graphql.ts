@@ -40,6 +40,11 @@ export class UpdateTagInput {
     id: number;
     label: string;
     color: string;
+    tasks?: Nullable<Nullable<TaskInput>[]>;
+}
+
+export class TaskInput {
+    id: number;
 }
 
 export class CreateTaskInput {
@@ -150,7 +155,9 @@ export abstract class IMutation {
 
     abstract updateTag(updateTagInput: UpdateTagInput): Tag | Promise<Tag>;
 
-    abstract removeTag(id: number): Nullable<Tag> | Promise<Nullable<Tag>>;
+    abstract removeTag(id: number): Tag | Promise<Tag>;
+
+    abstract removeTags(ids: Nullable<number>[]): BatchPayload | Promise<BatchPayload>;
 
     abstract createTask(createTaskInput: CreateTaskInput): Task | Promise<Task>;
 
@@ -174,6 +181,10 @@ export class Tag {
     label: string;
     color: string;
     tasks?: Nullable<Nullable<Task>[]>;
+}
+
+export class BatchPayload {
+    count: number;
 }
 
 export class Task {

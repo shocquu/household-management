@@ -45,14 +45,14 @@ const TasksPage = () => {
         <>
             <Helmet title='Tasks | Hovee' />
             <Container
-                maxWidth='xl'
+                maxWidth='4xl'
                 sx={{
                     height: '100%',
                 }}>
                 <Alert />
                 <Grid container spacing={3} wrap='nowrap' height='100%'>
                     {data?.users.map((user, index) => (
-                        <Grid key={user.id} item xs={24} sm={12} md={3}>
+                        <Grid key={user.id} item>
                             <TasksColumn user={user} index={index + 1} loading={loading} />
                         </Grid>
                     ))}

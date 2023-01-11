@@ -34,4 +34,12 @@ export class TagResolver {
   remove(@Args('id') id: number) {
     return this.tagService.remove(id);
   }
+
+  @Roles(Role.ADMIN)
+  @Mutation('removeTags')
+  removeMany(@Args('ids') ids: number[]) {
+    const a = this.tagService.removeMany(ids);
+
+    return a;
+  }
 }

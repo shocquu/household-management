@@ -123,7 +123,7 @@ export class UserService {
         ...restUser,
         tasks: tasks.map((task) => ({
           ...task,
-          tags: task.tags.map((tag) => tag.tag),
+          tags: task.tags.map(({ tag }) => tag),
         })),
         settings: {
           dateFormat,

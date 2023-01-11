@@ -2,6 +2,7 @@ import { useState } from 'react';
 
 type Preferences = {
     showCompletedTasks?: boolean;
+    rowsPerPage?: number;
 };
 
 const SETTINGS_NAME = 'preferences';
@@ -11,7 +12,7 @@ const useLocalPreferences = () => {
         { ...JSON.parse(localStorage.getItem(SETTINGS_NAME)) } || {}
     );
 
-    const setPreference = (preference: keyof Preferences, value: boolean) => {
+    const setPreference = (preference: keyof Preferences, value: unknown) => {
         setLocalPreferences((prevState) => ({
             ...prevState,
             [preference]: value,

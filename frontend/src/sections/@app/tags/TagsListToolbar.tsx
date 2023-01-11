@@ -2,15 +2,17 @@ import { Dispatch, MouseEvent, SetStateAction, useState } from 'react';
 import { styled, alpha } from '@mui/material/styles';
 import { Toolbar, Tooltip, IconButton, Typography, OutlinedInput, InputAdornment } from '@mui/material';
 import Iconify from '../../../components/iconify';
+import { FetchResult, gql } from '@apollo/client';
 
 interface TagsListToolbarProps {
     numSelected: number;
     filterName: string;
     setFilterName: Dispatch<SetStateAction<string>>;
     onFilterName: (event: any) => void;
+    onRemove: () => Promise<FetchResult<any, Record<string, any>, Record<string, any>>>;
 }
 
-const TagsListToolbar = ({ numSelected, filterName, setFilterName, onFilterName }: TagsListToolbarProps) => {
+const TagsListToolbar = ({ numSelected, filterName, setFilterName, onFilterName, onRemove }: TagsListToolbarProps) => {
     const [focused, setFocused] = useState(false);
 
     const clearInput = (_event: MouseEvent<HTMLButtonElement>) => setFilterName('');
@@ -56,7 +58,7 @@ const TagsListToolbar = ({ numSelected, filterName, setFilterName, onFilterName 
             )}
 
             {numSelected > 0 && (
-                <Tooltip title='Delete'>
+                <Tooltip title='Delete' onClick={onRemove}>
                     <IconButton>
                         <Iconify icon='eva:trash-2-fill' />
                     </IconButton>

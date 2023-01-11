@@ -115,7 +115,7 @@ const SettingsPage = () => {
                             }}>
                             <Stack spacing={1} sx={{ width: '100%' }}>
                                 <Grid container spacing={3}>
-                                    <Grid item xs={4}>
+                                    <Grid item xs={12} sm={4} md={4}>
                                         <TextField
                                             fullWidth
                                             select
@@ -132,7 +132,7 @@ const SettingsPage = () => {
                                             ))}
                                         </TextField>
                                     </Grid>
-                                    <Grid item xs={2}>
+                                    <Grid item xs={12} sm={3} md={2}>
                                         <TextField
                                             fullWidth
                                             select

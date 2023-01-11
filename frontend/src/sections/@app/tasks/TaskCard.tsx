@@ -13,6 +13,7 @@ import { useState } from 'react';
 import TaskModal from './TaskModal';
 import { getTimeColor } from '../../../utils/getTimeColor';
 import useAuth from '../../../hooks/useAuth';
+import { getLabelColor } from '../../../utils/getLabelColor';
 
 interface BlogPostCardProps {
     task: Task;
@@ -45,7 +46,7 @@ const TaskCard = ({ task }: BlogPostCardProps) => {
                             key={label}
                             size='small'
                             label={label}
-                            sx={{ bgcolor: color, color: 'common.white', mr: 1 }}
+                            sx={{ bgcolor: getLabelColor(color), color: 'common.white' }}
                         />
                     ))}
                 </Stack>

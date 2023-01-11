@@ -23,17 +23,49 @@ export class TagService {
     return this.prisma.tag.findUnique({ where: { id } });
   }
 
-  update(id: number, { label, color }: UpdateTagInput) {
+  update(id: number, updateTagInput: UpdateTagInput) {
     return this.prisma.tag.update({
       where: { id },
       data: {
-        label,
-        color,
+        id: updateTagInput.id,
+        label: updateTagInput.label,
+        color: updateTagInput.color,
+        // tasks: {
+        //   create: [{ id: 2 }],
+        // },
+        // tasks: undefined,
+        // tasks: {
+        //   connect: updateTagInput.
+        // }
+        // tasks: {
+        //   deleteMany: {},
+        //   create: [
+        //     ...updateTagInput.tasks?.map((task) => ({
+        //       task: { connect: task },
+        //     })),
+        //   ],
+        // },
+        // tasks: {
+        //   deleteMany: {},
+        //   // disconnect: true,
+        // },
+      },
+      include: {
+        tasks: true,
       },
     });
   }
 
   remove(id: number) {
     return this.prisma.tag.delete({ where: { id } });
+  }
+
+  async removeMany(ids: number[]) {
+    const result = await this.prisma.tag.deleteMany({
+      where: {
+        id: { in: ids },
+      },
+    });
+    return { count: result.count };
   }
 }

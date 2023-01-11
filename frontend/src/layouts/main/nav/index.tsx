@@ -60,16 +60,18 @@ const Nav = ({ openNav, onCloseNav }: Nav) => {
 
             <Box sx={{ flexGrow: 1 }} />
 
-            <Box sx={{ px: 2.5, pb: 3, m: 'auto' }}>
-                <Chip
-                    label={
-                        <>
-                            <strong>AGH</strong> 2023
-                        </>
-                    }
-                    color='secondary'
-                    sx={{ width: 86, m: 'auto' }}
-                />
+            <Box sx={{ px: 2.5, pb: 3, mt: '42vh' }}>
+                <Stack alignItems='center' spacing={3} sx={{ pt: 5, borderRadius: 2, position: 'relative' }}>
+                    <Chip
+                        label={
+                            <>
+                                <strong>AGH</strong> 2023
+                            </>
+                        }
+                        color='secondary'
+                        sx={{ width: 86, m: 'auto' }}
+                    />
+                </Stack>
             </Box>
         </Scrollbar>
     );

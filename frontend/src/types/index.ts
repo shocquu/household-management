@@ -56,12 +56,15 @@ export enum AlertStatus {
 
 export enum LabelColors {
     green = '#7bc86c',
+    caribbeanGreen = '#00c49a',
     blue = '#5ca4cf',
-    cyan = '#2acce5',
+    skyBlue = '#2acce5',
     pink = '#ff8dd4',
     purple = '#cd8de5',
     yellow = '#f5dd2a',
+    yellowCrayola = '#f8e16c',
     orange = '#ffaf3e',
+    melon = '#ffc2b4',
     red = '#ef7564',
-    black = '#091e42',
+    coral = '#fb8f67',
 }

@@ -54,7 +54,7 @@ export class TaskService {
         tags: {
           deleteMany: {},
           create: [
-            ...updateTaskInput.tags?.map((tag) => ({
+            ...updateTaskInput?.tags.map((tag) => ({
               tag: { connect: tag },
             })),
           ],

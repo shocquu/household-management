@@ -108,7 +108,14 @@ const TasksColumn = ({ loading, user, index = 1 }: TasksColumn) => {
                 elevation={5}
                 sx={{
                     position: 'relative',
-                    minWidth: 242,
+                    maxWidth: 350,
+                    minWidth: {
+                        xs: 250,
+                        sm: 300,
+                        md: 325,
+                        xl: 350,
+                    },
+                    width: '20vw',
                     overflow: 'hidden',
                     bgcolor: 'background.neutral',
                     display: 'flex',

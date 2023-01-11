@@ -14,6 +14,11 @@ input UpdateTagInput {
   id: Int!
   label: String!
   color: String!
+  tasks: [TaskInput]
+}
+
+input TaskInput {
+  id: Int!
 }
 
 type Query {
@@ -24,5 +29,10 @@ type Query {
 type Mutation {
   createTag(createTagInput: CreateTagInput!): Tag!
   updateTag(updateTagInput: UpdateTagInput!): Tag!
-  removeTag(id: Int!): Tag
+  removeTag(id: Int!): Tag!
+  removeTags(ids: [Int]!): BatchPayload!
+}
+
+type BatchPayload {
+  count: Int!
 }

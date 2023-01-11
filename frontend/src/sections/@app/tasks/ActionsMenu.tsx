@@ -75,20 +75,21 @@ const ActionsMenu = ({ taskId, userId, completed, appliedTags }: ActionsMenu) =>
     const { user } = useAuth();
     const { data } = useQuery(TAGS_QUERY);
     const [updateTask] = useMutation(UPDATE_TASK_MUTATION, {
-        refetchQueries: [{ query: TASK_QUERY, variables: { taskId } }],
+        // refetchQueries: [{ query: TASK_QUERY, variables: { taskId } }],
         onError: (error) => {
             alert.error(error.message);
         },
-        update: (cache, { data: { task } }) => {
-            cache.modify({
-                fields: {
-                    users(cachedUsers: User[] = [], { readField }) {
-                        const foundUser = cachedUsers?.find((user) => userId === readField('id', user));
-                        return { ...cachedUsers, foundUser };
-                    },
-                },
-            });
-        },
+        // update: (cache) => {
+        //     cache.modify({
+        //         fields: {
+        //             users(cachedUsers: User[] = [], { readField }) {
+        //                 const foundUser = cachedUsers?.find((user) => userId === readField('id', user));
+        //                 console.log('foundUser', foundUser);
+        //                 return { ...cachedUsers, foundUser };
+        //             },
+        //         },
+        //     });
+        // },
     });
 
     const client = useAppApolloClient();
@@ -225,8 +226,8 @@ const ActionsMenu = ({ taskId, userId, completed, appliedTags }: ActionsMenu) =>
                                               variables: {
                                                   updateTaskInput: {
                                                       id: taskId,
-                                                      tags: data?.tags
-                                                          .filter((tag) => tag.id !== id)
+                                                      tags: appliedTags
+                                                          ?.filter((tag) => tag.id !== id)
                                                           .map((tag) => ({
                                                               id: tag.id,
                                                               label: tag.label,
@@ -236,11 +237,27 @@ const ActionsMenu = ({ taskId, userId, completed, appliedTags }: ActionsMenu) =>
                                               },
                                               onCompleted: () => {
                                                   alert.success('Label deleted successfully');
-                                                  appliedTags = appliedTags.filter((tag) => tag.id !== id);
                                               },
                                               onError: (error) => {
                                                   console.error(error);
-                                                  alert.error('An error occured while editing label');
+                                                  alert.error('An error occured while deleting label');
+                                              },
+                                              update(cache) {
+                                                  cache.modify({
+                                                      fields: {
+                                                          task(cachedTask: Task, { readField }) {
+                                                              return appliedTags?.filter(
+                                                                  (tag) => id !== readField('id', tag)
+                                                              );
+                                                          },
+                                                          users(cachedUsers: User[] = [], { readField }) {
+                                                              const foundUser = cachedUsers?.find(
+                                                                  (user) => user?.id === readField('id', user)
+                                                              );
+                                                              return { ...cachedUsers, foundUser };
+                                                          },
+                                                      },
+                                                  });
                                               },
                                           });
                                       }
@@ -251,27 +268,27 @@ const ActionsMenu = ({ taskId, userId, completed, appliedTags }: ActionsMenu) =>
                                     variables: {
                                         updateTaskInput: {
                                             id: taskId,
-                                            tags: [
-                                                ...data?.tags.map((tag) => ({
-                                                    id: tag.id,
-                                                    label: tag.label,
-                                                    color: tag.color,
-                                                })),
-                                                { id, label, color },
-                                            ],
+                                            tags: appliedTags
+                                                .map(({ id, label, color }) => ({ id, label, color }))
+                                                .concat({ id, label, color }),
                                         },
                                     },
                                     onCompleted: () => {
                                         alert.success('Label applied successfully');
                                     },
-                                    onError: () => {
-                                        alert.error('An error occured while editing label');
-                                    },
-                                    update: (cache, { data: { task } }) => {
-                                        const { tags } = cache.readQuery({ query: TASK_QUERY });
-                                        cache.writeQuery({
-                                            query: TASK_QUERY,
-                                            data: { tags: tags.concat([task]) },
+                                    update: (cache, { data: { updateTask } }) => {
+                                        cache.modify({
+                                            fields: {
+                                                task(cachedTask: Task) {
+                                                    return cachedTask?.tags.concat([updateTask]);
+                                                },
+                                                users(cachedUsers: User[] = [], { readField }) {
+                                                    const foundUser = cachedUsers?.find(
+                                                        (user) => user?.id === readField('id', user)
+                                                    );
+                                                    return { ...cachedUsers, foundUser };
+                                                },
+                                            },
                                         });
                                     },
                                 })
