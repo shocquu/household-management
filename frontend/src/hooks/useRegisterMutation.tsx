@@ -1,9 +1,6 @@
-import { ApolloCache, gql, useMutation } from '@apollo/client';
+import { gql, useMutation } from '@apollo/client';
 import { useState } from 'react';
-import { useNavigate } from 'react-router';
-import { useAccessToken } from './useAccessToken';
 import useAlert from './useAlert';
-import useAuth from './useAuth';
 import { useLoginMutation } from './useLoginMutation';
 
 const REGISTER_MUTATION = gql`
@@ -32,7 +29,7 @@ export const useRegisterMutation = () => {
 
     const [mutation, mutationResults] = useMutation(REGISTER_MUTATION, {
         onCompleted: ({ createUser }) => {
-            login(createUser.email, password);
+            login(createUser.email, password, false);
         },
         onError: (error) => {
             alert.error(error.message);

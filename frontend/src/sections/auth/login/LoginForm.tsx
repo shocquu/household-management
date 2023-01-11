@@ -77,7 +77,6 @@ export default function LoginForm() {
                     error={formik.touched.password && Boolean(formik.errors.password)}
                     helperText={formik.touched.password && formik.errors.password}
                 />
-                {/* {error && <FormHelperText error>{error.message}</FormHelperText>} */}
             </Stack>
 
             <Stack direction='row' alignItems='center' justifyContent='space-between' sx={{ my: 2 }}>
@@ -91,9 +90,6 @@ export default function LoginForm() {
                     }
                     label='Remember me'
                 />
-                <Link variant='subtitle2' underline='hover' color='secondary'>
-                    Forgot password?
-                </Link>
             </Stack>
 
             <LoadingButton

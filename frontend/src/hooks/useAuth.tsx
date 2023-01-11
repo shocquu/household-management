@@ -8,13 +8,13 @@ import {
     useMutation,
     useQuery,
 } from '@apollo/client';
-import { replace } from 'lodash';
 import { createContext, Dispatch, ReactNode, useContext, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { AVATARS_BASE_PATH } from '../constants';
 import { useAppApolloClient } from '../services/apolloClient';
-import { User } from '../types';
 import { useAccessToken } from './useAccessToken';
+import useAlert from './useAlert';
+import { User } from '../types';
 
 interface AuthContextType {
     user?: User;
@@ -70,6 +70,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const [isLoggedIn, setIsLoggedIn] = useState(!!accessToken);
     const client = useAppApolloClient();
     const navigate = useNavigate();
+    const alert = useAlert();
 
     const { loading, error, refetch } = useQuery(CURRENT_USER_QUERY, {
         skip: !localStorage.getItem('accessToken'),
@@ -106,6 +107,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             removeAccessToken();
             setIsLoggedIn(false);
             navigate('/login', { replace: true });
+        },
+        onError: (error) => {
+            alert.error(error.message);
         },
     });
 

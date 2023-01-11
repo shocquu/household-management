@@ -1,11 +1,11 @@
-import { Stack, CircularProgress, styled } from '@mui/material';
+import { Stack, styled, LinearProgress } from '@mui/material';
 import Logo from '../../components/logo';
 
 const LoadingScreen = () => {
     return (
-        <StyledProgress spacing={2}>
+        <StyledProgress alignItems='center' spacing={2}>
             <Logo />
-            <CircularProgress />
+            <LinearProgress sx={{ width: '30vw' }} />
         </StyledProgress>
     );
 };

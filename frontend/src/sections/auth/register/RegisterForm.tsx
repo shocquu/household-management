@@ -1,5 +1,6 @@
 import LoadingButton from '@mui/lab/LoadingButton';
 import {
+    alpha,
     Avatar,
     Grid,
     IconButton,
@@ -130,6 +131,7 @@ const RegisterForm = () => {
                                         formik.values.avatarKey === key
                                             ? {
                                                   bgcolor: `${theme.palette.primary.light} !important`,
+                                                  boxShadow: theme.customShadows.primary,
                                               }
                                             : undefined
                                     }

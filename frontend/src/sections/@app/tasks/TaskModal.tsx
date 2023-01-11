@@ -120,6 +120,7 @@ const TaskModal = ({ taskId, open, handleClose }: TaskModal) => {
         enableReinitialize: true,
         onSubmit: ({ title, description, dueDate }) => {
             updateTask({
+                refetchQueries: [{ query: USERS_QUERY }], // temporary
                 variables: {
                     updateTaskInput: { id: taskId, title, description, dueDate },
                 },
@@ -159,7 +160,7 @@ const TaskModal = ({ taskId, open, handleClose }: TaskModal) => {
                                         <CloseIcon />
                                     </CloseButton>
 
-                                    {completed ? (
+                                    {completed || !showActionsMenu ? (
                                         <Typography variant='h6' component='h2'>
                                             {formik.values.title}
                                         </Typography>
@@ -171,6 +172,7 @@ const TaskModal = ({ taskId, open, handleClose }: TaskModal) => {
                                             component='h2'
                                             text={formik.values.title}
                                             name='title'
+                                            maxRows={1}
                                             onBlur={(e) => formik.setFieldValue('title', e.target.value)}
                                         />
                                     ) : (
@@ -219,7 +221,7 @@ const TaskModal = ({ taskId, open, handleClose }: TaskModal) => {
                                     />
                                 ) : (
                                     <TextField
-                                        disabled={completed}
+                                        disabled={completed || !showActionsMenu}
                                         fullWidth
                                         multiline
                                         minRows={2}

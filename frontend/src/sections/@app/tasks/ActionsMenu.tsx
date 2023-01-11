@@ -75,21 +75,9 @@ const ActionsMenu = ({ taskId, userId, completed, appliedTags }: ActionsMenu) =>
     const { user } = useAuth();
     const { data } = useQuery(TAGS_QUERY);
     const [updateTask] = useMutation(UPDATE_TASK_MUTATION, {
-        // refetchQueries: [{ query: TASK_QUERY, variables: { taskId } }],
         onError: (error) => {
             alert.error(error.message);
         },
-        // update: (cache) => {
-        //     cache.modify({
-        //         fields: {
-        //             users(cachedUsers: User[] = [], { readField }) {
-        //                 const foundUser = cachedUsers?.find((user) => userId === readField('id', user));
-        //                 console.log('foundUser', foundUser);
-        //                 return { ...cachedUsers, foundUser };
-        //             },
-        //         },
-        //     });
-        // },
     });
 
     const client = useAppApolloClient();
@@ -99,10 +87,6 @@ const ActionsMenu = ({ taskId, userId, completed, appliedTags }: ActionsMenu) =>
     const cachedUsers = cache?.users;
 
     const isTagApplied = (taskId: number) => appliedTags.some((tag) => tag.id === taskId);
-
-    const handleDelete = (tagId: number) => {
-        console.info('You clicked the delete icon.', tagId);
-    };
 
     return (
         <List

@@ -14,6 +14,7 @@ const headerLink = setContext((_request, previousContext) => ({
 }));
 
 export const useAppApolloClient = () => {
+    const { accessToken } = useAccessToken();
     return new ApolloClient({
         link: headerLink.concat(httpLink),
         cache,

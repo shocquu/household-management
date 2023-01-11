@@ -1,4 +1,5 @@
 import { Helmet } from 'react-helmet-async';
+import { Link as RouterLink } from 'react-router-dom';
 import { styled } from '@mui/material/styles';
 import { Link, Container, Typography, Box } from '@mui/material';
 import useResponsive from '../hooks/useResponsive';
@@ -28,7 +29,7 @@ const RegisterPage = () => {
 
                         <Typography variant='body2' sx={{ mb: 5 }}>
                             Already have an account? {''}
-                            <Link variant='subtitle2' href='/login'>
+                            <Link variant='subtitle2' component={RouterLink} to='/login'>
                                 Sign in
                             </Link>
                         </Typography>

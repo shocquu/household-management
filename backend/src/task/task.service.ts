@@ -51,13 +51,14 @@ export class TaskService {
       where: { id },
       data: {
         ...updateTaskInput,
+        dueDate: updateTaskInput?.dueDate
+          ? new Date(updateTaskInput.dueDate).toISOString()
+          : undefined,
         tags: {
           deleteMany: {},
-          create: [
-            ...updateTaskInput?.tags.map((tag) => ({
-              tag: { connect: tag },
-            })),
-          ],
+          create: updateTaskInput?.tags?.map((tag) => ({
+            tag: { connect: tag },
+          })),
         },
       },
       include: {
