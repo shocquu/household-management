@@ -33,6 +33,7 @@ export const USERS_QUERY = gql`
 `;
 
 const TasksPage = () => {
+    const theme = useTheme();
     const [getUsers, { data, loading, called }] = useLazyQuery(USERS_QUERY, {
         fetchPolicy: 'cache-first',
     });
@@ -45,9 +46,9 @@ const TasksPage = () => {
         <>
             <Helmet title='Tasks | Hovee' />
             <Container
-                maxWidth='4xl'
                 sx={{
                     height: '100%',
+                    maxWidth: theme.breakpoints.values.xl * 4,
                 }}>
                 <Alert />
                 <Grid container spacing={3} wrap='nowrap' height='100%'>

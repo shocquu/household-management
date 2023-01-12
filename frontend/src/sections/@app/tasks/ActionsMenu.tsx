@@ -23,7 +23,7 @@ import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { gql, useMutation, useQuery } from '@apollo/client';
 import Iconify from '../../../components/iconify';
-import { Role, Tag, Task, User } from '../../../types';
+import { Comment, Role, Tag, Task, User } from '../../../types';
 import ConfirmDialog from '../../../components/confirm-dialog';
 import { USERS_QUERY } from '../../../pages/TasksPage';
 import useAuth from '../../../hooks/useAuth';
@@ -60,6 +60,13 @@ const UPDATE_TASK_MUTATION = gql`
         }
     }
 `;
+
+type InitialValues = {
+    title: string;
+    description: string;
+    comments: Comment[];
+    dueDate: number;
+};
 
 interface ActionsMenu {
     taskId: number;
@@ -324,7 +331,7 @@ const DatePicker = ({ disabled }: { disabled: boolean }) => {
     const [anchorEl, setAnchorEl] = useState(null);
     const [date, setDate] = useState(format(new Date(), 'MM/dd/yyyy'));
     const [open, setOpen] = useState(false);
-    const { setFieldValue } = useFormikContext();
+    const { setFieldValue, values } = useFormikContext();
 
     const handleDateChange = (newDate) => {
         setDate(newDate);
@@ -378,7 +385,7 @@ const DatePicker = ({ disabled }: { disabled: boolean }) => {
                                             disabled={disabled}
                                             {...inputProps}
                                         />
-                                        Set due date
+                                        {(values as InitialValues)?.dueDate ? 'Edit due date' : 'Set due date'}
                                     </Box>
                                 )}
                             />

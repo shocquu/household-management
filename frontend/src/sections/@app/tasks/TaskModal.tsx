@@ -25,7 +25,7 @@ import ActionsMenu from './ActionsMenu';
 import EditableText from '../../../components/editable-text';
 import { Form, FormikProvider, useFormik } from 'formik';
 import useAuth from '../../../hooks/useAuth';
-import { Comment, Role, User } from '../../../types';
+import { Comment, Role, Task, User } from '../../../types';
 import Iconify from '../../../components/iconify';
 import { USERS_QUERY } from '../../../pages/TasksPage';
 import { AVATARS_BASE_PATH } from '../../../constants';
@@ -90,7 +90,7 @@ const UPDATE_TASK_MUTATION = gql`
 
 const TaskModal = ({ taskId, open, handleClose }: TaskModal) => {
     const { user: loggedInUser } = useAuth();
-    const { data, loading } = useQuery(TASK_QUERY, {
+    const { data, loading, called } = useQuery(TASK_QUERY, {
         skip: !open,
         variables: { taskId },
     });
@@ -117,22 +117,31 @@ const TaskModal = ({ taskId, open, handleClose }: TaskModal) => {
             comments,
             dueDate,
         },
-        enableReinitialize: true,
+        enableReinitialize: !loading,
         onSubmit: ({ title, description, dueDate }) => {
             updateTask({
-                refetchQueries: [{ query: USERS_QUERY }], // temporary
+                refetchQueries: [{ query: USERS_QUERY }],
                 variables: {
-                    updateTaskInput: { id: taskId, title, description, dueDate },
+                    updateTaskInput: {
+                        id: taskId,
+                        title,
+                        description,
+                        dueDate: dueDate ? new Date(dueDate) : undefined,
+                    },
                 },
                 onCompleted: (values) => {
-                    formik.setValues(values);
+                    formik.resetForm(values);
                 },
-                update: (cache) => {
+                update: (cache, { data: { updateTask } }) => {
                     cache.modify({
                         fields: {
                             users(cachedUsers: User[] = [], { readField }) {
                                 const foundUser = cachedUsers?.find((user) => user?.id === readField('id', user));
-                                return { ...cachedUsers, foundUser };
+                                return [...cachedUsers, foundUser];
+                            },
+                            task(cachedTask: Task) {
+                                // console.log(data);
+                                return [updateTask];
                             },
                         },
                     });
@@ -429,7 +438,10 @@ const NewComment = ({ disabled, authorId, taskId }: { disabled: boolean; authorI
                 onChange={formik.handleChange}
                 onClick={() => setIsFocused(true)}
                 onKeyDown={(e) => {
-                    if (e.key === 'Enter') formik.handleSubmit();
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        formik.handleSubmit();
+                    }
                 }}
                 onBlur={() => {
                     if (!formik.values.message) setIsFocused(false);

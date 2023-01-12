@@ -77,6 +77,12 @@ const EditableText = ({
                     onChange?.(event);
                     setValue(event.target.value);
                 }}
+                onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        setIsFocused(false);
+                    }
+                }}
                 onBlur={(event) => {
                     onBlur?.(event);
                     setIsFocused(false);

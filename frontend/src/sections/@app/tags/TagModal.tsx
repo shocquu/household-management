@@ -122,11 +122,6 @@ const TagModal = ({ open, handleClose, labelToEdit }: TagModal) => {
                           },
                       },
                       update: (cache, { data: { createTag } }) => {
-                          const { tags } = cache.readQuery({ query: TAGS_QUERY });
-                          //   cache.writeQuery({
-                          //       query: TAGS_QUERY,
-                          //       data: { tags: tags.concat([createTag]) },
-                          //   });
                           cache.modify({
                               fields: {
                                   tags(cachedTags: Tag[]) {
