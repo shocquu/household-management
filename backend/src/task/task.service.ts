@@ -54,7 +54,7 @@ export class TaskService {
         dueDate: updateTaskInput?.dueDate
           ? new Date(updateTaskInput.dueDate).toISOString()
           : undefined,
-        tags: {
+        tags: updateTaskInput?.tags && {
           deleteMany: {},
           create: updateTaskInput?.tags?.map((tag) => ({
             tag: { connect: tag },

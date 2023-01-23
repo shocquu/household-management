@@ -1,4 +1,5 @@
 import { Helmet } from 'react-helmet-async';
+import { useTranslation } from 'react-i18next';
 import { styled } from '@mui/material/styles';
 import { Link as RouterLink } from 'react-router-dom';
 import { Container, Typography, Link } from '@mui/material';
@@ -7,6 +8,7 @@ import { LoginForm } from '../sections/auth/login';
 import Logo from '../components/logo';
 
 const LoginPage = () => {
+    const { t } = useTranslation();
     const mdUp = useResponsive('up', 'md');
 
     return (
@@ -24,7 +26,7 @@ const LoginPage = () => {
                 {mdUp && (
                     <StyledSection>
                         <Typography variant='h3' sx={{ px: 5, mt: 10, mb: 5 }}>
-                            Hi, Welcome Back
+                            {t('loginPage.welcomeMessage')}
                         </Typography>
                         <img src='/assets/illustrations/illustration_login.png' alt='login' />
                     </StyledSection>
@@ -33,7 +35,7 @@ const LoginPage = () => {
                 <Container maxWidth='sm'>
                     <StyledContent>
                         <Typography variant='h4' gutterBottom>
-                            Sign in to Minimal
+                            {t('loginPage.header', { name: 'Hovee' })}
                         </Typography>
 
                         <Typography variant='body2' sx={{ mb: 5 }}>

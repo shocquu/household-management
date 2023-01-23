@@ -29,7 +29,7 @@ import { USERS_QUERY } from '../../../pages/TasksPage';
 import useAuth from '../../../hooks/useAuth';
 import useAlert from '../../../hooks/useAlert';
 import { TASK_QUERY } from './TaskModal';
-import { useAppApolloClient } from '../../../services/apolloClient';
+import { useAppApolloClient } from '../../../@apollo/apolloClient';
 import { AVATARS_BASE_PATH } from '../../../constants';
 import { format, parse } from 'date-fns';
 import { useFormikContext } from 'formik';
@@ -271,7 +271,7 @@ const ActionsMenu = ({ taskId, userId, completed, appliedTags }: ActionsMenu) =>
                                         cache.modify({
                                             fields: {
                                                 task(cachedTask: Task) {
-                                                    return cachedTask?.tags.concat([updateTask]);
+                                                    return (cachedTask?.tags ?? []).concat([updateTask]);
                                                 },
                                                 users(cachedUsers: User[] = [], { readField }) {
                                                     const foundUser = cachedUsers?.find(

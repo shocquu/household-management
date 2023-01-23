@@ -182,7 +182,10 @@ const TaskModal = ({ taskId, open, handleClose }: TaskModal) => {
                                             text={formik.values.title}
                                             name='title'
                                             maxRows={1}
-                                            onBlur={(e) => formik.setFieldValue('title', e.target.value)}
+                                            onBlur={(e) =>
+                                                e.target.value.trim().length > 0 &&
+                                                formik.setFieldValue('title', e.target.value)
+                                            }
                                         />
                                     ) : (
                                         <Skeleton variant='text' width='30%' sx={{ fontSize: '1rem' }} />

@@ -11,7 +11,7 @@ import {
 import { createContext, Dispatch, ReactNode, useContext, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { AVATARS_BASE_PATH } from '../constants';
-import { useAppApolloClient } from '../services/apolloClient';
+import { useAppApolloClient } from '../@apollo/apolloClient';
 import { useAccessToken } from './useAccessToken';
 import useAlert from './useAlert';
 import { User } from '../types';
@@ -83,12 +83,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         onCompleted: ({ whoami }) => {
             setUser({ ...whoami, avatarUrl: AVATARS_BASE_PATH + whoami?.avatarUrl });
         },
-        onError: ({ graphQLErrors }) => {
+        onError: async ({ graphQLErrors }) => {
             if (graphQLErrors) {
                 for (let err of graphQLErrors) {
                     switch (err.extensions.code) {
                         case 'UNAUTHENTICATED':
-                            refreshTokens();
+                            await refreshTokens();
+                            refetch();
                             break;
                     }
                 }
@@ -96,8 +97,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         },
     });
     const [refreshTokens] = useLazyQuery(REFRESH_TOKENS_QUERY, {
-        onCompleted: ({ refresh }) => {
-            setAccessToken(refresh.accessToken);
+        onCompleted: ({ refresh: { accessToken } }) => {
+            setAccessToken(accessToken);
         },
     });
     const [logout] = useLazyQuery(LOGOUT_USER_QUERY, {

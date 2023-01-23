@@ -1,0 +1,114 @@
+{
+    "navBar": {
+        "assigments": "Assigments",
+        "labels": "Labels"
+    },
+    "header": {
+        "language": {
+            "polish": "Polish",
+            "english": "English",
+            "german": "German"
+        },
+        "menu": {
+            "account": "Account",
+            "settings": "Settings",
+            "logout": "Logout"
+        }
+    },
+    "common": {
+        "save": "Save",
+        "saveChanges": "Save changes",
+        "edit": "Edit",
+        "delete": "Delete",
+        "cancel": "Cancel",
+        "search": "Search...",
+        "rowsPerPage": "Rows per page",
+        "username": "Username",
+        "displayName": "Display name",
+        "email": "Email address",
+        "dateFormat": "Date format",
+        "timeFormat": "Time format"
+    },
+    "labels": {
+        "green": "Green",
+        "caribbeanGreen": "Green",
+        "blue": "Green",
+        "skyBlue": "Green",
+        "pink": "Green",
+        "purple": "Green",
+        "yellow": "Green",
+        "yellowCrayola": "Green",
+        "orange": "Green",
+        "melon": "Green",
+        "red": "Green",
+        "coral": "Green"
+    },
+    "loginPage": {
+        "welcomeMessage": "Hi, welcome back",
+        "header": "Sign in to {{name}}",
+        "subtitle": "Don't have an account?",
+        "getStarted": "Get started",
+        "rememberMe": "Remember me",
+        "login": "Login"
+    },
+    "registerPage": {
+        "welcomeMessage": "Manage your tasks more effectively with {{name}}",
+        "header": "Create an account",
+        "subtitle": "Already have an account?",
+        "signIn": "Sign in",
+        "selectAvatar": "Select avatar",
+        "createAccount": "Create account"
+    },
+    "tasksPage": {
+        "addNewTask": "Add new task",
+        "showCompleted": "Show completed",
+        "hideCompleted": "Hide completed",
+        "timeLeft": "{{daysCount}} daysLeft",
+        "timeOver": "Time is over",
+        "task": {
+            "addNew": "Add new task",
+            "addNewPlaceholder": "Enter a title for this card",
+            "commentTooltip": "This card has a comment",
+            "commentsTooltip": "This card has {{commentCount}} comments",
+            "descriptionTooltip": "This card has a description",
+            "modal": {
+                "labels": "Labels",
+                "description": "Description",
+                "activity": "Activity",
+                "actions": "Actions",
+                "commentPlaceholder": "Write a comment",
+                "markAsDone": "Mark as done",
+                "setDueDate": "Set due date",
+                "editDueDate": "Edit due date",
+                "delete": "Delete",
+                "assignTo": "Assign to"
+            }
+        }
+    },
+    "labelsPage": {
+        "header": {
+            "title": "Labels",
+            "newLabel": "New label",
+            "search": "Search label..."
+        },
+        "table": {
+            "label": "Label",
+            "color": "Color"
+        },
+        "modal": {
+            "header": "Create label",
+            "title": "Title",
+            "selectColor": "Select a color"
+        }
+    },
+    "accountPage": {
+        "tabs": {
+            "general": "General",
+            "changePassword": "Change password"
+        },
+        "oldPassword": "Old password",
+        "newPassword": "NewPassword",
+        "confirmNewPassword": "Confirm new password",
+        "minPasswordHelper": "Password must be minimum {{min}} characters long"
+    }
+}
