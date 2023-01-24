@@ -1,6 +1,6 @@
 {
     "navBar": {
-        "assigments": "Assigments",
+        "assignments": "Assignments",
         "labels": "Labels"
     },
     "header": {
@@ -21,30 +21,43 @@
         "edit": "Edit",
         "delete": "Delete",
         "cancel": "Cancel",
+        "create": "Create",
         "search": "Search...",
+        "settings": "Settings",
         "rowsPerPage": "Rows per page",
         "username": "Username",
-        "displayName": "Display name",
+        "password": "Password",
+        "displayName": "Display Name",
         "email": "Email address",
         "dateFormat": "Date format",
-        "timeFormat": "Time format"
+        "timeFormat": "Time format",
+        "clearSearch": "Clear",
+        "notFound": "Not found",
+        "noResults": "No results found for",
+        "selected": "{{selectedCount}} selected"
+    },
+    "alerts": {
+        "markedAsCompleted": "Marked as completed",
+        "undoSuccess": "Undone successfully",
+        "assignSuccess": "Task assigned successfully",
+        "taskDeleteError": "An error occurred while deleting the task"
     },
     "labels": {
         "green": "Green",
-        "caribbeanGreen": "Green",
-        "blue": "Green",
-        "skyBlue": "Green",
-        "pink": "Green",
-        "purple": "Green",
-        "yellow": "Green",
-        "yellowCrayola": "Green",
-        "orange": "Green",
-        "melon": "Green",
-        "red": "Green",
-        "coral": "Green"
+        "caribbeanGreen": "Caribbean green",
+        "blue": "Blue",
+        "skyBlue": "Sky blue",
+        "pink": "Pink",
+        "purple": "Purple",
+        "yellow": "Yellow",
+        "yellowCrayola": "Yellow crayola",
+        "orange": "Orange",
+        "melon": "Melon",
+        "red": "Red",
+        "coral": "Coral"
     },
     "loginPage": {
-        "welcomeMessage": "Hi, welcome back",
+        "welcomeMessage": "Hi, welcome back!",
         "header": "Sign in to {{name}}",
         "subtitle": "Don't have an account?",
         "getStarted": "Get started",
@@ -52,7 +65,7 @@
         "login": "Login"
     },
     "registerPage": {
-        "welcomeMessage": "Manage your tasks more effectively with {{name}}",
+        "welcomeMessage": "Manage your tasks more effectively with",
         "header": "Create an account",
         "subtitle": "Already have an account?",
         "signIn": "Sign in",
@@ -60,28 +73,39 @@
         "createAccount": "Create account"
     },
     "tasksPage": {
-        "addNewTask": "Add new task",
         "showCompleted": "Show completed",
         "hideCompleted": "Hide completed",
-        "timeLeft": "{{daysCount}} daysLeft",
+        "timeLeft": "{{daysCount}} days left",
         "timeOver": "Time is over",
+        "permission": "Only users with the Admin role can add tasks",
+        "empty": "Empty",
+        "noTasksTitle": "You don't have any tasks 🥳",
+        "noTasksSubtitle": "Feel free to rest",
         "task": {
             "addNew": "Add new task",
             "addNewPlaceholder": "Enter a title for this card",
             "commentTooltip": "This card has a comment",
-            "commentsTooltip": "This card has {{commentCount}} comments",
+            "commentsTooltip": "This card has {{commentsCount}} comments",
             "descriptionTooltip": "This card has a description",
             "modal": {
                 "labels": "Labels",
                 "description": "Description",
+                "descriptionPlaceholder": "Add a more detailed description",
                 "activity": "Activity",
                 "actions": "Actions",
+                "deleteComment": "Delete comment",
+                "commentDisabled": "Cannot post comments on completed tasks",
                 "commentPlaceholder": "Write a comment",
                 "markAsDone": "Mark as done",
+                "undoDone": "Undo done",
                 "setDueDate": "Set due date",
                 "editDueDate": "Edit due date",
                 "delete": "Delete",
                 "assignTo": "Assign to"
+            },
+            "dialog": {
+                "title": "Are you sure you want to delete this task?",
+                "description": "This action is irreversible"
             }
         }
     },
@@ -96,19 +120,27 @@
             "color": "Color"
         },
         "modal": {
-            "header": "Create label",
+            "create": "Create label",
+            "edit": "Edit label",
             "title": "Title",
             "selectColor": "Select a color"
         }
     },
     "accountPage": {
+        "header": "Account",
         "tabs": {
             "general": "General",
             "changePassword": "Change password"
         },
+        "changeAvatar": "Change avatar",
         "oldPassword": "Old password",
-        "newPassword": "NewPassword",
+        "newPassword": "New password",
         "confirmNewPassword": "Confirm new password",
         "minPasswordHelper": "Password must be minimum {{min}} characters long"
+    },
+    "404": {
+        "title": "Sorry, page not found!",
+        "description": "Sorry, we couldn’t find the page you’re looking for. Perhaps you’ve mistyped the URL? Be sure to check your spelling.",
+        "goToHome": "Go to home"
     }
 }

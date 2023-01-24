@@ -24,6 +24,7 @@ import NewCard from './NewCard';
 import { AVATARS_BASE_PATH, HEADER } from '../../../constants';
 import useAuth from '../../../hooks/useAuth';
 import useLocalPreferences from '../../../hooks/useLocalPreferences';
+import { useTranslation } from 'react-i18next';
 
 interface TasksColumn {
     user?: User;
@@ -33,6 +34,7 @@ interface TasksColumn {
 
 const EmptyState = ({ id, sx }: { id: number; sx?: SxProps }) => {
     const { user: loggedInUser } = useAuth();
+    const { t } = useTranslation();
 
     return (
         <Stack
@@ -46,10 +48,10 @@ const EmptyState = ({ id, sx }: { id: number; sx?: SxProps }) => {
                 <>
                     <img src='/assets/illustrations/illustration_avatar.png' alt='Empty' width={85} />
                     <Typography variant='subtitle1' textAlign='center'>
-                        You don't have any tasks 🥳
+                        {t('tasksPage.noTasksTitle')}
                     </Typography>
                     <Typography variant='body2' textAlign='center'>
-                        Feel free to rest
+                        {t('tasksPage.noTasksSubtitle')}
                     </Typography>
                 </>
             ) : (
@@ -66,7 +68,7 @@ const EmptyState = ({ id, sx }: { id: number; sx?: SxProps }) => {
                         }}
                     />
                     <Typography variant='subtitle1' textAlign='center' color='text.disabled'>
-                        Empty
+                        {t('tasksPage.empty')}
                     </Typography>
                 </>
             )}
@@ -77,6 +79,7 @@ const EmptyState = ({ id, sx }: { id: number; sx?: SxProps }) => {
 const TasksColumn = ({ loading, user, index = 1 }: TasksColumn) => {
     const { id, displayName, username, avatarUrl, tasks } = user;
     const { user: loggedInUser } = useAuth();
+    const { t } = useTranslation();
     const { preferences, setPreference } = useLocalPreferences();
     const [isAdding, setIsAdding] = useState(false);
     const [showCompleted, setShowCompleted] = useState(preferences.showCompletedTasks);
@@ -92,9 +95,9 @@ const TasksColumn = ({ loading, user, index = 1 }: TasksColumn) => {
     const handleCancel = () => setIsAdding(false);
 
     const getTitle = () => {
-        if (!isAdmin) return 'Only users with the Admin role can add tasks';
-        if (isAdding) return 'Cancel';
-        return 'Add new task';
+        if (!isAdmin) return t('tasksPage.permission');
+        if (isAdding) return t('common.cancel');
+        return t('tasksPage.task.addNew');
     };
 
     const handleToggle = () => {
@@ -156,18 +159,18 @@ const TasksColumn = ({ loading, user, index = 1 }: TasksColumn) => {
                             },
                         }}>
                         <Button color='secondary' onClick={handleToggle}>
-                            {showCompleted ? 'Hide completed' : 'Show completed'}
+                            {showCompleted ? t('tasksPage.hideCompleted') : t('tasksPage.showCompleted')}
                         </Button>
                     </Divider>
 
                     <Scrollbar
                         scrollableNodeProps={{ ref: scrollableNodeRef }}
-                        sx={{ maxHeight: 'calc(100vh - 24rem)' }}>
+                        sx={{ maxHeight: 'calc(100vh - 22rem)' }}>
                         {!loading && (nonCompletedTasks.length > 0 || showCompleted) ? (
                             <Stack mb={2} spacing={1}>
                                 {tasks
-                                    .filter((task) => (!showCompleted ? !task.completed : task))
-                                    .map((task) => (
+                                    ?.filter((task) => (!showCompleted ? !task.completed : task))
+                                    ?.map((task) => (
                                         <TaskCard key={task.id} task={task} />
                                     ))}
 

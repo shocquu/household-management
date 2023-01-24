@@ -1,0 +1,146 @@
+{
+    "navBar": {
+        "assignments": "Zadania",
+        "labels": "Etykiety"
+    },
+    "header": {
+        "language": {
+            "polish": "Polski",
+            "english": "Angielski",
+            "german": "Niemiecki"
+        },
+        "menu": {
+            "account": "Konto",
+            "settings": "Ustawienia",
+            "logout": "Wyloguj"
+        }
+    },
+    "common": {
+        "save": "Zapisz",
+        "saveChanges": "Zapisz zmiany",
+        "edit": "Edytuj",
+        "delete": "Usuń",
+        "cancel": "Anuluj",
+        "create": "Utwórz",
+        "search": "Szukaj...",
+        "settings": "Ustawienia",
+        "rowsPerPage": "Wierszy na stronę",
+        "username": "Nazwa użytkownika",
+        "password": "Hasło",
+        "displayName": "Nazwa ogólna",
+        "email": "Adres email",
+        "dateFormat": "Format daty",
+        "timeFormat": "Format godziny",
+        "clearSearch": "Wyczyść",
+        "notFound": "Nie znaleziono",
+        "noResults": "Brak wyników dla zapytania",
+        "selected": "Wybrano {{selectedCount}}"
+    },
+    "alerts": {
+        "markedAsCompleted": "Oznaczono jako ukończone",
+        "undoSuccess": "Pomyślnie cofnięto",
+        "assignSuccess": "Zadanie przypisano pomyślnie",
+        "taskDeleteError": "Wystąpił błąd podczas usuwania zadania"
+    },
+    "labels": {
+        "green": "Zielony",
+        "caribbeanGreen": "Karaibska zieleń",
+        "blue": "Niebieski",
+        "skyBlue": "Błękit nieba",
+        "pink": "Różowy",
+        "purple": "Fioletowy",
+        "yellow": "Żółty",
+        "yellowCrayola": "Kredkowa żółć",
+        "orange": "Pomarańczowy",
+        "melon": "Melonowy",
+        "red": "Czerwony",
+        "coral": "Koralowy"
+    },
+    "loginPage": {
+        "welcomeMessage": "Cześć, witaj z powrotem!",
+        "header": "Zaloguj się do {{name}}",
+        "subtitle": "Nie masz konta?",
+        "getStarted": "Zacznijmy",
+        "rememberMe": "Zapamiętaj mnie",
+        "login": "Zaloguj"
+    },
+    "registerPage": {
+        "welcomeMessage": "Zarządzaj zadaniami efektywniej z",
+        "header": "Utwórz konto",
+        "subtitle": "Już masz konto?",
+        "signIn": "Zaloguj się",
+        "selectAvatar": "Wybierz awatara",
+        "createAccount": "Utwórz konto"
+    },
+    "tasksPage": {
+        "showCompleted": "Pokaż ukończone",
+        "hideCompleted": "Ukryj ukończone",
+        "timeLeft": "Pozostało {{daysCount}} dni",
+        "timeOver": "Czas się skończył",
+        "permission": "Tylko użytkownicy o roli administratora mogą dodawać zadania",
+        "empty": "Puste",
+        "noTasksTitle": "Nie masz żadnych zadań 🥳",
+        "noTasksSubtitle": "Możesz odpocząć",
+        "task": {
+            "addNew": "Dodaj nowe zadanie",
+            "addNewPlaceholder": "Wprowadź tytuł zadania",
+            "commentTooltip": "Ta karta ma komentarz",
+            "commentsTooltip": "Ta karta ma {{commentsCount}} komentarzy",
+            "descriptionTooltip": "Ta karta ma opis",
+            "modal": {
+                "labels": "Etykiety",
+                "description": "Opis",
+                "descriptionPlaceholder": "Dodaj bardziej szczegółowy opsi",
+                "activity": "Aktywność",
+                "actions": "Akcje",
+                "deleteComment": "Usuń komentarz",
+                "commentDisabled": "Nie można zamieszczać komentarzy pod ukończonymi zadaniami",
+                "commentPlaceholder": "Zamieść komentarz",
+                "markAsDone": "Zakończ",
+                "undoDone": "Cofnij ukończenie",
+                "setDueDate": "Ustaw termin",
+                "editDueDate": "Edytuj termin",
+                "delete": "Usuń",
+                "assignTo": "Przypisz do"
+            },
+            "dialog": {
+                "title": "Czy na pewno chcesz usunąć to zadanie",
+                "description": "Tej czynności nie da się cofnąć"
+            }
+        }
+    },
+    "labelsPage": {
+        "header": {
+            "header": "Utwórz etykietę",
+            "newLabel": "Nowa etykieta",
+            "search": "Szukaj etykiety..."
+        },
+        "table": {
+            "label": "Etykieta",
+            "color": "Kolor"
+        },
+        "modal": {
+            "create": "Utwórz etykietę",
+            "edit": "Edytuj etykietę",
+            "title": "Tytuł",
+            "selectColor": "Wybierz kolor"
+        }
+    },
+    "accountPage": {
+        "header": "Konto",
+        "tabs": {
+            "general": "Ogólne",
+            "changePassword": "Zmiana hasła"
+        },
+        "changeAvatar": "Zmień awatara",
+        "oldPassword": "Stare hasło",
+        "newPassword": "Nowe hasło",
+        "confirmNewPassword": "Potwierdź nowe hasło",
+        "minPasswordHelper": "Hasło musi składać się z przynajmniej {{min}} znaków"
+    },
+    "404": {
+        "title": "Przepraszamy, brak strony",
+        "description": "Przepraszamy, nie udało nam się znaleźć strony, której szukasz. Upewnij się, że dobrze wpisałeś adres URL.",
+        "goToHome": "Przejdź na stronę główną"
+    }
+}

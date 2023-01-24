@@ -7,7 +7,6 @@ import {
     Table,
     Stack,
     Paper,
-    Avatar,
     Button,
     Popover,
     Checkbox,
@@ -34,6 +33,7 @@ import { LabelColors, Tag } from '../types';
 import useAlert from '../hooks/useAlert';
 import useLocalPreferences from '../hooks/useLocalPreferences';
 import { USERS_QUERY } from './TasksPage';
+import { useTranslation } from 'react-i18next';
 
 export const TAGS_QUERY = gql`
     query Tags {
@@ -62,12 +62,6 @@ const REMOVE_TAGS_MUTATION = gql`
         }
     }
 `;
-
-const TABLE_HEAD = [
-    { id: 'label', label: 'Label', alignRight: false },
-    { id: 'color', label: 'Color', alignRight: false },
-    { id: '' },
-];
 
 function descendingComparator(a, b, orderBy) {
     if (b[orderBy] < a[orderBy]) {
@@ -109,6 +103,7 @@ const TagsPage = () => {
     const [filterName, setFilterName] = useState('');
     const { preferences, setPreference } = useLocalPreferences();
     const [rowsPerPage, setRowsPerPage] = useState(preferences?.rowsPerPage ?? 5);
+    const { t } = useTranslation();
     const alert = useAlert();
 
     const { data } = useQuery(TAGS_QUERY);
@@ -145,6 +140,12 @@ const TagsPage = () => {
             });
         },
     });
+
+    const tableHead = [
+        { id: 'label', label: t('labelsPage.table.label'), alignRight: false },
+        { id: 'color', label: t('labelsPage.table.color'), alignRight: false },
+        { id: '' },
+    ];
 
     const handleOpenMenu = (selectedTag: Tag) => (event) => {
         setOpen(event.currentTarget);
@@ -221,15 +222,15 @@ const TagsPage = () => {
 
             <TagModal open={openModal} handleClose={handleCloseModal} labelToEdit={selectedLabelItem} />
             <Container>
-                <Stack direction='row' alignItems='center' justifyContent='space-between' mb={5}>
+                <Stack direction='row' alignItems='center' justifyContent='space-between' mb={{ xs: 2, md: 5 }}>
                     <Typography variant='h4' gutterBottom>
-                        Labels
+                        {t('labelsPage.header.title')}
                     </Typography>
                     <Button
                         variant='contained'
                         startIcon={<Iconify icon='eva:plus-fill' />}
                         onClick={() => setOpenModal(true)}>
-                        New label
+                        {t('labelsPage.header.newLabel')}
                     </Button>
                 </Stack>
 
@@ -248,9 +249,9 @@ const TagsPage = () => {
                                 <TagsListHead
                                     order={order}
                                     orderBy={orderBy}
-                                    headLabel={TABLE_HEAD}
+                                    headLabel={tableHead}
                                     rowCount={data?.tags.length}
-                                    numSelected={selected.length}
+                                    numSelected={selected?.length}
                                     onRequestSort={handleRequestSort}
                                     onSelectAllClick={handleSelectAllClick}
                                 />
@@ -325,11 +326,11 @@ const TagsPage = () => {
                                                         textAlign: 'center',
                                                     }}>
                                                     <Typography variant='h6' paragraph>
-                                                        Not found
+                                                        {t('common.notFound')}
                                                     </Typography>
 
                                                     <Typography variant='body2'>
-                                                        No results found for &nbsp;
+                                                        {t('common.noResults')}&nbsp;
                                                         <strong>&quot;{filterName}&quot;</strong>.
                                                     </Typography>
                                                 </Paper>
@@ -347,6 +348,7 @@ const TagsPage = () => {
                         count={data?.tags.length}
                         rowsPerPage={rowsPerPage}
                         page={page}
+                        labelRowsPerPage={t('common.rowsPerPage')}
                         onPageChange={handleChangePage}
                         onRowsPerPageChange={handleChangeRowsPerPage}
                     />
@@ -372,7 +374,7 @@ const TagsPage = () => {
                 }}>
                 <MenuItem onClick={handleOpenModal}>
                     <Iconify icon={'eva:edit-fill'} sx={{ mr: 2 }} />
-                    Edit
+                    {t('common.edit')}
                 </MenuItem>
 
                 <MenuItem
@@ -381,7 +383,7 @@ const TagsPage = () => {
                         removeTag();
                     }}>
                     <Iconify icon={'eva:trash-2-outline'} sx={{ mr: 2 }} />
-                    Delete
+                    {t('common.delete')}
                 </MenuItem>
             </Popover>
         </>

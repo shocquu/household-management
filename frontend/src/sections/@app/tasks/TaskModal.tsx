@@ -31,6 +31,7 @@ import { USERS_QUERY } from '../../../pages/TasksPage';
 import { AVATARS_BASE_PATH } from '../../../constants';
 import { getTimeColor } from '../../../utils/getTimeColor';
 import { getLabelColor } from '../../../utils/getLabelColor';
+import { useTranslation } from 'react-i18next';
 
 export const TASK_QUERY = gql`
     query Task($taskId: Int!) {
@@ -90,7 +91,8 @@ const UPDATE_TASK_MUTATION = gql`
 
 const TaskModal = ({ taskId, open, handleClose }: TaskModal) => {
     const { user: loggedInUser } = useAuth();
-    const { data, loading, called } = useQuery(TASK_QUERY, {
+    const { t } = useTranslation();
+    const { data, loading } = useQuery(TASK_QUERY, {
         skip: !open,
         variables: { taskId },
     });
@@ -198,28 +200,31 @@ const TaskModal = ({ taskId, open, handleClose }: TaskModal) => {
                                             variant='caption'
                                             color='text.secondary'
                                             sx={{ mt: 0.5, mb: 0 }}>
-                                            Labels
+                                            {t('tasksPage.task.modal.labels')}
                                         </Typography>
                                         <Stack direction='row' flexWrap='wrap' sx={{ rowGap: 0.5 }}>
-                                            {appliedTags.map(({ label, color }) => (
-                                                <Chip
-                                                    key={label}
-                                                    size='small'
-                                                    label={label}
-                                                    sx={{
-                                                        bgcolor: getLabelColor(color),
-                                                        color: 'common.white',
-                                                        mr: 1,
-                                                        fontSize: 12,
-                                                    }}
-                                                />
-                                            ))}
+                                            {appliedTags.map(
+                                                (tag) =>
+                                                    tag && (
+                                                        <Chip
+                                                            key={tag.label}
+                                                            size='small'
+                                                            label={tag.label}
+                                                            sx={{
+                                                                bgcolor: getLabelColor(tag.color),
+                                                                color: 'common.white',
+                                                                mr: 1,
+                                                                fontSize: 12,
+                                                            }}
+                                                        />
+                                                    )
+                                            )}
                                         </Stack>
                                     </>
                                 )}
 
                                 <Typography variant='subtitle2' mt={1}>
-                                    Description
+                                    {t('tasksPage.task.modal.description')}
                                 </Typography>
                                 {loading ? (
                                     <Skeleton variant='rounded' width='100%' height={60} sx={{ mt: 0.5 }} />
@@ -237,7 +242,7 @@ const TaskModal = ({ taskId, open, handleClose }: TaskModal) => {
                                         fullWidth
                                         multiline
                                         minRows={2}
-                                        placeholder='Add a more detailed description'
+                                        placeholder={t('tasksPage.task.modal.descriptionPlaceholder')}
                                         variant='filled'
                                         size='small'
                                         name='description'
@@ -268,7 +273,7 @@ const TaskModal = ({ taskId, open, handleClose }: TaskModal) => {
                             )}
 
                             <Typography variant='subtitle2' mt={3} onClick={(e) => e.preventDefault()}>
-                                Activity
+                                {t('tasksPage.task.modal.activity')}
                             </Typography>
                             <List
                                 dense
@@ -341,6 +346,7 @@ const REMOVE_COMMENT_MUTATION = gql`
 
 const CommentBlock = ({ comment }: { comment: Comment }) => {
     const { id, createdAt, message, author } = comment;
+    const { t } = useTranslation();
 
     const { user } = useAuth();
     const [removeComment] = useMutation(REMOVE_COMMENT_MUTATION, {
@@ -379,7 +385,7 @@ const CommentBlock = ({ comment }: { comment: Comment }) => {
                     <Stack direction='row' alignItems='center' justifyContent='space-between'>
                         {message}
                         {author.id === user.id && (
-                            <Tooltip title='Delete comment'>
+                            <Tooltip title={t('tasksPage.task.modal.deleteComment')}>
                                 <IconButton
                                     aria-label='delete'
                                     sx={{ p: 0, cursor: 'pointer', display: 'none', fontSize: 'inherit' }}
@@ -405,6 +411,7 @@ const ADD_COMMENT_MUTATION = gql`
 
 const NewComment = ({ disabled, authorId, taskId }: { disabled: boolean; authorId: number; taskId: number }) => {
     const [isFocused, setIsFocused] = useState(false);
+    const { t } = useTranslation();
     const [postComment] = useMutation(ADD_COMMENT_MUTATION, {
         refetchQueries: [TASK_QUERY, USERS_QUERY],
     });
@@ -430,7 +437,9 @@ const NewComment = ({ disabled, authorId, taskId }: { disabled: boolean; authorI
                 size='small'
                 name='message'
                 value={formik.values.message}
-                placeholder={disabled ? 'Cannot post comments on completed tasks' : 'Write a comment'}
+                placeholder={
+                    disabled ? t('tasksPage.task.modal.commentDisabled') : t('tasksPage.task.modal.commentPlaceholder')
+                }
                 InputProps={{
                     sx: {
                         transition: 'padding .3s',

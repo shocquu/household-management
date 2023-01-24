@@ -1,19 +1,18 @@
 import { alpha, styled } from '@mui/material/styles';
-import { Link, Card, Avatar, Typography, Stack, Box, Chip, Tooltip } from '@mui/material';
+import { Card, Typography, Stack, Box, Chip, Tooltip } from '@mui/material';
 import TaskAltIcon from '@mui/icons-material/TaskAlt';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import { fCountdown, fDate, fDateTime } from '../../../utils/formatTime';
-import { fShortenNumber } from '../../../utils/formatNumber';
-import SvgColor from '../../../components/svg-color';
 import Iconify from '../../../components/iconify';
 import { Task, Comment } from '../../../types';
 import ScheduleIcon from '@mui/icons-material/Schedule';
 import SegmentIcon from '@mui/icons-material/Segment';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import TaskModal from './TaskModal';
 import { getTimeColor } from '../../../utils/getTimeColor';
 import useAuth from '../../../hooks/useAuth';
 import { getLabelColor } from '../../../utils/getLabelColor';
+import { useTranslation } from 'react-i18next';
 
 interface BlogPostCardProps {
     task: Task;
@@ -41,14 +40,17 @@ const TaskCard = ({ task }: BlogPostCardProps) => {
                 }}
                 onClick={handleOpen}>
                 <Stack direction='row' flexWrap='wrap' sx={{ gap: 0.5 }}>
-                    {tags?.map(({ label, color }) => (
-                        <Chip
-                            key={label}
-                            size='small'
-                            label={label}
-                            sx={{ bgcolor: getLabelColor(color), color: 'common.white' }}
-                        />
-                    ))}
+                    {tags?.map(
+                        (tag) =>
+                            tag && (
+                                <Chip
+                                    key={tag.label}
+                                    size='small'
+                                    label={tag.label}
+                                    sx={{ bgcolor: getLabelColor(tag.color), color: 'common.white' }}
+                                />
+                            )
+                    )}
                 </Stack>
                 <Typography variant='subtitle1' sx={{ py: 1 }}>
                     {title}
@@ -89,6 +91,7 @@ const TaskDetails = ({
     };
 }) => {
     const { completed, createdAt, dueDate, showDescription, comments } = details;
+    const { t } = useTranslation();
     const { user } = useAuth();
 
     return (
@@ -104,7 +107,7 @@ const TaskDetails = ({
                     />
                 </Tooltip>
                 {showDescription && (
-                    <Tooltip enterDelay={1000} title={'This card has a description'}>
+                    <Tooltip enterDelay={1000} title={t('tasksPage.task.descriptionTooltip')}>
                         <Chip
                             icon={<SegmentIcon color='disabled' />}
                             size='small'
@@ -118,8 +121,8 @@ const TaskDetails = ({
                         enterDelay={1000}
                         title={
                             comments.length === 1
-                                ? 'This card has a comment'
-                                : `This card has ${comments.length} comments`
+                                ? t('tasksPage.task.commentTooltip')
+                                : t('tasksPage.task.commentsTooltip', { commentsCount: comments.length })
                         }>
                         <Chip
                             icon={
@@ -139,7 +142,11 @@ const TaskDetails = ({
             </Box>
             {dueDate && (
                 <Tooltip
-                    title={fCountdown(dueDate, ['days']) ? fCountdown(dueDate, ['days']) + ' left' : 'Time is over'}
+                    title={
+                        fCountdown(dueDate, ['days'])
+                            ? t('tasksPage.timeLeft', { daysCount: fCountdown(dueDate, ['days']).replace('days', '') })
+                            : t('tasksPage.timeOver')
+                    }
                     PopperProps={{
                         placement: 'top',
                         modifiers: [{ name: 'offset', options: { offset: [0, -10] } }],

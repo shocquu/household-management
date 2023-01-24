@@ -6,6 +6,7 @@ import { useFormik } from 'formik';
 import * as yup from 'yup';
 import useAuth from '../../hooks/useAuth';
 import useAlert from '../../hooks/useAlert';
+import { useTranslation } from 'react-i18next';
 
 const UPDATE_PASSWORD_MUTATION = gql`
     mutation Mutation($updatePasswordInput: UpdatePasswordInput!) {
@@ -31,6 +32,7 @@ const validationSchema = yup.object({
 const PasswordChange = () => {
     const alert = useAlert();
     const { user } = useAuth();
+    const { t } = useTranslation();
     const [updatePassword, { loading }] = useMutation(UPDATE_PASSWORD_MUTATION);
 
     const formik = useFormik({
@@ -65,7 +67,7 @@ const PasswordChange = () => {
                         <TextField
                             id='oldPassword'
                             name='oldPassword'
-                            label='Old password'
+                            label={t('accountPage.oldPassword')}
                             type='password'
                             error={Boolean(formik.errors.oldPassword)}
                             helperText={formik.errors.oldPassword}
@@ -75,7 +77,7 @@ const PasswordChange = () => {
                         <TextField
                             id='newPassword'
                             name='newPassword'
-                            label='New password'
+                            label={t('accountPage.newPassword')}
                             type='password'
                             error={Boolean(formik.errors.newPassword)}
                             helperText={formik.errors.newPassword ? formik.errors.newPassword : <HelperText />}
@@ -86,7 +88,7 @@ const PasswordChange = () => {
                         <TextField
                             id='confirmNewPassword'
                             name='confirmNewPassword'
-                            label='Confirm new password'
+                            label={t('accountPage.confirmNewPassword')}
                             type='password'
                             error={Boolean(formik.errors.confirmNewPassword)}
                             helperText={formik.errors.confirmNewPassword}
@@ -100,7 +102,7 @@ const PasswordChange = () => {
                             loading={loading}
                             disabled={!formik.dirty || (formik.dirty && !formik.isValid)}
                             sx={{ alignSelf: 'end' }}>
-                            Save changes
+                            {t('common.saveChanges')}
                         </LoadingButton>
                     </Stack>
                 </form>

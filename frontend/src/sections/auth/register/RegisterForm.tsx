@@ -13,10 +13,12 @@ import {
 } from '@mui/material';
 import { useFormik } from 'formik';
 import { ChangeEvent, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import * as yup from 'yup';
 import Iconify from '../../../components/iconify';
 import { AVATARS_COUNT } from '../../../constants';
 import { useRegisterMutation } from '../../../hooks/useRegisterMutation';
+import useResponsive from '../../../hooks/useResponsive';
 
 const AVATARS_PER_PAGE_COUNT = 8;
 
@@ -31,6 +33,8 @@ const RegisterForm = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [page, setPage] = useState(1);
     const [register, { loading }] = useRegisterMutation();
+    const isDesktop = useResponsive('up', 'lg');
+    const { t } = useTranslation();
 
     const theme = useTheme();
     const formik = useFormik({
@@ -59,25 +63,25 @@ const RegisterForm = () => {
 
     return (
         <form onSubmit={formik.handleSubmit}>
-            <Stack spacing={3}>
+            <Stack spacing={isDesktop ? 3 : 1.5}>
                 <TextField
                     required
                     id='email'
                     name='email'
-                    label='Email address'
+                    label={t('common.email')}
                     value={formik.values.email}
                     onChange={formik.handleChange}
                     inputProps={{ autoComplete: 'off' }}
                     error={formik.touched.email && Boolean(formik.errors.email)}
                     helperText={formik.touched.email && formik.errors.email}
                 />
-                <Stack direction='row' spacing={2}>
+                <Stack direction='row' spacing={isDesktop ? 3 : 1.5}>
                     <TextField
                         required
                         fullWidth
                         id='username'
                         name='username'
-                        label='Username'
+                        label={t('common.username')}
                         inputProps={{ autoComplete: 'off' }}
                         value={formik.values.username}
                         onChange={formik.handleChange}
@@ -89,7 +93,7 @@ const RegisterForm = () => {
                         fullWidth
                         id='displayName'
                         name='displayName'
-                        label='Display name'
+                        label={t('common.displayName')}
                         inputProps={{ autoComplete: 'off' }}
                         value={formik.values.displayName}
                         onChange={formik.handleChange}
@@ -102,7 +106,7 @@ const RegisterForm = () => {
                     required
                     id='password'
                     name='password'
-                    label='Password'
+                    label={t('common.password')}
                     inputProps={{ autoComplete: 'new-password' }}
                     type={showPassword ? 'text' : 'password'}
                     InputProps={{
@@ -120,8 +124,8 @@ const RegisterForm = () => {
                     error={formik.touched.password && Boolean(formik.errors.password)}
                     helperText={formik.touched.password && formik.errors.password}
                 />
-                <Typography variant='subtitle1'>Select avatar</Typography>
-                <Grid container spacing={3}>
+                <Typography variant='subtitle1'>{t('registerPage.selectAvatar')}</Typography>
+                <Grid container spacing={isDesktop ? 3 : 1}>
                     {[...Array(AVATARS_COUNT).keys()]
                         .slice((page - 1) * AVATARS_PER_PAGE_COUNT, page * AVATARS_PER_PAGE_COUNT)
                         .map((key) => (
@@ -140,7 +144,7 @@ const RegisterForm = () => {
                                     <Avatar
                                         alt={`Avatar ${key + 1}`}
                                         src={`/assets/images/avatars/avatar_${key + 1}.jpg`}
-                                        sx={{ width: 64, height: 64 }}
+                                        sx={{ width: { xs: 48, md: 64 }, height: { xs: 48, md: 64 } }}
                                     />
                                 </IconButton>
                             </Grid>
@@ -154,12 +158,11 @@ const RegisterForm = () => {
                 <LoadingButton
                     fullWidth
                     loading={loading}
-                    // loadingPosition='start'
                     size='large'
                     type='submit'
                     variant='contained'
                     disabled={!formik.dirty || (formik.dirty && !formik.isValid)}>
-                    Create account
+                    {t('registerPage.createAccount')}
                 </LoadingButton>
             </Stack>
         </form>

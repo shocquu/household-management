@@ -18,10 +18,9 @@ import {
 import { LoadingButton } from '@mui/lab';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
-import { gql, useMutation } from '@apollo/client';
 import Iconify from '../../../components/iconify';
-import useAuth from '../../../hooks/useAuth';
 import { useLoginMutation } from '../../../hooks/useLoginMutation';
+import { useTranslation } from 'react-i18next';
 
 const validationSchema = yup.object({
     email: yup.string().email('Enter a valid email').required('Email is required'),
@@ -31,7 +30,7 @@ const validationSchema = yup.object({
 export default function LoginForm() {
     const [showPassword, setShowPassword] = useState(false);
     const [login, { loading }] = useLoginMutation();
-    const navigate = useNavigate();
+    const { t } = useTranslation();
 
     const formik = useFormik({
         initialValues: {
@@ -51,7 +50,7 @@ export default function LoginForm() {
                 <TextField
                     id='email'
                     name='email'
-                    label='Email address'
+                    label={t('common.email')}
                     value={formik.values.email}
                     onChange={formik.handleChange}
                     error={formik.touched.email && Boolean(formik.errors.email)}
@@ -60,7 +59,7 @@ export default function LoginForm() {
                 <TextField
                     id='password'
                     name='password'
-                    label='Password'
+                    label={t('common.password')}
                     type={showPassword ? 'text' : 'password'}
                     InputProps={{
                         endAdornment: (
@@ -88,7 +87,7 @@ export default function LoginForm() {
                             onClick={() => formik.setFieldValue('remember', !formik.values.remember)}
                         />
                     }
-                    label='Remember me'
+                    label={t('loginPage.rememberMe')}
                 />
             </Stack>
 
@@ -99,7 +98,7 @@ export default function LoginForm() {
                 type='submit'
                 variant='contained'
                 disabled={!!Object.keys(formik.errors).length}>
-                Login
+                {t('loginPage.login')}
             </LoadingButton>
         </form>
     );

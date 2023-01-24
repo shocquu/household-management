@@ -39,9 +39,9 @@ const LoginPage = () => {
                         </Typography>
 
                         <Typography variant='body2' sx={{ mb: 5 }}>
-                            Don’t have an account? {''}
+                            {t('loginPage.subtitle')}{' '}
                             <Link variant='subtitle2' component={RouterLink} to='/register'>
-                                Get started
+                                {t('loginPage.getStarted')}
                             </Link>
                         </Typography>
 

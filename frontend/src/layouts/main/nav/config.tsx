@@ -3,8 +3,8 @@ import LocalOfferIcon from '@mui/icons-material/LocalOffer';
 
 const navConfig = [
     {
-        title: 'assigments',
-        path: '/assigments',
+        title: 'assignments',
+        path: '/assignments',
         icon: <AssignmentIcon />,
     },
     {

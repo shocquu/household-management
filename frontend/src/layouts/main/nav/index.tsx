@@ -2,7 +2,6 @@ import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { styled, alpha } from '@mui/material/styles';
 import { Box, Link, Button, Drawer, Typography, Avatar, Stack, Chip } from '@mui/material';
-import account from '../../../_mock/account';
 import useResponsive from '../../../hooks/useResponsive';
 import Logo from '../../../components/logo';
 import Scrollbar from '../../../components/scrollbar';
@@ -60,8 +59,8 @@ const Nav = ({ openNav, onCloseNav }: Nav) => {
 
             <Box sx={{ flexGrow: 1 }} />
 
-            <Box sx={{ px: 2.5, pb: 3, mt: '42vh' }}>
-                <Stack alignItems='center' spacing={3} sx={{ pt: 5, borderRadius: 2, position: 'relative' }}>
+            <Box sx={{ px: 2.5, pb: 3, position: 'absolute', bottom: 0, left: '50%', transform: 'translateX(-50%)' }}>
+                <Stack alignItems='center' spacing={3} sx={{ pt: 5, borderRadius: 2 }}>
                     <Chip
                         label={
                             <>

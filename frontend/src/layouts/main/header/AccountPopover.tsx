@@ -3,24 +3,25 @@ import { alpha } from '@mui/material/styles';
 import { Box, Divider, Typography, Stack, MenuItem, Avatar, IconButton, Popover } from '@mui/material';
 import useAuth from '../../../hooks/useAuth';
 import { Link, useNavigate } from 'react-router-dom';
-
-const MENU_OPTIONS = [
-    {
-        label: 'Account',
-        path: '/user/account',
-        icon: 'eva:person-fill',
-    },
-    {
-        label: 'Settings',
-        path: '/user/settings',
-        icon: 'eva:settings-2-fill',
-    },
-];
+import { useTranslation } from 'react-i18next';
 
 export default function AccountPopover() {
     const [open, setOpen] = useState(null);
-    const navigate = useNavigate();
     const { user, logout } = useAuth();
+    const { t } = useTranslation();
+
+    const menuOptions = [
+        {
+            label: t('header.menu.account'),
+            path: '/user/account',
+            icon: 'eva:person-fill',
+        },
+        {
+            label: t('header.menu.settings'),
+            path: '/user/settings',
+            icon: 'eva:settings-2-fill',
+        },
+    ];
 
     const handleOpen = (event) => {
         setOpen(event.currentTarget);
@@ -83,7 +84,7 @@ export default function AccountPopover() {
                 <Divider sx={{ borderStyle: 'dashed' }} />
 
                 <Stack sx={{ p: 1 }}>
-                    {MENU_OPTIONS.map((option) => (
+                    {menuOptions.map((option) => (
                         <MenuItem key={option.label} to={option.path} component={Link}>
                             {option.label}
                         </MenuItem>
@@ -93,7 +94,7 @@ export default function AccountPopover() {
                 <Divider sx={{ borderStyle: 'dashed' }} />
 
                 <MenuItem onClick={handleLogout} sx={{ m: 1 }}>
-                    Logout
+                    {t('header.menu.logout')}
                 </MenuItem>
             </Popover>
         </>

@@ -21,6 +21,7 @@ import useAuth, { CURRENT_USER_QUERY } from '../../hooks/useAuth';
 import { AVATARS_BASE_PATH } from '../../constants';
 import { gql, useMutation } from '@apollo/client';
 import useAlert from '../../hooks/useAlert';
+import { useTranslation } from 'react-i18next';
 
 type FormikValues = {
     email: string;
@@ -47,6 +48,7 @@ const General = () => {
     const [open, setOpen] = useState(false);
     const { user } = useAuth();
     const alert = useAlert();
+    const { t } = useTranslation();
     const [updateUser, { loading }] = useMutation(UPDATE_USER_MUTATION, {
         refetchQueries: [{ query: CURRENT_USER_QUERY }],
         onCompleted: () => {
@@ -105,7 +107,7 @@ const General = () => {
                                         />
                                     </IconButton>
                                     <Button color='secondary' onClick={() => setOpen(true)}>
-                                        Change avatar
+                                        {t('accountPage.changeAvatar')}
                                     </Button>
                                 </Stack>
                             </CardContent>
@@ -119,13 +121,13 @@ const General = () => {
                                         disabled
                                         id='username'
                                         name='username'
-                                        label='Username'
+                                        label={t('common.username')}
                                         value={formik.values.username}
                                     />
                                     <TextField
                                         id='displayName'
                                         name='displayName'
-                                        label='Display name'
+                                        label={t('common.displayName')}
                                         value={formik.values.displayName}
                                         onChange={formik.handleChange}
                                         error={Boolean(formik.errors.displayName)}
@@ -138,7 +140,7 @@ const General = () => {
                                     <TextField
                                         id='email'
                                         name='email'
-                                        label='Email address'
+                                        label={t('common.email')}
                                         value={formik.values.email}
                                         onChange={formik.handleChange}
                                         error={Boolean(formik.errors.email)}
@@ -150,7 +152,7 @@ const General = () => {
                                         loading={loading}
                                         disabled={!formik.dirty}
                                         sx={{ alignSelf: 'end' }}>
-                                        Save changes
+                                        {t('common.saveChanges')}
                                     </LoadingButton>
                                 </Stack>
                             </CardContent>

@@ -1,0 +1,146 @@
+{
+    "navBar": {
+        "assignments": "Zuordnungen",
+        "labels": "Etiketten"
+    },
+    "header": {
+        "language": {
+            "polish": "Polnische",
+            "english": "Englisch",
+            "german": "Deutsche"
+        },
+        "menu": {
+            "account": "Konto",
+            "settings": "Einstellungen",
+            "logout": "Ausloggen"
+        }
+    },
+    "common": {
+        "save": "Speichern",
+        "saveChanges": "Änderungen speichern",
+        "edit": "Bearbeiten",
+        "delete": "Delete",
+        "cancel": "Löschen",
+        "create": "Erstellen",
+        "search": "Suche...",
+        "settings": "Einstellungen",
+        "rowsPerPage": "Zeilen pro Seite",
+        "username": "Nutzername",
+        "password": "Passwort",
+        "displayName": "Anzeigename",
+        "email": "E-Mail-Addresse",
+        "dateFormat": "Datumsformat",
+        "timeFormat": "Zeitformat",
+        "clearSearch": "Löschen",
+        "notFound": "Nicht gefunden",
+        "noResults": "Keine Ergebnisse gefunden für",
+        "selected": "{{selectedCount}} ausgewählt"
+    },
+    "alerts": {
+        "markedAsCompleted": "Als abgeschlossen markiert",
+        "undoSuccess": "Erfolgreich rückgängig gemacht",
+        "assignSuccess": "Aufgabe erfolgreich zugewiesen",
+        "taskDeleteError": "Beim Löschen der Aufgabe ist ein Fehler aufgetreten"
+    },
+    "labels": {
+        "green": "Grün",
+        "caribbeanGreen": "Karibisches Grün",
+        "blue": "Blau",
+        "skyBlue": "Himmelblau",
+        "pink": "Rosa",
+        "purple": "Violett",
+        "yellow": "Gelb",
+        "yellowCrayola": "Gelbe Buntstifte",
+        "orange": "Orange",
+        "melon": "Melonen",
+        "red": "Rot",
+        "coral": "Koralle"
+    },
+    "loginPage": {
+        "welcomeMessage": "Hallo, willkommen zurück!",
+        "header": "Melden Sie sich auf der {{name}} an",
+        "subtitle": "Sie haben kein Konto?",
+        "getStarted": "Loslegen",
+        "rememberMe": "Erinnere dich an mich",
+        "login": "Anmeldung"
+    },
+    "registerPage": {
+        "welcomeMessage": "Verwalten Sie Ihre Aufgaben effektiver mit",
+        "header": "Ein Konto erstellen",
+        "subtitle": "Sie haben bereits ein Konto?",
+        "signIn": "Einloggen",
+        "selectAvatar": "Avatar auswählen",
+        "createAccount": "Benutzerkonto erstellen"
+    },
+    "tasksPage": {
+        "showCompleted": "Show abgeschlossen",
+        "hideCompleted": "Verstecken abgeschlossen",
+        "timeLeft": "Noch {{daysCount}} Tage",
+        "timeOver": "Die Zeit ist um",
+        "permission": "Nur Benutzer mit der Administratorrolle können Aufgaben hinzufügen",
+        "empty": "Leer",
+        "noTasksTitle": "Sie haben keine Aufgaben 🥳",
+        "noTasksSubtitle": "Fühlen Sie sich frei, sich auszuruhen",
+        "task": {
+            "addNew": "Neue Aufgabe hinzufügen",
+            "addNewPlaceholder": "Geben Sie einen Titel für diese Karte ein",
+            "commentTooltip": "iese Karte hat einen Kommentar",
+            "commentsTooltip": "Diese Karte hat {{commentsCount}} Kommentare",
+            "descriptionTooltip": "Diese Karte hat eine Beschreibung",
+            "modal": {
+                "labels": "Etiketten",
+                "description": "Beschreibung",
+                "descriptionPlaceholder": "Fügen Sie eine ausführlichere Beschreibung hinzu",
+                "activity": "Aktivität",
+                "actions": "Aktionen",
+                "deleteComment": "Kommentar löschen",
+                "commentDisabled": "Kommentare zu abgeschlossenen Aufgaben können nicht gepostet werden",
+                "commentPlaceholder": "Schreibe einen Kommentar",
+                "markAsDone": "Markieren Sie als erledigt",
+                "undoDone": "Rückgängig gemacht",
+                "setDueDate": "Fälligkeitsdatum festlegen",
+                "editDueDate": "Fälligkeitsdatum bearbeiten",
+                "delete": "Löschen",
+                "assignTo": "Zuweisen"
+            },
+            "dialog": {
+                "title": "Möchten Sie diese Aufgabe wirklich löschen?",
+                "description": "Diese Aktion ist irreversibel"
+            }
+        }
+    },
+    "labelsPage": {
+        "header": {
+            "title": "Etiketten",
+            "newLabel": "Neues Etikett hinzufügen",
+            "search": "Etikett suchen..."
+        },
+        "table": {
+            "label": "Etikett",
+            "color": "Farbe"
+        },
+        "modal": {
+            "create": "Etikett erstellen",
+            "edit": "Etikett bearbeiten",
+            "title": "Titel",
+            "selectColor": "Wählen Sie eine Farbe aus"
+        }
+    },
+    "accountPage": {
+        "header": "Konto",
+        "tabs": {
+            "general": "Allgemein",
+            "changePassword": "Passwort ändern"
+        },
+        "changeAvatar": "Avatar ändern",
+        "oldPassword": "Altes Kennwort",
+        "newPassword": "Neues Passwort",
+        "confirmNewPassword": "Bestätige neues Passwort",
+        "minPasswordHelper": "Das Passwort muss mindestens {{min}} Zeichen lang sein"
+    },
+    "404": {
+        "title": "Entschuldigung, Seite nicht gefunden!",
+        "description": "Entschuldigung, wir konnten die gesuchte Seite nicht finden. Vielleicht haben Sie sich bei der URL vertippt? Überprüfen Sie unbedingt Ihre Rechtschreibung.",
+        "goToHome": "Zur Startseite"
+    }
+}

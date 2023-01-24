@@ -25,6 +25,7 @@ import { TAGS_QUERY } from '../../../pages/TagsPage';
 import { LabelColors, Tag } from '../../../types';
 import { getLabelColor } from '../../../utils/getLabelColor';
 import { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 
 const ADD_TAG_MUTATION = gql`
     mutation CreateTag($createTagInput: CreateTagInput!) {
@@ -56,6 +57,7 @@ const validationSchema = yup.object({
 const TagModal = ({ open, handleClose, labelToEdit }: TagModal) => {
     const theme = useTheme();
     const alert = useAlert();
+    const { t } = useTranslation();
     const [createTag, { loading: adding }] = useMutation(ADD_TAG_MUTATION, {
         onCompleted: () => {
             alert.success('Added new label');
@@ -145,7 +147,10 @@ const TagModal = ({ open, handleClose, labelToEdit }: TagModal) => {
                 <DialogContent>
                     <Stack spacing={1}>
                         <Stack direction='row' alignItems='center' justifyContent='space-between' mb={1}>
-                            <Typography variant='h6'> {labelToEdit ? 'Edit label' : 'Create label'}</Typography>
+                            <Typography variant='h6'>
+                                {' '}
+                                {labelToEdit ? t('labelsPage.modal.edit') : t('labelsPage.modal.create')}
+                            </Typography>
                             <IconButton
                                 disableRipple
                                 sx={{
@@ -160,7 +165,7 @@ const TagModal = ({ open, handleClose, labelToEdit }: TagModal) => {
                         <TextField
                             size='small'
                             name='title'
-                            label={'Title'}
+                            label={t('labelsPage.modal.title')}
                             value={formik.values.title}
                             inputProps={{ maxLength: 10 }}
                             error={formik.touched.title && Boolean(formik.errors.title)}
@@ -168,13 +173,13 @@ const TagModal = ({ open, handleClose, labelToEdit }: TagModal) => {
                             onChange={formik.handleChange}
                         />
                         <Typography variant='subtitle2' pl={'1px'}>
-                            Select a color
+                            {t('labelsPage.modal.selectColor')}
                         </Typography>
                         <Grid container spacing={1}>
                             {Object.entries(LabelColors).map(([label, value]) => (
                                 <Grid key={label} xs={4}>
                                     <Tooltip
-                                        title={sentenceCase(label)}
+                                        title={t(`labels.${label}`)}
                                         PopperProps={{
                                             modifiers: [
                                                 {
@@ -210,7 +215,7 @@ const TagModal = ({ open, handleClose, labelToEdit }: TagModal) => {
                                                         position: 'relative',
                                                         color: darken(getLabelColor(value), 0.25),
                                                     }}>
-                                                    {sentenceCase(label)}
+                                                    {t(`labels.${label}`)}
                                                 </Typography>
                                             )}
                                         </Box>
@@ -224,7 +229,7 @@ const TagModal = ({ open, handleClose, labelToEdit }: TagModal) => {
                             type='submit'
                             variant='contained'
                             sx={{ alignSelf: 'start' }}>
-                            {labelToEdit ? 'Edit' : 'Create'}
+                            {labelToEdit ? t('common.edit') : t('common.create')}
                         </LoadingButton>
                     </Stack>
                 </DialogContent>

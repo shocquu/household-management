@@ -2,12 +2,14 @@ import { Helmet } from 'react-helmet-async';
 import { Link as RouterLink } from 'react-router-dom';
 import { styled } from '@mui/material/styles';
 import { Link, Container, Typography, Box } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import useResponsive from '../hooks/useResponsive';
 import Logo from '../components/logo';
 import { RegisterForm } from '../sections/auth/register';
 
 const RegisterPage = () => {
     const lgUp = useResponsive('up', 'lg');
+    const { t } = useTranslation();
 
     return (
         <>
@@ -24,13 +26,13 @@ const RegisterPage = () => {
                 <Container maxWidth='sm'>
                     <StyledContent>
                         <Typography variant='h4' gutterBottom>
-                            Get started
+                            {t('loginPage.getStarted')}
                         </Typography>
 
-                        <Typography variant='body2' sx={{ mb: 5 }}>
-                            Already have an account? {''}
+                        <Typography variant='body2' sx={{ mb: { xs: 2, md: 5 } }}>
+                            {t('registerPage.subtitle')}{' '}
                             <Link variant='subtitle2' component={RouterLink} to='/login'>
-                                Sign in
+                                {t('registerPage.signIn')}
                             </Link>
                         </Typography>
 
@@ -41,7 +43,7 @@ const RegisterPage = () => {
                 {lgUp && (
                     <StyledSection>
                         <Typography variant='h3' textAlign='center' sx={{ px: 5, mt: 10, mb: 5 }}>
-                            Manage your tasks more effectively with{' '}
+                            {t('registerPage.welcomeMessage')}{' '}
                             <Box fontWeight='inherit' display='inline' color='primary.main'>
                                 Hovee
                             </Box>
@@ -76,7 +78,7 @@ const StyledContent = styled('div')(({ theme }) => ({
     display: 'flex',
     justifyContent: 'center',
     flexDirection: 'column',
-    padding: theme.spacing(12, 0),
+    padding: theme.spacing(6, 0),
 }));
 
 export default RegisterPage;

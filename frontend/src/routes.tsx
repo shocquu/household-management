@@ -33,10 +33,10 @@ const RoutesWrapper = () => {
                 </ProtectedRoute>
             ),
             children: [
-                { element: <Navigate to='/assigments' />, index: true },
+                { element: <Navigate to='/assignments' />, index: true },
 
                 {
-                    path: 'assigments',
+                    path: 'assignments',
                     element: <TasksPage />,
                 },
                 { path: 'labels', element: <TagsPage /> },

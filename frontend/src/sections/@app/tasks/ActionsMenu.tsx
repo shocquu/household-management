@@ -34,6 +34,7 @@ import { AVATARS_BASE_PATH } from '../../../constants';
 import { format, parse } from 'date-fns';
 import { useFormikContext } from 'formik';
 import { getLabelColor } from '../../../utils/getLabelColor';
+import { useTranslation } from 'react-i18next';
 
 const TAGS_QUERY = gql`
     query Tags {
@@ -80,6 +81,7 @@ const ActionsMenu = ({ taskId, userId, completed, appliedTags }: ActionsMenu) =>
     const [labelsExpanded, setLabelsExpanded] = useState(false);
     const alert = useAlert();
     const { user } = useAuth();
+    const { t } = useTranslation();
     const { data } = useQuery(TAGS_QUERY);
     const [updateTask] = useMutation(UPDATE_TASK_MUTATION, {
         onError: (error) => {
@@ -93,7 +95,7 @@ const ActionsMenu = ({ taskId, userId, completed, appliedTags }: ActionsMenu) =>
     });
     const cachedUsers = cache?.users;
 
-    const isTagApplied = (taskId: number) => appliedTags.some((tag) => tag.id === taskId);
+    const isTagApplied = (taskId: number) => appliedTags.some((tag) => tag?.id === taskId);
 
     return (
         <List
@@ -103,7 +105,7 @@ const ActionsMenu = ({ taskId, userId, completed, appliedTags }: ActionsMenu) =>
             aria-labelledby='actions-list'
             subheader={
                 <ListSubheader component='div' id='actions-list'>
-                    Actions
+                    {t('tasksPage.task.modal.actions')}
                 </ListSubheader>
             }>
             <ListItemButton
@@ -118,14 +120,16 @@ const ActionsMenu = ({ taskId, userId, completed, appliedTags }: ActionsMenu) =>
                             },
                         },
                         onCompleted: () => {
-                            alert.success(!completed ? 'Marked as completed ' : 'Undone successfully');
+                            alert.success(!completed ? t('alerts.markedAsCompleted') : t('alerts.undoSuccess'));
                         },
                     });
                 }}>
                 <ListItemIcon sx={{ minWidth: 28, color: 'inherit' }}>
                     <Iconify icon={completed ? 'eva:undo-outline' : 'eva:done-all-outline'} />
                 </ListItemIcon>
-                <ListItemText primary={completed ? 'Undo done' : 'Mark as done'} />
+                <ListItemText
+                    primary={completed ? t('tasksPage.task.modal.undoDone') : t('tasksPage.task.modal.markAsDone')}
+                />
             </ListItemButton>
 
             {user.role === Role.Admin && (
@@ -141,7 +145,7 @@ const ActionsMenu = ({ taskId, userId, completed, appliedTags }: ActionsMenu) =>
                         <ListItemIcon sx={{ minWidth: 28, color: 'inherit' }}>
                             <Iconify icon={'eva:people-outline'} />
                         </ListItemIcon>
-                        <ListItemText primary='Assign to' />
+                        <ListItemText primary={t('tasksPage.task.modal.assignTo')} />
                         {usersExpanded ? <ExpandLessIcon fontSize='small' /> : <ExpandMoreIcon fontSize='small' />}
                     </ListItemButton>
 
@@ -175,7 +179,7 @@ const ActionsMenu = ({ taskId, userId, completed, appliedTags }: ActionsMenu) =>
                                                     },
                                                 },
                                                 onCompleted: () => {
-                                                    alert.success('Task assigned successfully');
+                                                    alert.success(t('alerts.assignSuccess'));
                                                 },
                                             })
                                         }
@@ -190,7 +194,7 @@ const ActionsMenu = ({ taskId, userId, completed, appliedTags }: ActionsMenu) =>
                 <ListItemIcon sx={{ minWidth: 28 }}>
                     <Iconify icon={'material-symbols:label-outline'} />
                 </ListItemIcon>
-                <ListItemText primary='Labels' />
+                <ListItemText primary={t('tasksPage.task.modal.labels')} />
                 {labelsExpanded ? <ExpandLessIcon fontSize='small' /> : <ExpandMoreIcon fontSize='small' />}
             </ListItemButton>
             <Collapse in={labelsExpanded} timeout='auto' unmountOnExit>
@@ -295,10 +299,11 @@ const ActionsMenu = ({ taskId, userId, completed, appliedTags }: ActionsMenu) =>
 const RemoveAction = ({ taskId }: { taskId: number }) => {
     const [isOpen, setIsOpen] = useState(false);
     const alert = useAlert();
+    const { t } = useTranslation();
     const [removeTask] = useMutation(REMOVE_TASK_MUTATION, {
         refetchQueries: [{ query: USERS_QUERY }, 'Users'],
         onError: () => {
-            alert.error('An error occured while deleting the task');
+            alert.error(t('alerts.taskDeleteError'));
         },
     });
 
@@ -315,7 +320,7 @@ const RemoveAction = ({ taskId }: { taskId: number }) => {
                 <ListItemIcon sx={{ minWidth: 28, color: 'inherit' }}>
                     <Iconify icon={'eva:trash-2-outline'} />
                 </ListItemIcon>
-                <ListItemText primary='Delete' />
+                <ListItemText primary={t('tasksPage.task.modal.delete')} />
             </ListItemButton>
             <ConfirmDialog
                 open={isOpen}
@@ -328,9 +333,11 @@ const RemoveAction = ({ taskId }: { taskId: number }) => {
 };
 
 const DatePicker = ({ disabled }: { disabled: boolean }) => {
+    const { user } = useAuth();
     const [anchorEl, setAnchorEl] = useState(null);
-    const [date, setDate] = useState(format(new Date(), 'MM/dd/yyyy'));
+    const [date, setDate] = useState(format(new Date(), user.settings.dateFormat));
     const [open, setOpen] = useState(false);
+    const { t } = useTranslation();
     const { setFieldValue, values } = useFormikContext();
 
     const handleDateChange = (newDate) => {
@@ -385,7 +392,9 @@ const DatePicker = ({ disabled }: { disabled: boolean }) => {
                                             disabled={disabled}
                                             {...inputProps}
                                         />
-                                        {(values as InitialValues)?.dueDate ? 'Edit due date' : 'Set due date'}
+                                        {(values as InitialValues)?.dueDate
+                                            ? t('tasksPage.task.modal.editDueDate')
+                                            : t('tasksPage.task.modal.setDueDate')}
                                     </Box>
                                 )}
                             />

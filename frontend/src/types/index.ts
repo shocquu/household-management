@@ -46,6 +46,12 @@ export enum Role {
     User = 'USER',
 }
 
+export enum ELanguage {
+    EN = 'en',
+    DE = 'de',
+    PL = 'pl',
+}
+
 export enum AlertStatus {
     None = '',
     Info = 'info',

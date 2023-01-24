@@ -21,6 +21,7 @@ import { gql, useMutation } from '@apollo/client';
 import { fDate } from '../utils/formatTime';
 import { ChangeEvent, ChangeEventHandler } from 'react';
 import { User } from '../types';
+import { useTranslation } from 'react-i18next';
 
 const UPDATE_USER_MUTATION = gql`
     mutation Mutation($updateUserInput: UpdateUserInput!) {
@@ -56,6 +57,7 @@ const validationSchema = yup.object({
 const SettingsPage = () => {
     const { user } = useAuth();
     const alert = useAlert();
+    const { t } = useTranslation();
     const [updateUser, { loading }] = useMutation(UPDATE_USER_MUTATION, {
         onCompleted: () => {
             alert.success('Successfuly updated');
@@ -104,7 +106,7 @@ const SettingsPage = () => {
                 }}>
                 <form onSubmit={formik.handleSubmit}>
                     <Typography variant='h4' mb={3}>
-                        Settings
+                        {t('common.settings')}
                     </Typography>
                     <Card elevation={3}>
                         <CardContent
@@ -120,7 +122,7 @@ const SettingsPage = () => {
                                             fullWidth
                                             select
                                             name='dateFormat'
-                                            label='Date format'
+                                            label={t('common.dateFormat')}
                                             value={formik.values.dateFormat}
                                             error={formik.touched.dateFormat && Boolean(formik.errors.dateFormat)}
                                             helperText={formik.touched.dateFormat && formik.errors.dateFormat}
@@ -136,8 +138,8 @@ const SettingsPage = () => {
                                         <TextField
                                             fullWidth
                                             select
-                                            label='Time format'
                                             name='timeFormat'
+                                            label={t('common.timeFormat')}
                                             value={formik.values.timeFormat}
                                             error={formik.touched.timeFormat && Boolean(formik.errors.timeFormat)}
                                             helperText={formik.touched.timeFormat && formik.errors.timeFormat}
@@ -156,7 +158,7 @@ const SettingsPage = () => {
                                     loading={loading}
                                     disabled={!formik.dirty}
                                     sx={{ alignSelf: 'start' }}>
-                                    Save changes
+                                    {t('common.saveChanges')}
                                 </LoadingButton>
                             </Stack>
                         </CardContent>

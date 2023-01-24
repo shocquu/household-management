@@ -3,6 +3,7 @@ import { styled, alpha } from '@mui/material/styles';
 import { Toolbar, Tooltip, IconButton, Typography, OutlinedInput, InputAdornment } from '@mui/material';
 import Iconify from '../../../components/iconify';
 import { FetchResult, gql } from '@apollo/client';
+import { useTranslation } from 'react-i18next';
 
 interface TagsListToolbarProps {
     numSelected: number;
@@ -14,6 +15,7 @@ interface TagsListToolbarProps {
 
 const TagsListToolbar = ({ numSelected, filterName, setFilterName, onFilterName, onRemove }: TagsListToolbarProps) => {
     const [focused, setFocused] = useState(false);
+    const { t } = useTranslation();
 
     const clearInput = (_event: MouseEvent<HTMLButtonElement>) => setFilterName('');
 
@@ -27,13 +29,13 @@ const TagsListToolbar = ({ numSelected, filterName, setFilterName, onFilterName,
             }}>
             {numSelected > 0 ? (
                 <Typography component='div' variant='subtitle1'>
-                    {numSelected} selected
+                    {t('common.selected', { selectedCount: numSelected })}
                 </Typography>
             ) : (
                 <StyledSearch
                     value={filterName}
                     onChange={onFilterName}
-                    placeholder={'Search label...'}
+                    placeholder={t('labelsPage.header.search')}
                     inputProps={{ onFocus: () => setFocused(true), onBlur: () => setFocused(false) }}
                     startAdornment={
                         <InputAdornment position='start'>
@@ -44,7 +46,7 @@ const TagsListToolbar = ({ numSelected, filterName, setFilterName, onFilterName,
                         filterName.length > 0 &&
                         !focused && (
                             <Tooltip
-                                title={'Clear search'}
+                                title={t('common.clearSearch')}
                                 PopperProps={{
                                     placement: 'right',
                                 }}>
@@ -58,7 +60,7 @@ const TagsListToolbar = ({ numSelected, filterName, setFilterName, onFilterName,
             )}
 
             {numSelected > 0 && (
-                <Tooltip title='Delete' onClick={onRemove}>
+                <Tooltip title={t('common.delete')} onClick={onRemove}>
                     <IconButton>
                         <Iconify icon='eva:trash-2-fill' />
                     </IconButton>
